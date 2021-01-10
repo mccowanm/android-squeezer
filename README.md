@@ -1,8 +1,10 @@
-Squeezer
-========
+# Squeezer
 
 Control your SqueezeCenter ("Slimserver") and SqueezeBox (or multiple squeezeboxes)
 from your Android phone.
+
+[<img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' height='80'/>](http://play.google.com/store/apps/details?id=uk.org.ngo.squeezer)
+[<img alt='Get it on F-Droid' src='https://f-droid.org/badge/get-it-on.png' height='80'/>](https://www.f-droid.org/packages/uk.org.ngo.squeezer/)
 
 Features include:
 

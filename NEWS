@@ -1,3 +1,25 @@
+2.2.2
+=====
+
+*   Interactive Now Playing screen
+
+*   Confirmation dialog for clear current playlist
+
+*   Wake up server (Wake-on-LAN)
+
+*   Select how much info to display per item
+
+*   Shortcut for current playlist on top bar if room
+
+*   Volume button on bottom bar if room
+
+*   Synchronize Volume and Power for player group
+
+*   Pause music on call
+
+*   Bug and stability fixes
+
+
 2.2.1
 =====
 

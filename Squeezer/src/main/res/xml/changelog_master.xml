@@ -2,6 +2,28 @@
 
 <changelog>
     <release
+        version="2.2.2"
+        versioncode="90">
+        <change>Interactive Now Playing screen</change>
+
+        <change>Confirmation dialog for clear current playlist</change>
+
+        <change>Wake up server (Wake-on-LAN)</change>
+
+        <change>Select how much info to display per item</change>
+
+        <change>Shortcut for current playlist on top bar if room</change>
+
+        <change>Volume button on bottom bar if room</change>
+
+        <change>Synchronize Volume and Power for player group</change>
+
+        <change>Pause music on call</change>
+
+        <change>Bug and stability fixes</change>
+    </release>
+
+    <release
         version="2.2.1"
         versioncode="89">
         <change>Current playlist control;

@@ -11,6 +11,7 @@ squeezer.properties
 crashlytics.properties
 key.json
 key.p12
+keystore
 .classpath
 /ant.properties
 .settings/

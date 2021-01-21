@@ -36,9 +36,8 @@ Features include:
 
 *   Control playback from your Android Wear device
 
-Squeezer is free, and open source. 
-To file an issue or a feature request see the [Issue Tracker](https://github.com/kaaholst/android-squeezer/issues).
-For more information, or to contribute, see the [project home page](https://github.com/kaaholst/android-squeezer).
+Squeezer is free, and open source. To contribute, see [Contributing](https://github.com/kaaholst/android-squeezer/blob/develop/CONTRIBUTING.md).
 
-**NOTE** The issue tracker has moved, please use the new location: https://github.com/kaaholst/android-squeezer/issues
-for future requests. 
+To file an issue or a feature request please use the [Issue Tracker](https://github.com/kaaholst/android-squeezer/issues).
+
+If you like to help translate Squeezer, please see [Translating Squeezer](https://github.com/kaaholst/android-squeezer/wiki/Translating-Squeezer).

@@ -251,13 +251,20 @@ public class JiveItemListActivity extends BaseListActivity<JiveItemView, JiveIte
     void updateHeader(JiveItem parent) {
         updateHeader(parent.getName());
 
-        if (parent.hasArtwork() && window.windowStyle == Window.WindowStyle.TEXT_ONLY) {
+        if (!TextUtils.isEmpty(parent.text2)) {
             parentViewHolder.text2.setVisibility(View.VISIBLE);
             parentViewHolder.text2.setText(parent.text2);
-
-            parentViewHolder.icon.setVisibility(View.VISIBLE);
-            ImageFetcher.getInstance(this).loadImage(parent.getIcon(), parentViewHolder.icon);
         }
+
+        if (parent.hasIcon() && window.windowStyle == Window.WindowStyle.TEXT_ONLY) {
+            parentViewHolder.icon.setVisibility(View.VISIBLE);
+            if (parent.hasIconUri()) {
+                ImageFetcher.getInstance(this).loadImage(parent.getIcon(), parentViewHolder.icon);
+            } else {
+                parentViewHolder.icon.setImageDrawable(parent.getIconDrawable(this));
+            }
+        }
+
         if (parent.hasContextMenu()) {
             parentViewHolder.contextMenuButtonHolder.setVisibility(View.VISIBLE);
         }

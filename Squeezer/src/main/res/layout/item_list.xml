@@ -20,7 +20,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/fastscroller"
-    app:handleDrawable="@drawable/thumb_drawable"
+    app:handleDrawable="?attr/thumb_drawable"
     app:handleHeight="32dp"
     app:handleVisibilityDuration="1000"
     android:layout_width="match_parent"

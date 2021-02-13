@@ -2,6 +2,12 @@
 
 <changelog>
     <release
+        version="2.2.3"
+        versioncode="93">
+        <change>Restore the scroll bar</change>
+    </release>
+
+    <release
         version="2.2.2"
         versioncode="90">
         <change>Interactive Now Playing screen</change>

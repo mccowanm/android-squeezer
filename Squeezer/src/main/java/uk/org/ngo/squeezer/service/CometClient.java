@@ -82,9 +82,6 @@ import uk.org.ngo.squeezer.util.SendWakeOnLan;
 class CometClient extends BaseClient {
     private static final String TAG = CometClient.class.getSimpleName();
 
-    /** The maximum number of milliseconds to wait before considering a request to the LMS failed */
-    private static final int LONG_POLLING_TIMEOUT = 120_000;
-
     /** {@link java.util.regex.Pattern} that splits strings on forward slash. */
     private static final Pattern mSlashSplitPattern = Pattern.compile("/");
 
@@ -268,36 +265,15 @@ class CometClient extends BaseClient {
                     }
                 });
 
-                Map<String, Object> options = new HashMap<>();
-                options.put(HttpClientTransport.MAX_NETWORK_DELAY_OPTION, LONG_POLLING_TIMEOUT);
-                ClientTransport clientTransport;
-                if (!isSqueezeNetwork) {
-                    clientTransport = new HttpStreamingTransport(url, options, httpClient) {
-                        @Override
-                        protected void customize(org.eclipse.jetty.client.api.Request request) {
-                            if (username != null && password != null) {
-                                String authorization = B64Code.encode(username + ":" + password);
-                                request.header(HttpHeader.AUTHORIZATION, "Basic " + authorization);
-                            }
+                ClientTransport clientTransport = new HttpStreamingTransport(url, null, httpClient) {
+                    @Override
+                    protected void customize(org.eclipse.jetty.client.api.Request request) {
+                        if (!isSqueezeNetwork && username != null && password != null) {
+                            String authorization = B64Code.encode(username + ":" + password);
+                            request.header(HttpHeader.AUTHORIZATION, "Basic " + authorization);
                         }
-                    };
-                } else {
-                    clientTransport = new HttpStreamingTransport(url, options, httpClient) {
-                        // SN only replies the first connect message
-                        private boolean hasSendConnect;
-
-                        @Override
-                        public void send(TransportListener listener, List<Message.Mutable> messages) {
-                            boolean isConnect = Channel.META_CONNECT.equals(messages.get(0).getChannel());
-                            if (!(isConnect && hasSendConnect)) {
-                                super.send(listener, messages);
-                                if (isConnect) {
-                                    hasSendConnect = true;
-                                }
-                            }
-                        }
-                    };
-                }
+                    }
+                };
                 mBayeuxClient = new SqueezerBayeuxClient(url, clientTransport);
                 mBayeuxClient.addExtension(new SqueezerBayeuxExtension());
                 mBayeuxClient.getChannel(Channel.META_HANDSHAKE).addListener((ClientSessionChannel.MessageListener) (channel, message) -> {

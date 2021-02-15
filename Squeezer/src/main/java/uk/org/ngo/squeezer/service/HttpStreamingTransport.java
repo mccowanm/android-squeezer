@@ -70,6 +70,13 @@ public class HttpStreamingTransport extends HttpClientTransport implements Messa
     private ScheduledExecutorService _scheduler;
     private boolean _shutdownScheduler;
 
+    // The CometD library reschedules connect (channel META_CONNECT) messages to keep the connection
+    // alive, but SN and LMS sees this as a connection request, and instead relies on an active
+    // subscribe query (serverstatus or playerstatus) to provide keep-alive messages from the server
+    // to the client.
+    // This boolean ensures that we only send the connect message one time
+    private boolean hasSendConnect;
+
     private final Delegate _delegate;
     private TransportListener _listener;
 
@@ -170,10 +177,17 @@ public class HttpStreamingTransport extends HttpClientTransport implements Messa
         if (!_delegate.connected) connect(getURL(), listener, messages);
         if (!_delegate.connected) return;
 
-        if (Channel.META_CONNECT.equals(messages.get(0).getChannel()) ||
-                Channel.META_SUBSCRIBE.equals(messages.get(0).getChannel()) ||
-                Channel.META_HANDSHAKE.equals(messages.get(0).getChannel())) {
-            delegateSend(listener, messages);
+        String channel = messages.get(0).getChannel();
+        boolean isConnect = Channel.META_CONNECT.equals(channel);
+        if (isConnect || Channel.META_SUBSCRIBE.equals(channel) || Channel.META_HANDSHAKE.equals(channel)) {
+            if (isConnect && hasSendConnect) {
+                Log.v(TAG, "Attempt to resend connect message, but we refuse that");
+            } else {
+                delegateSend(listener, messages);
+                if (isConnect) {
+                    hasSendConnect = true;
+                }
+            }
         } else {
             transportSend(listener, messages);
         }
@@ -409,15 +423,9 @@ public class HttpStreamingTransport extends HttpClientTransport implements Messa
             }
 
             // Schedule a task to expire if the maxNetworkDelay elapses
-            final long expiration = TimeUnit.NANOSECONDS.toMillis(System.nanoTime()) + maxNetworkDelay;
             ScheduledFuture<?> task = _scheduler.schedule(new Runnable() {
                 @Override
                 public void run() {
-                    long now = TimeUnit.NANOSECONDS.toMillis(System.nanoTime());
-                    long delay = now - expiration;
-                    if (delay > 5000) // TODO: make the max delay a parameter ?
-                        Log.d(TAG, "Message " + message + " expired " + delay + " ms too late");
-                    //Log.d(TAG,"Expiring message " + message);
                     fail(new TimeoutException(), "Expired");
                 }
             }, maxNetworkDelay, TimeUnit.MILLISECONDS);

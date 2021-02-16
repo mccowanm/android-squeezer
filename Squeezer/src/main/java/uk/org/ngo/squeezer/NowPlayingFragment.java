@@ -872,7 +872,9 @@ public class NowPlayingFragment extends Fragment {
 
     public void startVisibleConnection() {
         Log.v(TAG, "startVisibleConnection");
-        if (mService == null) {
+
+        // If were not connected to service or not attached to activity do nothing.
+        if (mService == null || !isAdded()) {
             return;
         }
 

@@ -206,10 +206,13 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
 
         if (item.radio != null) {
             ItemAdapter<JiveItemView, JiveItem> itemAdapter = getActivity().getItemAdapter();
-            JiveItem prevItem = itemAdapter.getItem(getActivity().getSelectedIndex());
-            if (prevItem != null && prevItem.radio != null) {
-                prevItem.radio = false;
-                itemAdapter.notifyItemChanged(getActivity().getSelectedIndex());
+            int prevIndex = getActivity().getSelectedIndex();
+            if (prevIndex >= 0 && prevIndex < itemAdapter.getItemCount()) {
+                JiveItem prevItem = itemAdapter.getItem(prevIndex);
+                if (prevItem != null && prevItem.radio != null) {
+                    prevItem.radio = false;
+                    itemAdapter.notifyItemChanged(prevIndex);
+                }
             }
 
             item.radio = true;

@@ -136,7 +136,7 @@ public class ConnectionState {
 
     void setServerVersion(String version) {
         if (Util.atomicReferenceUpdated(serverVersion, version)) {
-            if (version != null) {
+            if (version != null && mConnectionState == CONNECTION_COMPLETED) {
                 HandshakeComplete event = new HandshakeComplete(getServerVersion());
                 Log.i(TAG, "Handshake complete: " + event);
                 mEventBus.postSticky(event);

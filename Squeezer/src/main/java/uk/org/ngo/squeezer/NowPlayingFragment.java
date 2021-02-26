@@ -540,9 +540,9 @@ public class NowPlayingFragment extends Fragment {
         if (!isConnected()) {
             if (isManualDisconnect(mActivity)) {
                 ConnectActivity.show(mActivity);
-
             } else {
                 startVisibleConnection();
+                new Preferences(mActivity).setManualDisconnect(true); // Only try reconnect once
             }
         }
     }
@@ -1009,6 +1009,7 @@ public class NowPlayingFragment extends Fragment {
 
         Log.d(TAG, "Handshake complete");
 
+        new Preferences(mActivity).setManualDisconnect(false);
         dismissConnectingDialog();
 
         nextButton.setEnabled(true);

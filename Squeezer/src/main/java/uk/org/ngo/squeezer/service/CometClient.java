@@ -33,8 +33,6 @@ import org.cometd.bayeux.Message;
 import org.cometd.bayeux.client.ClientSessionChannel;
 import org.cometd.client.BayeuxClient;
 import org.cometd.client.transport.ClientTransport;
-import org.cometd.client.transport.HttpClientTransport;
-import org.cometd.client.transport.TransportListener;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.http.HttpField;
 import org.eclipse.jetty.http.HttpHeader;
@@ -281,18 +279,21 @@ class CometClient extends BaseClient {
                     } else {
                         Log.w(TAG, channel + ": " + message.getJSON());
 
-                        // The bayeux protocol handle failures internally.
-                        // This current client libraries are however incompatible with LMS as new messages to the
-                        // meta channels are ignored.
-                        // So we disconnect here so we can create a new connection.
                         Map<String, Object> failure = Util.getRecord(message, "failure");
-                        Message failedMessage = (failure != null) ? (Message) failure.get("message") : null;
-                        if ("forced reconnect".equals(failedMessage.get("error"))) {
-                            disconnect(ConnectionState.RECONNECT);
+                        String adviceAction = getAdviceAction(message.getAdvice());
+                        if (adviceAction != null) {
+                            // The bayeux protocol handle failures internally.
+                            // The current client libraries are however incompatible with LMS as new messages to the
+                            // meta channels are ignored.
+                            // So we disconnect here so we can create a new connection.
+                            Message failedMessage = (failure != null) ? (Message) failure.get("message") : null;
+                            String errorMessage = (failedMessage != null) ? (String) failedMessage.get("error") : null;
+                            if ("handshake".equals(adviceAction) || "forced reconnect".equals(errorMessage)) {
+                                disconnect(ConnectionState.RECONNECT);
+                            }
                         } else {
                             Object httpCodeValue = (failure != null) ? failure.get("httpCode") : null;
                             int httpCode = (httpCodeValue instanceof Integer) ? (int) httpCodeValue : -1;
-
                             disconnect((httpCode == 401) ? ConnectionError.LOGIN_FALIED : ConnectionError.CONNECTION_ERROR);
                         }
                     }
@@ -494,8 +495,10 @@ class CometClient extends BaseClient {
         @Override
         public void onMessage(ClientSessionChannel channel, Message message) {
             if (!message.isSuccessful()) {
-                // TODO remote logging and possible other handling
-                Log.e(TAG, channel + ": " + message.getJSON());
+                Map<String, Object> failure = (Map<String, Object>) message.get("failure");
+                Exception exception = (failure != null) ? (Exception) failure.get("exception") : null;
+                Log.w(TAG, channel + ": " + message.getJSON(), exception);
+                disconnect();
             }
             mBackgroundHandler.sendEmptyMessage(MSG_PUBLISH_RESPONSE_RECIEVED);
         }

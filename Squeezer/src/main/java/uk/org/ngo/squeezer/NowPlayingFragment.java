@@ -75,7 +75,6 @@ import uk.org.ngo.squeezer.framework.BaseActivity;
 import uk.org.ngo.squeezer.framework.ViewParamItemView;
 import uk.org.ngo.squeezer.itemlist.AlarmsActivity;
 import uk.org.ngo.squeezer.itemlist.CurrentPlaylistActivity;
-import uk.org.ngo.squeezer.itemlist.HomeActivity;
 import uk.org.ngo.squeezer.itemlist.IServiceItemListCallback;
 import uk.org.ngo.squeezer.itemlist.PlayerListActivity;
 import uk.org.ngo.squeezer.itemlist.JiveItemListActivity;
@@ -186,7 +185,7 @@ public class NowPlayingFragment extends Fragment {
                 if (!isConnected()) {
                     // Requires a serviceStub. Else we'll do this on the service
                     // connection callback.
-                    if (mService != null && !isManualDisconnect(context)) {
+                    if (mService != null && !isManualDisconnect()) {
                         Log.v(TAG, "Initiated connect on WIFI connected");
                         startVisibleConnection();
                     }
@@ -535,13 +534,8 @@ public class NowPlayingFragment extends Fragment {
         maybeRegisterCallbacks(mService);
 
         // Assume they want to connect (unless manually disconnected).
-        if (!isConnected()) {
-            if (isManualDisconnect(mActivity)) {
-                ConnectActivity.show(mActivity);
-            } else {
-                startVisibleConnection();
-                new Preferences(mActivity).setManualDisconnect(true); // Only try reconnect once
-            }
+        if (!isConnected() && !isManualDisconnect()) {
+            startVisibleConnection();
         }
     }
 
@@ -842,7 +836,6 @@ public class NowPlayingFragment extends Fragment {
             SettingsActivity.show(mActivity);
             return true;
         } else if (itemId == R.id.menu_item_disconnect) {
-            new Preferences(mActivity).setManualDisconnect(true);
             mService.disconnect();
             return true;
         } else if (itemId == R.id.menu_item_players) {
@@ -864,8 +857,8 @@ public class NowPlayingFragment extends Fragment {
      *
      * @return true if they have, false otherwise.
      */
-    private boolean isManualDisconnect(Context context) {
-        return new Preferences(context).isManualDisconnect();
+    private boolean isManualDisconnect() {
+        return getActivity() instanceof ConnectActivity;
     }
 
     public void startVisibleConnection() {
@@ -1001,7 +994,6 @@ public class NowPlayingFragment extends Fragment {
 
         Log.d(TAG, "Handshake complete");
 
-        new Preferences(mActivity).setManualDisconnect(false);
         dismissConnectingDialog();
 
         nextButton.setEnabled(true);

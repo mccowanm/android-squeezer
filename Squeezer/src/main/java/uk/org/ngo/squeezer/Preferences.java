@@ -370,16 +370,6 @@ public final class Preferences {
         return sharedPreferences.getBoolean(KEY_AUTO_CONNECT, true);
     }
 
-    public boolean isManualDisconnect() {
-        return sharedPreferences.getBoolean(KEY_MANUAL_DISCONNECT, false);
-    }
-
-    public void setManualDisconnect(boolean manualDisconnect) {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(Preferences.KEY_MANUAL_DISCONNECT, manualDisconnect);
-        editor.apply();
-    }
-
     public boolean isPauseOnIncomingCall() {
         return sharedPreferences.getBoolean(KEY_PAUSE_ON_INCOMING_CALL, true);
     }

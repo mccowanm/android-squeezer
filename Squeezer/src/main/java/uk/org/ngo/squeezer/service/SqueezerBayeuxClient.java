@@ -18,9 +18,11 @@ package uk.org.ngo.squeezer.service;
 
 import android.util.Log;
 
+import org.cometd.bayeux.Channel;
 import org.cometd.bayeux.Message;
 import org.cometd.client.BayeuxClient;
 import org.cometd.client.transport.ClientTransport;
+import org.cometd.common.HashMapMessage;
 
 import java.util.List;
 
@@ -66,5 +68,15 @@ class SqueezerBayeuxClient extends BayeuxClient {
                 Log.v(TAG, "FAIL: " + message.getJSON());
             }
         }
+    }
+
+    public void rehandshake() {
+        HashMapMessage message = new HashMapMessage();
+        message.setId(newMessageId());
+        message.setSuccessful(false);
+        message.setChannel(Channel.META_HANDSHAKE);
+        message.getAdvice(true).put(Message.RECONNECT_FIELD, Message.RECONNECT_HANDSHAKE_VALUE);
+        message.setClientId(getId());
+        processHandshake(message);
     }
 }

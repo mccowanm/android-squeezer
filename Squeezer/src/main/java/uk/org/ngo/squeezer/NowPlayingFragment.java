@@ -954,12 +954,6 @@ public class NowPlayingFragment extends Fragment {
             return;
         }
 
-        if (event.connectionState == ConnectionState.RECONNECT) {
-            dismissConnectingDialog();
-            HomeActivity.show(mActivity);
-            return;
-        }
-
         // Any other event means that a connection is in progress or completed.
         // Show the the dialog if appropriate.
         if (event.connectionState != ConnectionState.CONNECTION_COMPLETED) {

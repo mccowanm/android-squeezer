@@ -52,7 +52,7 @@ public class ConnectionState {
     public final static String MEDIA_DIRS = "mediadirs";
 
     // Connection state machine
-    @IntDef({DISCONNECTED, CONNECTION_STARTED, CONNECTION_FAILED, CONNECTION_COMPLETED, RECONNECT})
+    @IntDef({DISCONNECTED, CONNECTION_STARTED, CONNECTION_FAILED, CONNECTION_COMPLETED})
     @Retention(RetentionPolicy.SOURCE)
     public @interface ConnectionStates {}
     /** Ordinarily disconnected from the server. */
@@ -63,8 +63,6 @@ public class ConnectionState {
     public static final int CONNECTION_FAILED = 2;
     /** The connection to the server completed, the handshake can start. */
     public static final int CONNECTION_COMPLETED = 3;
-    /** Create a new connection to the server. */
-    public static final int RECONNECT = 5;
 
     @ConnectionStates
     private volatile int mConnectionState = DISCONNECTED;

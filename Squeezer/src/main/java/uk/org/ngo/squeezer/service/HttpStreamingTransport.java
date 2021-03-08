@@ -1,6 +1,5 @@
 package uk.org.ngo.squeezer.service;
 
-import android.annotation.TargetApi;
 import android.os.Build;
 import android.util.Log;
 
@@ -176,37 +175,42 @@ public class HttpStreamingTransport extends HttpClientTransport implements Messa
 
     @Override
     public void send(final TransportListener listener, final List<Message.Mutable> messages) {
-        if (!_delegate.isConnected()) delegateConnect(getURL(), listener, messages);
-        if (!_delegate.isConnected()) return;
-
-        String channel = messages.get(0).getChannel();
-        boolean isConnect = Channel.META_CONNECT.equals(channel);
-        if (isConnect || Channel.META_SUBSCRIBE.equals(channel) || Channel.META_HANDSHAKE.equals(channel)) {
-            if (isConnect && hasSendConnect) {
-                Log.v(TAG, "Attempt to resend connect message, but we refuse that");
-            } else {
-                delegateSend(listener, messages);
-                if (isConnect) {
-                    hasSendConnect = true;
+        List<Message.Mutable> delegateMessages = new ArrayList<>();
+        List<Message.Mutable> transportMessages = new ArrayList<>();
+        for (Message.Mutable message : messages) {
+            String channel = message.getChannel();
+            boolean isConnect = Channel.META_CONNECT.equals(channel);
+            boolean isHandshake = Channel.META_HANDSHAKE.equals(channel);
+            if (isConnect || Channel.META_SUBSCRIBE.equals(channel) || isHandshake) {
+                if (isConnect && hasSendConnect) {
+                    Log.v(TAG, "Attempt to resend connect message, but we refuse that");
+                } else {
+                    if (isHandshake) hasSendConnect = false;
+                    if (isConnect) hasSendConnect = true;
+                    delegateMessages.add(message);
                 }
+            } else {
+                transportMessages.add(message);
             }
-        } else {
-            transportSend(listener, messages);
         }
-    }
 
-    protected void delegateConnect(String urlString, TransportListener listener, List<Message.Mutable> messages) {
-        try {
-            URL url = new URL(urlString);
-            String host = url.getHost();
-            int port = url.getPort();
-            _delegate.connect(host, port);
-        } catch (IOException e) {
-            listener.onFailure(e, messages);
-        }
+        if (!delegateMessages.isEmpty()) delegateSend(listener, delegateMessages);
+        if (!transportMessages.isEmpty()) transportSend(listener, transportMessages);
     }
 
     private void delegateSend(final TransportListener listener, final List<Message.Mutable> messages) {
+        if (!_delegate.isConnected()) {
+            try {
+                URL url = new URL(getURL());
+                String host = url.getHost();
+                int port = url.getPort();
+                _delegate.connect(host, port);
+            } catch (IOException e) {
+                listener.onFailure(e, messages);
+                return;
+            }
+        }
+
         _delegate.registerMessages(listener, messages);
         try {
             String content = generateJSON(messages);
@@ -384,7 +388,6 @@ public class HttpStreamingTransport extends HttpClientTransport implements Messa
 
         private final Map<String, Exchange> _exchanges = new ConcurrentHashMap<>();
         private Map<String, Object> _advice;
-        private long interval;
 
         public Delegate() {
             Request request = _httpClient.newRequest(getURL());
@@ -557,35 +560,22 @@ public class HttpStreamingTransport extends HttpClientTransport implements Messa
                         fixMessage(message);
                     }
 
-                    // If the server sends an interval with the handshake response, set it to zero
-                    // so we can send the connect message immediately.
-                    // But store the interval so we can use it for subsequent connect messages, if
-                    // the server does not supply an interval in the connect response.
-                    if (Channel.META_HANDSHAKE.equals(message.getChannel()) && message.isSuccessful()) {
-                        Map<String, Object> advice = message.getAdvice();
-                        if (advice != null && advice.containsKey(Message.INTERVAL_FIELD)) {
-                            interval = ((Number)advice.get(Message.INTERVAL_FIELD)).longValue();
-                            if (interval > 0) {
-                                advice.put(Message.INTERVAL_FIELD, 0);
-                            }
-                        }
-                    }
-
-                    // Remembering the advice must be done before we notify listeners
-                    // otherwise we risk that listeners send a connect message that does
-                    // not take into account the timeout to calculate the maxNetworkDelay
-                    if (Channel.META_CONNECT.equals(message.getChannel()) && message.isSuccessful()) {
+                    if (message.isMeta() && message.isSuccessful()) {
                         Map<String, Object> advice = message.getAdvice();
                         if (advice != null) {
-                            // Remember the advice so that we can properly calculate the max network delay
-                            if (advice.get(Message.TIMEOUT_FIELD) != null)
-                                _advice = advice;
-                        } else {
-                            // If the server doesn't send an interval with the connect response, but
-                            // we have one from the handshake response, then use that to avoid sending
-                            // connect messages continuously.
-                            if (interval > 0) {
-                                message.put(Message.ADVICE_FIELD, Collections.singletonMap(Message.INTERVAL_FIELD, interval));
+                            Log.i(TAG, message.getChannel() + " advice: " + advice);
+
+                            // Make sure interval is zero so we can send connect and rehandshake message
+                            // immediately.
+                            advice.put(Message.INTERVAL_FIELD, 0);
+
+                            // Remembering the advice must be done before we notify listeners
+                            // otherwise we risk that listeners send a connect message that does
+                            // not take into account the timeout to calculate the maxNetworkDelay
+                            if (Channel.META_CONNECT.equals(message.getChannel())) {
+                                // Remember the advice so that we can properly calculate the max network delay
+                                if (advice.get(Message.TIMEOUT_FIELD) != null)
+                                    _advice = advice;
                             }
                         }
                     }
@@ -594,7 +584,7 @@ public class HttpStreamingTransport extends HttpClientTransport implements Messa
                     if (exchange != null) {
                         exchange.listener.onMessages(Collections.singletonList(message));
                     } else if (message.containsKey("error")) {
-                        failMessages(null);
+                        fail(null, "Received error: " +  message);
 
                         // We send messages with no channel to the handshake listener
                         if (message.getChannel() == null) {

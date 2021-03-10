@@ -179,16 +179,22 @@ public class HttpStreamingTransport extends HttpClientTransport implements Messa
         List<Message.Mutable> transportMessages = new ArrayList<>();
         for (Message.Mutable message : messages) {
             String channel = message.getChannel();
-            boolean isConnect = Channel.META_CONNECT.equals(channel);
-            boolean isHandshake = Channel.META_HANDSHAKE.equals(channel);
-            if (isConnect || Channel.META_SUBSCRIBE.equals(channel) || isHandshake) {
-                if (isConnect && hasSendConnect) {
-                    Log.v(TAG, "Attempt to resend connect message, but we refuse that");
-                } else {
-                    if (isHandshake) hasSendConnect = false;
-                    if (isConnect) hasSendConnect = true;
-                    delegateMessages.add(message);
+
+            if (Channel.META_HANDSHAKE.equals(channel)) {
+                if (_delegate.isConnected()) {
+                    _delegate.disconnect("Disconnect to prepare for a new handshake");
                 }
+                hasSendConnect = false;
+                delegateMessages.add(message);
+            } else if (Channel.META_CONNECT.equals(channel)) {
+                if (hasSendConnect) {
+                    Log.v(TAG, "Attempt to resend connect message, but we refuse that");
+                    continue;
+                }
+                hasSendConnect = true;
+                delegateMessages.add(message);
+            } else if (Channel.META_SUBSCRIBE.equals(channel)) {
+                delegateMessages.add(message);
             } else {
                 transportMessages.add(message);
             }

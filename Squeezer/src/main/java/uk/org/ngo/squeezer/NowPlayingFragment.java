@@ -922,63 +922,31 @@ public class NowPlayingFragment extends Fragment {
             return;
         }
 
-        // Handle any of the reasons for disconnection, clear the dialog and show the
-        // ConnectActivity.
-        if (event.connectionState == ConnectionState.DISCONNECTED) {
-            dismissConnectingDialog();
-            ConnectActivity.show(mActivity);
-            return;
-        }
-
-        if (event.connectionState == ConnectionState.CONNECTION_FAILED) {
-            dismissConnectingDialog();
-            switch (event.connectionError) {
-                case LOGIN_FALIED:
-                    ConnectActivity.showLoginFailed(mActivity);
-                    break;
-                case INVALID_URL:
-                    ConnectActivity.showInvalidUrl(mActivity);
-                    break;
-                case START_CLIENT_ERROR:
-                case CONNECTION_ERROR:
-                    ConnectActivity.showConnectionFailed(mActivity);
-                    break;
-            }
-            return;
-        }
-
-        // Any other event means that a connection is in progress or completed.
-        // Show the the dialog if appropriate.
-        if (event.connectionState != ConnectionState.CONNECTION_COMPLETED) {
-            showConnectingDialog();
-        }
-
-        // Ensure that option menu item state is adjusted as appropriate.
-        getActivity().supportInvalidateOptionsMenu();
-
-        nextButton.setEnabled(false);
-        prevButton.setEnabled(false);
-        volumeButton.setEnabled(false);
-
-        if (mFullHeightLayout) {
-            shuffleButton.setEnabled(false);
-            repeatButton.setEnabled(false);
-            playlistButton.setEnabled(false);
-
-            albumArt.setImageResource(R.drawable.icon_album_noart_fullscreen);
-            shuffleButton.setIconResource(0);
-            repeatButton.setIconResource(0);
-            updatePlayerDropDown(Collections.emptyList(), null);
-            artistText.setText(getText(R.string.disconnected_text));
-            btnContextMenu.setVisibility(View.GONE);
-            currentTime.setText("--:--");
-            totalTime.setText("--:--");
-            slider.setEnabled(false);
-            slider.setValue(0);
-        } else {
-            albumArt.setImageResource(R.drawable.icon_pending_artwork);
-            mProgressBar.setEnabled(false);
-            mProgressBar.setProgress(0);
+        switch (event.connectionState) {
+            case ConnectionState.DISCONNECTED:
+                dismissConnectingDialog();
+                ConnectActivity.show(mActivity);
+                break;
+            case ConnectionState.CONNECTION_STARTED:
+                showConnectingDialog();
+                break;
+            case ConnectionState.CONNECTION_FAILED:
+                dismissConnectingDialog();
+                switch (event.connectionError) {
+                    case LOGIN_FALIED:
+                        ConnectActivity.showLoginFailed(mActivity);
+                        break;
+                    case INVALID_URL:
+                        ConnectActivity.showInvalidUrl(mActivity);
+                        break;
+                    case START_CLIENT_ERROR:
+                    case CONNECTION_ERROR:
+                        ConnectActivity.showConnectionFailed(mActivity);
+                        break;
+                }
+                break;
+            case ConnectionState.CONNECTION_COMPLETED:
+                break;
         }
      }
 

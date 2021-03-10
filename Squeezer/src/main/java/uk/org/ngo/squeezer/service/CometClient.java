@@ -104,8 +104,12 @@ class CometClient extends BaseClient {
     /** The format string for the channel to listen to for menu status events. */
     private static final String CHANNEL_MENU_STATUS_FORMAT = "/%s/slim/menustatus/%s";
 
-    // Maximum time for wait replies for server capabilities
-    private static final long HANDSHAKE_TIMEOUT = 4000;
+    // Maximum time to wait for replies for server capabilities
+    private static final long HANDSHAKE_TIMEOUT = 4_000;
+
+    // The time interval in seconds between server status messages in case nothing happened to the server info in the interval.
+    public static long SERVER_STATUS_INTERVAL = 60;
+    public static final long SERVER_STATUS_TIMEOUT = SERVER_STATUS_INTERVAL * 1_000 + 10_000;
 
 
     /** Handler for off-main-thread work. */
@@ -295,7 +299,12 @@ class CometClient extends BaseClient {
     private void onConnected(boolean isSqueezeNetwork) {
         Log.i(TAG, "Connected, start learning server capabilities");
         mConnectionState.setConnectionState(ConnectionState.CONNECTION_COMPLETED);
-        mConnectionState.setServerVersion(null);
+
+        // Set a timeout for the handshake
+        if (mConnectionState.getServerVersion() == null) {
+            mBackgroundHandler.removeMessages(MSG_HANDSHAKE_TIMEOUT);
+            mBackgroundHandler.sendEmptyMessageDelayed(MSG_HANDSHAKE_TIMEOUT, HANDSHAKE_TIMEOUT);
+        }
 
         String clientId = mBayeuxClient.getId();
         mBayeuxClient.getChannel(String.format(CHANNEL_SLIM_REQUEST_RESPONSE_FORMAT, clientId, "*")).subscribe(this::parseRequestResponse);
@@ -309,13 +318,9 @@ class CometClient extends BaseClient {
 
         // Subscribe to server changes
         {
-            Request request = serverStatusRequest().param("subscribe", "60");
+            Request request = serverStatusRequest().param("subscribe", String.valueOf(SERVER_STATUS_INTERVAL));
             publishMessage(request, CHANNEL_SLIM_SUBSCRIBE, String.format(CHANNEL_SERVER_STATUS_FORMAT, clientId), null);
         }
-
-        // Set a timeout for the handshake
-        mBackgroundHandler.removeMessages(MSG_HANDSHAKE_TIMEOUT);
-        mBackgroundHandler.sendEmptyMessageDelayed(MSG_HANDSHAKE_TIMEOUT, HANDSHAKE_TIMEOUT);
 
         if (isSqueezeNetwork) {
             if (needRegister()) {
@@ -367,6 +372,10 @@ class CometClient extends BaseClient {
                 }
             }
         }
+
+        // Set a timeout for the next server status message
+        mBackgroundHandler.removeMessages(MSG_SERVER_STATUS_TIMEOUT);
+        mBackgroundHandler.sendEmptyMessageDelayed(MSG_SERVER_STATUS_TIMEOUT, SERVER_STATUS_TIMEOUT);
     }
 
     private void parsePlayerStatus(ClientSessionChannel channel, Message message) {
@@ -718,8 +727,9 @@ class CometClient extends BaseClient {
     private static final int MSG_PUBLISH = 1;
     private static final int MSG_DISCONNECT = 2;
     private static final int MSG_HANDSHAKE_TIMEOUT = 3;
-    private static final int MSG_TIME_UPDATE = 4;
-    private static final int MSG_STATE_UPDATE = 5;
+    private static final int MSG_SERVER_STATUS_TIMEOUT = 4;
+    private static final int MSG_TIME_UPDATE = 5;
+    private static final int MSG_STATE_UPDATE = 6;
     private class CliHandler extends Handler {
         CliHandler(Looper looper) {
             super(looper);
@@ -737,8 +747,12 @@ class CometClient extends BaseClient {
                     mBayeuxClient.disconnect();
                     break;
                 case MSG_HANDSHAKE_TIMEOUT:
-                    Log.w(TAG, "LMS handshake timeout: " + mConnectionState);
+                    Log.w(TAG, "Handshake timeout: " + mConnectionState);
                     disconnect();
+                    break;
+                case MSG_SERVER_STATUS_TIMEOUT:
+                    Log.w(TAG, "Server status timeout: initiate a new handshake");
+                    mBayeuxClient.rehandshake();
                     break;
                 case MSG_TIME_UPDATE: {
                     Player activePlayer = mConnectionState.getActivePlayer();

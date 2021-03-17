@@ -24,6 +24,7 @@ import org.cometd.client.BayeuxClient;
 import org.cometd.client.transport.ClientTransport;
 import org.cometd.common.HashMapMessage;
 
+import java.net.SocketException;
 import java.util.List;
 
 import uk.org.ngo.squeezer.BuildConfig;
@@ -65,8 +66,11 @@ class SqueezerBayeuxClient extends BayeuxClient {
         super.onFailure(failure, messages);
         for (Message message : messages) {
             if (BuildConfig.DEBUG) {
-                Log.v(TAG, "FAIL: " + message.getJSON());
+                Log.v(TAG, "FAIL: " + message.getJSON(), failure);
             }
+        }
+        if (failure instanceof SocketException) {
+            rehandshake();
         }
     }
 

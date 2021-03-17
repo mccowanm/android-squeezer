@@ -36,7 +36,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.OutputStream;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.HttpCookie;
@@ -371,7 +371,7 @@ public class HttpStreamingTransport extends HttpClientTransport implements Messa
         });
     }
 
-    private static void sendText(PrintWriter writer, String json, HttpFields customHeaders) {
+    private static void sendText(OutputStream stream, String json, HttpFields customHeaders) throws IOException {
         StringBuilder msg = new StringBuilder("POST /cometd HTTP/1.1\r\n" +
                 HttpHeader.CONTENT_TYPE.asString() + ": text/json;charset=UTF-8\r\n" +
                 HttpHeader.CONTENT_LENGTH.asString() + ": " + json.length() + "\r\n");
@@ -383,14 +383,13 @@ public class HttpStreamingTransport extends HttpClientTransport implements Messa
         }
         msg.append("\r\n").append(json);
         //Log.v(TAG,"sendtext: " + msg);
-        writer.print(msg.toString());
-        writer.flush();
+        stream.write(msg.toString().getBytes(StandardCharsets.UTF_8));
+        stream.flush();
     }
 
     private class Delegate {
         private Socket socket;
         private final HttpFields headers;
-        private PrintWriter writer;
 
         private final Map<String, Exchange> _exchanges = new ConcurrentHashMap<>();
         private Map<String, Object> _advice;
@@ -420,13 +419,11 @@ public class HttpStreamingTransport extends HttpClientTransport implements Messa
         public void connect(String host, int port) throws IOException {
             socket = new Socket();
             socket.connect(new InetSocketAddress(host, port), 4000); // TODO use proper timeout
-            writer = new PrintWriter(socket.getOutputStream());
             new ListeningThread(this, socket.getInputStream()).start();
         }
 
         private void disconnect(String reason) {
             if (isConnected()) {
-                writer = null;
                 Log.v(TAG, "Closing socket, reason: " + reason);
                 try {
                     socket.close();
@@ -439,7 +436,11 @@ public class HttpStreamingTransport extends HttpClientTransport implements Messa
 
         private void fail(Throwable failure, String reason) {
             disconnect(reason);
-            failMessages(failure);
+            if (_exchanges.size() > 0) {
+                failMessages(failure);
+            } else {
+                _listener.onFailure(failure, Collections.emptyList());
+            }
         }
 
         private void failMessages(Throwable cause) {
@@ -534,19 +535,17 @@ public class HttpStreamingTransport extends HttpClientTransport implements Messa
             }
         }
 
-        public void send(String content) {
-            PrintWriter session;
+        public void send(String content) throws IOException {
+            Socket session;
             synchronized (this) {
-                session = writer;
+                session = socket;
             }
-            try {
-                if (session == null)
-                    throw new IOException("Unconnected");
 
-                sendText(session, content, headers);
-            } catch (Throwable x) {
-                fail(x, "Exception");
+            if (session == null) {
+                throw new IOException("Unconnected");
             }
+
+            sendText(session.getOutputStream(), content, headers);
         }
 
         private void onData(String data) {
@@ -555,7 +554,7 @@ public class HttpStreamingTransport extends HttpClientTransport implements Messa
                 //Log.v(TAG,"Received messages " + data);
                 onMessages(messages);
             } catch (ParseException x) {
-                fail(x, "Exception");
+                fail(x, "ParseException");
             }
         }
 
@@ -695,10 +694,7 @@ public class HttpStreamingTransport extends HttpClientTransport implements Messa
                         delegate.fail(x, "Unexpected HTTP status code");
                     }
                 } catch (IOException e) {
-                    if (delegate.isConnected()) {
-                        delegate.fail(e, "Server disconnected");
-                    }
-                    return;
+                    delegate.fail(e, "IOException reading socket");
                 }
             }
         }

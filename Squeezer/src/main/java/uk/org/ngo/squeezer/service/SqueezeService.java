@@ -51,6 +51,7 @@ import android.widget.RemoteViews;
 
 import com.google.common.io.Files;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -334,11 +335,27 @@ public class SqueezeService extends Service {
 
             // Start an asynchronous fetch of the squeezeservers "home menu" items
             // See http://wiki.slimdevices.com/index.php/SqueezePlayAndSqueezeCenterPlugins
-            mDelegate.clearHomeMenu();
             mDelegate.requestItems(newActivePlayer, 0, new IServiceItemListCallback<JiveItem>() {
+                private final List<JiveItem> homeMenu = new ArrayList<>();
+
                 @Override
                 public void onItemsReceived(int count, int start, Map<String, Object> parameters, List<JiveItem> items, Class<JiveItem> dataType) {
-                    mDelegate.addToHomeMenu(count, items);
+                    homeMenu.addAll(items);
+                    if (homeMenu.size() == count) {
+                        jiveMainNodes();
+                        mDelegate.setHomeMenu(homeMenu);
+                    }
+                }
+
+                private void jiveMainNodes() {
+                    addNode(JiveItem.EXTRAS);
+                    addNode(JiveItem.SETTINGS);
+                    addNode(JiveItem.ADVANCED_SETTINGS);
+                }
+
+                private void addNode(JiveItem jiveItem) {
+                    if (!homeMenu.contains(jiveItem))
+                        homeMenu.add(jiveItem);
                 }
 
                 @Override

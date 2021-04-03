@@ -74,7 +74,7 @@ public class ConnectionState {
     private final AtomicReference<Player> mActivePlayer = new AtomicReference<>();
 
     /** Home menu tree as received from slimserver */
-    private List<JiveItem> homeMenu = new Vector<>();
+    private final List<JiveItem> homeMenu = new Vector<>();
 
     private final AtomicReference<String> serverVersion = new AtomicReference<>();
 
@@ -146,16 +146,10 @@ public class ConnectionState {
         this.mediaDirs.set(mediaDirs);
     }
 
-    void clearHomeMenu() {
+    void setHomeMenu(List<JiveItem> items) {
         homeMenu.clear();
-    }
-
-    void addToHomeMenu(int count, List<JiveItem> items) {
         homeMenu.addAll(items);
-        if (homeMenu.size() == count) {
-            jiveMainNodes();
-            mEventBus.postSticky(new HomeMenuEvent(homeMenu));
-        }
+        mEventBus.postSticky(new HomeMenuEvent(homeMenu));
     }
 
     void menuStatusEvent(MenuStatusMessage event) {
@@ -177,17 +171,6 @@ public class ConnectionState {
             }
             mEventBus.postSticky(new HomeMenuEvent(homeMenu));
         }
-    }
-
-    private void jiveMainNodes() {
-        addNode(JiveItem.EXTRAS);
-        addNode(JiveItem.SETTINGS);
-        addNode(JiveItem.ADVANCED_SETTINGS);
-    }
-
-    private void addNode(JiveItem jiveItem) {
-        if (!homeMenu.contains(jiveItem))
-            homeMenu.add(jiveItem);
     }
 
     String getServerVersion() {

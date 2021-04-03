@@ -694,7 +694,9 @@ public class HttpStreamingTransport extends HttpClientTransport implements Messa
                         delegate.fail(x, "Unexpected HTTP status code");
                     }
                 } catch (IOException e) {
-                    delegate.fail(e, "IOException reading socket");
+                    if (delegate.isConnected()) {
+                        delegate.fail(e, "IOException reading socket");
+                    }
                 }
             }
         }

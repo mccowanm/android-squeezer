@@ -308,7 +308,7 @@ public class SqueezeService extends Service {
      * @param newActivePlayer The new active player. May be null, in which case no players
      *     are controlled.
      */
-    void changeActivePlayer(@Nullable final Player newActivePlayer) {
+    private void changeActivePlayer(@Nullable final Player newActivePlayer) {
         Player prevActivePlayer = mDelegate.getActivePlayer();
 
         // Do nothing if the player hasn't actually changed.
@@ -316,26 +316,30 @@ public class SqueezeService extends Service {
             return;
         }
 
+        Log.i(TAG, "Active player now: " + newActivePlayer);
         mDelegate.setActivePlayer(newActivePlayer);
+
         if (prevActivePlayer != null) {
             mDelegate.subscribeDisplayStatus(prevActivePlayer, false);
             mDelegate.subscribeMenuStatus(prevActivePlayer, false);
         }
-        if (newActivePlayer != null) {
-            mDelegate.subscribeDisplayStatus(newActivePlayer, true);
-            mDelegate.subscribeMenuStatus(newActivePlayer, true);
-        }
+
         updateAllPlayerSubscriptionStates();
+        requestPlayerData();
+        new Preferences(this).setLastPlayer(newActivePlayer);
+    }
 
-        Log.i(TAG, "Active player now: " + newActivePlayer);
+    private void requestPlayerData() {
+        Player activePlayer = mDelegate.getActivePlayer();
 
-        // If this is a new player then start an async fetch of its status.
-        if (newActivePlayer != null) {
-            mDelegate.requestPlayerStatus(newActivePlayer);
+        if (activePlayer != null) {
+            mDelegate.subscribeDisplayStatus(activePlayer, true);
+            mDelegate.subscribeMenuStatus(activePlayer, true);
+            mDelegate.requestPlayerStatus(activePlayer);
 
             // Start an asynchronous fetch of the squeezeservers "home menu" items
             // See http://wiki.slimdevices.com/index.php/SqueezePlayAndSqueezeCenterPlugins
-            mDelegate.requestItems(newActivePlayer, 0, new IServiceItemListCallback<JiveItem>() {
+            mDelegate.requestItems(activePlayer, 0, new IServiceItemListCallback<JiveItem>() {
                 private final List<JiveItem> homeMenu = new ArrayList<>();
 
                 @Override
@@ -364,8 +368,6 @@ public class SqueezeService extends Service {
                 }
             }).cmd("menu").param("direct", "1").exec();
         }
-
-        new Preferences(this).setLastPlayer(newActivePlayer);
     }
 
     /**
@@ -403,9 +405,7 @@ public class SqueezeService extends Service {
             @NonNull PlayerState.PlayerSubscriptionType playerSubscriptionType) {
         PlayerState playerState = player.getPlayerState();
 
-        // Do nothing if the player subscription type hasn't changed. This prevents sending a
-        // subscription update "status" message which will be echoed back by the server and
-        // trigger processing of the status message by the service.
+        // Do nothing if the player subscription type hasn't changed.
         if (playerState.getSubscriptionType().equals(playerSubscriptionType)) {
             return;
         }
@@ -700,8 +700,16 @@ public class SqueezeService extends Service {
     }
 
     public void onEvent(PlayersChanged event) {
-        // Figure out the new active player, let everyone know.
-        changeActivePlayer(getPreferredPlayer(event.players.values()));
+        Player activePlayer = mDelegate.getActivePlayer();
+        if (activePlayer == null) {
+            // Figure out the new active player, let everyone know.
+            changeActivePlayer(getPreferredPlayer(event.players.values()));
+        } else {
+            activePlayer = event.players.get(activePlayer.getId());
+            mDelegate.setActivePlayer(activePlayer);
+            updateAllPlayerSubscriptionStates();
+            requestPlayerData();
+        }
     }
 
     /**

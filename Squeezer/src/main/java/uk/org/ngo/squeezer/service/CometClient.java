@@ -299,6 +299,8 @@ class CometClient extends BaseClient {
     private void onConnected(boolean isSqueezeNetwork) {
         Log.i(TAG, "Connected, start learning server capabilities");
         mConnectionState.setConnectionState(ConnectionState.CONNECTION_COMPLETED);
+        // If this is a rehandshake we may already have players.
+        boolean rehandshake = !mConnectionState.getPlayers().isEmpty();
 
         // Set a timeout for the handshake
         if (mConnectionState.getServerVersion() == null) {
@@ -326,6 +328,12 @@ class CometClient extends BaseClient {
             if (needRegister()) {
                 mEventBus.post(new RegisterSqueezeNetwork());
             }
+        }
+
+        if (rehandshake) {
+            // Make sure we reorder subscriptions on rehandshake
+            mConnectionState.getPlayers().values().stream().forEach(player -> player.getPlayerState().setSubscriptionType(PlayerState.PlayerSubscriptionType.NOTIFY_NONE));
+            mConnectionState.setServerVersion(null);
         }
     }
 

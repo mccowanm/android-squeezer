@@ -113,8 +113,6 @@ abstract class BaseClient implements SlimClient {
         boolean changedSyncMaster = playerState.setSyncMaster(Util.getString(tokenMap, "sync_master"));
         boolean changedSyncSlaves = playerState.setSyncSlaves(Splitter.on(",").omitEmptyStrings().splitToList(Util.getStringOrEmpty(tokenMap, "sync_slaves")));
 
-        player.setPlayerState(playerState);
-
         // Kept as its own method because other methods call it, unlike the explicit
         // calls to the callbacks below.
         updatePlayStatus(player, Util.getString(tokenMap, "mode"));

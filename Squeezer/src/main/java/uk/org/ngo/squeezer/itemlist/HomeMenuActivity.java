@@ -19,6 +19,8 @@ package uk.org.ngo.squeezer.itemlist;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
@@ -34,6 +36,8 @@ import uk.org.ngo.squeezer.service.ISqueezeService;
 import uk.org.ngo.squeezer.service.event.HomeMenuEvent;
 
 public class HomeMenuActivity extends JiveItemListActivity {
+
+    private static final String TAG = "HomeMenuActivity";
 
     @Override
     protected void orderPage(@NonNull ISqueezeService service, int start) {

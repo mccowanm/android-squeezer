@@ -16,9 +16,10 @@
 
 package uk.org.ngo.squeezer.service;
 
+import android.util.Log;
+
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
-import android.util.Log;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -30,13 +31,13 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import de.greenrobot.event.EventBus;
 import uk.org.ngo.squeezer.Util;
-import uk.org.ngo.squeezer.model.Player;
 import uk.org.ngo.squeezer.model.JiveItem;
+import uk.org.ngo.squeezer.model.MenuStatusMessage;
+import uk.org.ngo.squeezer.model.Player;
 import uk.org.ngo.squeezer.service.event.ActivePlayerChanged;
 import uk.org.ngo.squeezer.service.event.ConnectionChanged;
 import uk.org.ngo.squeezer.service.event.HandshakeComplete;
 import uk.org.ngo.squeezer.service.event.HomeMenuEvent;
-import uk.org.ngo.squeezer.model.MenuStatusMessage;
 import uk.org.ngo.squeezer.service.event.PlayersChanged;
 
 public class ConnectionState {
@@ -113,6 +114,7 @@ public class ConnectionState {
         mPlayers.clear();
         mPlayers.putAll(players);
         mEventBus.postSticky(new PlayersChanged(players));
+
     }
 
     Player getPlayer(String playerId) {

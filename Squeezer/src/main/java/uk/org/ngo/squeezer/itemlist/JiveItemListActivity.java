@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 2011 Kurt Aaholst <kaaholst@gmail.com>
  *
@@ -25,16 +26,8 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
-import androidx.appcompat.content.res.AppCompatResources;
-import androidx.core.view.MenuCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -43,6 +36,14 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.view.MenuCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
@@ -55,13 +56,13 @@ import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.Util;
 import uk.org.ngo.squeezer.dialog.NetworkErrorDialogFragment;
+import uk.org.ngo.squeezer.framework.BaseListActivity;
 import uk.org.ngo.squeezer.framework.ItemAdapter;
 import uk.org.ngo.squeezer.framework.ViewParamItemView;
+import uk.org.ngo.squeezer.itemlist.dialog.ArtworkListLayout;
 import uk.org.ngo.squeezer.model.Action;
-import uk.org.ngo.squeezer.framework.BaseListActivity;
 import uk.org.ngo.squeezer.model.JiveItem;
 import uk.org.ngo.squeezer.model.Window;
-import uk.org.ngo.squeezer.itemlist.dialog.ArtworkListLayout;
 import uk.org.ngo.squeezer.service.ISqueezeService;
 import uk.org.ngo.squeezer.service.event.HandshakeComplete;
 import uk.org.ngo.squeezer.util.ImageFetcher;
@@ -77,6 +78,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class JiveItemListActivity extends BaseListActivity<JiveItemView, JiveItem>
         implements NetworkErrorDialogFragment.NetworkErrorDialogListener {
+    private static final String TAG = "JiveItemListActivity";
     private static final int GO = 1;
     private static final String FINISH = "FINISH";
     private static final String RELOAD = "RELOAD";
@@ -329,6 +331,7 @@ public class JiveItemListActivity extends BaseListActivity<JiveItemView, JiveIte
 
     @Override
     protected void orderPage(@NonNull ISqueezeService service, int start) {
+        Log.d(TAG, "orderPage: BEN BEN");
         if (parent != null) {
             if (action == null || (parent.hasInput() && !parent.isInputReady())) {
                 showContent();

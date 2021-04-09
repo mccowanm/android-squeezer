@@ -43,11 +43,16 @@ import uk.org.ngo.squeezer.Util;
 
 
 public class JiveItem extends Item {
+
+    private static final String TAG = "JiveItem";
+
     public static final JiveItem HOME = new JiveItem("home", null, R.string.HOME, 1, Window.WindowStyle.HOME_MENU);
     public static final JiveItem CURRENT_PLAYLIST = new JiveItem("status", null, R.string.menu_item_playlist, 1, Window.WindowStyle.PLAY_LIST);
-    public static final JiveItem EXTRAS = new JiveItem("extras", "home", R.string.EXTRAS, 50, Window.WindowStyle.HOME_MENU);
-    public static final JiveItem SETTINGS = new JiveItem("settings", "home", R.string.SETTINGS, 1005, Window.WindowStyle.HOME_MENU);
+    public static final JiveItem EXTRAS = new JiveItem("extras", "homesub", R.string.EXTRAS, 50, Window.WindowStyle.HOME_MENU);
+    public static final JiveItem SETTINGS = new JiveItem("settings", "homesub", R.string.SETTINGS, 1005, Window.WindowStyle.HOME_MENU);
     public static final JiveItem ADVANCED_SETTINGS = new JiveItem("advancedSettings", "settings", R.string.ADVANCED_SETTINGS, 105, Window.WindowStyle.TEXT_ONLY);
+    public static final JiveItem HOMESUB = new JiveItem("homesub", "home", R.string.HOMESUB, 105, Window.WindowStyle.TEXT_ONLY);
+    public static final JiveItem BENSUB = new JiveItem("bensubid", "homesub", R.string.BENNODE, 105, Window.WindowStyle.TEXT_ONLY);
 
     /**
      * Information that will be requested about songs.
@@ -88,7 +93,6 @@ public class JiveItem extends Item {
         record.put("node", node);
         record.put("name", Squeezer.getContext().getString(text));
         record.put("weight", weight);
-
         return record;
     }
 
@@ -211,6 +215,7 @@ public class JiveItem extends Item {
         result.put("appletCustomizeHome", R.drawable.icon_settings_home);
         result.put("settingsPlayerNameChange", R.drawable.icon_settings_name);
         result.put("advancedSettings", R.drawable.icon_settings_adv);
+        result.put("homesub", R.drawable.icon_settings);
 
         return result;
     }

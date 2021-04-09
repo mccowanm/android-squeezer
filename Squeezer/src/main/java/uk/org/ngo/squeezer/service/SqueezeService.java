@@ -34,6 +34,12 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.session.MediaSessionCompat;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
+import android.util.Log;
+import android.widget.RemoteViews;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
@@ -41,13 +47,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-
-import android.support.v4.media.MediaMetadataCompat;
-import android.support.v4.media.session.MediaSessionCompat;
-import android.telephony.PhoneStateListener;
-import android.telephony.TelephonyManager;
-import android.util.Log;
-import android.widget.RemoteViews;
 
 import com.google.common.io.Files;
 
@@ -61,16 +60,16 @@ import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.Util;
 import uk.org.ngo.squeezer.download.DownloadDatabase;
-import uk.org.ngo.squeezer.model.Action;
-import uk.org.ngo.squeezer.model.JiveItem;
-import uk.org.ngo.squeezer.model.MusicFolderItem;
-import uk.org.ngo.squeezer.model.SlimCommand;
 import uk.org.ngo.squeezer.itemlist.IServiceItemListCallback;
+import uk.org.ngo.squeezer.model.Action;
 import uk.org.ngo.squeezer.model.Alarm;
 import uk.org.ngo.squeezer.model.AlarmPlaylist;
 import uk.org.ngo.squeezer.model.CurrentPlaylistItem;
+import uk.org.ngo.squeezer.model.JiveItem;
+import uk.org.ngo.squeezer.model.MusicFolderItem;
 import uk.org.ngo.squeezer.model.Player;
 import uk.org.ngo.squeezer.model.PlayerState;
+import uk.org.ngo.squeezer.model.SlimCommand;
 import uk.org.ngo.squeezer.model.Song;
 import uk.org.ngo.squeezer.service.event.ConnectionChanged;
 import uk.org.ngo.squeezer.service.event.HandshakeComplete;
@@ -98,7 +97,6 @@ import uk.org.ngo.squeezer.util.Scrobble;
  * When we are connected to LMS it runs as a foreground service and a notification is displayed.
  */
 public class SqueezeService extends Service {
-
     private static final String TAG = "SqueezeService";
 
     public static final String NOTIFICATION_CHANNEL_ID = "channel_squeezer_1";
@@ -336,7 +334,6 @@ public class SqueezeService extends Service {
             mDelegate.subscribeDisplayStatus(activePlayer, true);
             mDelegate.subscribeMenuStatus(activePlayer, true);
             mDelegate.requestPlayerStatus(activePlayer);
-
             // Start an asynchronous fetch of the squeezeservers "home menu" items
             // See http://wiki.slimdevices.com/index.php/SqueezePlayAndSqueezeCenterPlugins
             mDelegate.requestItems(activePlayer, 0, new IServiceItemListCallback<JiveItem>() {

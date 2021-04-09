@@ -17,6 +17,7 @@
 package uk.org.ngo.squeezer.service;
 
 import android.os.SystemClock;
+
 import androidx.annotation.NonNull;
 
 import com.google.common.base.Splitter;
@@ -181,6 +182,7 @@ abstract class BaseClient implements SlimClient {
     }
 
     protected static class BrowseRequest<T> extends SlimCommand {
+        private static final String TAG = "BrowseRequest BENJAMIN";
         private final Player player;
         private final boolean fullList;
         private int start;

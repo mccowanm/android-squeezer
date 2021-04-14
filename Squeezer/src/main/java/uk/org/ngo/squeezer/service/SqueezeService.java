@@ -49,8 +49,6 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.RemoteViews;
 
-import com.google.common.io.Files;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -750,7 +748,7 @@ public class SqueezeService extends Service {
                     downloadSong(downloadUrl, song.title, song.album, song.artist, getLocalFile(song.url));
                 } else {
                     final String lastPathSegment = song.url.getLastPathSegment();
-                    final String fileExtension = Files.getFileExtension(lastPathSegment);
+                    final String fileExtension = Util.getFileExtension(lastPathSegment);
                     final String localPath = song.getLocalPath(preferences.getDownloadPathStructure(), preferences.getDownloadFilenameStructure());
                     downloadSong(downloadUrl, song.title, song.album, song.artist, localPath + "." + fileExtension);
                 }

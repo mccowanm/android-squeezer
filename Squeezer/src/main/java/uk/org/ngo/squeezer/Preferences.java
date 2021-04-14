@@ -146,6 +146,9 @@ public final class Preferences {
     // Store a unique id for this app instance.
     private static final String KEY_UUID = "squeezer.uuid";
 
+    // Map JiveItems to archive
+    private static final String MAP_MENU_ITEMS = "squeezer.map_menu_items";
+
     private final Context context;
     private final SharedPreferences sharedPreferences;
     private final int defaultCliPort;
@@ -495,6 +498,14 @@ public final class Preferences {
             editor.apply();
         }
         return uuid;
+    }
+
+    public boolean isArchive() {
+        return sharedPreferences.getBoolean(MAP_MENU_ITEMS, false);
+    }
+
+    public void setArchive(boolean b) {
+        sharedPreferences.edit().putBoolean(Preferences.MAP_MENU_ITEMS, b).apply();
     }
 
     public boolean isDownloadEnabled() {

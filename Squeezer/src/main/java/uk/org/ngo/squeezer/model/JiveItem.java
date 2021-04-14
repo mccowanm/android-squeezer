@@ -52,7 +52,7 @@ public class JiveItem extends Item {
     public static final JiveItem SETTINGS = new JiveItem("settings", "homesub", R.string.SETTINGS, 1005, Window.WindowStyle.HOME_MENU);
     public static final JiveItem ADVANCED_SETTINGS = new JiveItem("advancedSettings", "settings", R.string.ADVANCED_SETTINGS, 105, Window.WindowStyle.TEXT_ONLY);
     public static final JiveItem HOMESUB = new JiveItem("homesub", "home", R.string.HOMESUB, 105, Window.WindowStyle.TEXT_ONLY);
-    public static final JiveItem BENSUB = new JiveItem("bensubid", "homesub", R.string.BENNODE, 105, Window.WindowStyle.TEXT_ONLY);
+    public static final JiveItem BENSUB = new JiveItem("bensubid", "homesub", R.string.BENNODE, 2005, Window.WindowStyle.TEXT_ONLY);
 
     /**
      * Information that will be requested about songs.

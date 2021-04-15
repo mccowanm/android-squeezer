@@ -22,6 +22,7 @@ import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.Parcel;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
@@ -51,6 +52,7 @@ public class JiveItem extends Item {
     public static final JiveItem EXTRAS = new JiveItem("extras", "homesub", R.string.EXTRAS, 50, Window.WindowStyle.HOME_MENU);
     public static final JiveItem SETTINGS = new JiveItem("settings", "homesub", R.string.SETTINGS, 1005, Window.WindowStyle.HOME_MENU);
     public static final JiveItem ADVANCED_SETTINGS = new JiveItem("advancedSettings", "settings", R.string.ADVANCED_SETTINGS, 105, Window.WindowStyle.TEXT_ONLY);
+    public static final JiveItem ARCHIVE = new JiveItem("archiveNode", "home", R.string.ARCHIVE_NODE, 1010, Window.WindowStyle.HOME_MENU);
     public static final JiveItem HOMESUB = new JiveItem("homesub", "home", R.string.HOMESUB, 105, Window.WindowStyle.TEXT_ONLY);
     public static final JiveItem BENSUB = new JiveItem("bensubid", "homesub", R.string.BENNODE, 2005, Window.WindowStyle.TEXT_ONLY);
 
@@ -682,4 +684,8 @@ public class JiveItem extends Item {
     }
     private static final Set<String> title_parameters = new HashSet<>(Arrays.asList("track_id", "album_id", "artist_id", "genre_id", "year"));
 
+    public void setNode(String id) {
+        Log.d(TAG, "setNode: BEN BEN");
+//      TODO: Set id to the node that was pressed so it will be put into Archive
+    }
 }

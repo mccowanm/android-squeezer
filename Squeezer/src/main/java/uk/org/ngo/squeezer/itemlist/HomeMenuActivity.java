@@ -19,7 +19,7 @@ package uk.org.ngo.squeezer.itemlist;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 
@@ -29,9 +29,11 @@ import java.util.Comparator;
 import java.util.List;
 
 import uk.org.ngo.squeezer.Preferences;
+import uk.org.ngo.squeezer.R;
+import uk.org.ngo.squeezer.framework.ItemAdapter;
+import uk.org.ngo.squeezer.itemlist.dialog.ArtworkListLayout;
 import uk.org.ngo.squeezer.model.JiveItem;
 import uk.org.ngo.squeezer.model.Window;
-import uk.org.ngo.squeezer.itemlist.dialog.ArtworkListLayout;
 import uk.org.ngo.squeezer.service.ISqueezeService;
 import uk.org.ngo.squeezer.service.event.HomeMenuEvent;
 
@@ -94,6 +96,33 @@ public class HomeMenuActivity extends JiveItemListActivity {
         final Intent intent = new Intent(activity, HomeMenuActivity.class);
         intent.putExtra(JiveItem.class.getName(), item);
         activity.startActivity(intent);
+    }
+
+    @Override
+    protected ItemAdapter<JiveItemView, JiveItem> createItemListAdapter() {
+
+        return new ItemAdapter<JiveItemView, JiveItem>(this) {
+
+            @Override
+            public JiveItemView createViewHolder(View view) {
+                return new JiveItemView(HomeMenuActivity.this, view) {
+                    @Override
+                    public void bindView(JiveItem item) {
+                        super.bindView(item);
+                        itemView.setOnLongClickListener(view -> {
+                            getService().archiveItem(item);
+                            return true;
+                        });
+                    }
+                };
+            }
+
+            @Override
+            protected int getItemViewType(JiveItem item) {
+                return item != null && item.hasSlider() ?
+                        R.layout.slider_item : (getListLayout() == ArtworkListLayout.grid) ? R.layout.grid_item : R.layout.list_item;
+            }
+        };
     }
 
 }

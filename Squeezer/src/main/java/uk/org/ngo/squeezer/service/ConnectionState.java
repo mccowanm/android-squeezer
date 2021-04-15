@@ -213,6 +213,15 @@ public class ConnectionState {
         return connectionState == CONNECTION_STARTED;
     }
 
+    void archiveItem(JiveItem item) {
+        Log.d(TAG, "archiveItem: Connection State");
+        item.setNode(JiveItem.ARCHIVE.getId());
+        if (!homeMenu.contains(JiveItem.ARCHIVE)) {
+            homeMenu.add(JiveItem.ARCHIVE);
+            mEventBus.postSticky(new HomeMenuEvent(homeMenu));
+        }
+    }
+
     @Override
     public String toString() {
         return "ConnectionState{" +

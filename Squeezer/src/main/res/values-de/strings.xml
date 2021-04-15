@@ -219,5 +219,6 @@
     <string name="remote_preset4Description">Favoritentaste 4</string>
     <string name="remote_preset5Description">Favoritentaste 5</string>
     <string name="remote_preset6Description">Favoritentaste 6</string>
+    <string name="ARCHIVE_NODE">Archiv</string>
 
 </resources>

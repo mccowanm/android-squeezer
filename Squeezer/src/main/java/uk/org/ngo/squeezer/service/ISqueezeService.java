@@ -203,4 +203,10 @@ public interface ISqueezeService {
      */
     void downloadItem(JiveItem item) throws SqueezeService.HandshakeNotCompleteException;
 
+    /**
+     * Put menu item into the Archive node
+     *
+     * @param item
+     */
+    void archiveItem(JiveItem item);
 }

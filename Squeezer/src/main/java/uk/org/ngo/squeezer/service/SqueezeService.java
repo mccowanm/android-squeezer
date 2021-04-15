@@ -1386,6 +1386,14 @@ public class SqueezeService extends Service {
             IServiceItemListCallback<?> callback = ("musicfolder".equals(command.cmd.get(0))) ? musicFolderDownloadCallback : songDownloadCallback;
             mDelegate.requestItems(-1, callback).params(command.params).cmd(command.cmd()).exec();
         }
+
+        @Override
+        public void archiveItem(JiveItem item) {
+            Log.d(TAG, "archiveItem: BEN BEN - Here also");
+
+//          TODO: Check if this is correct
+
+        }
     }
 
     /**

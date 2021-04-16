@@ -31,6 +31,7 @@ import java.util.UUID;
 import uk.org.ngo.squeezer.download.DownloadFilenameStructure;
 import uk.org.ngo.squeezer.download.DownloadPathStructure;
 import uk.org.ngo.squeezer.itemlist.dialog.ArtworkListLayout;
+import uk.org.ngo.squeezer.model.JiveItem;
 import uk.org.ngo.squeezer.model.Player;
 import uk.org.ngo.squeezer.util.ThemeManager;
 
@@ -500,13 +501,15 @@ public final class Preferences {
         return uuid;
     }
 
-    public boolean isArchive() {
+    public boolean isArchive(JiveItem item) {
         return sharedPreferences.getBoolean(MAP_MENU_ITEMS, false);
+//    TODO: isArchive
     }
 
-    public void setArchive(boolean b) {
-        sharedPreferences.edit().putBoolean(Preferences.MAP_MENU_ITEMS, b).apply();
-    }
+//    public void setArchive(JiveItem item) {
+//        sharedPreferences.edit().putBoolean(Preferences.MAP_MENU_ITEMS, item).apply();
+//  TODO: setArchive
+//    }
 
     public boolean isDownloadEnabled() {
         return sharedPreferences.getBoolean(KEY_DOWNLOAD_ENABLED, true);

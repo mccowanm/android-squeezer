@@ -328,6 +328,7 @@ public class SqueezeService extends Service {
     }
 
     private void requestPlayerData() {
+        Log.d(TAG, "requestPlayerData:");
         Player activePlayer = mDelegate.getActivePlayer();
 
         if (activePlayer != null) {
@@ -1377,8 +1378,9 @@ public class SqueezeService extends Service {
 
         @Override
         public void archiveItem(JiveItem item) {
-            Log.d(TAG, "archiveItem: BEN BEN - Here also");
-
+            Log.d(TAG, "archiveItem: BEN - Call mDelegate.archive from here");
+            mDelegate.archiveItem(item);
+//          TODO: set shared Preferences as a test
 //          TODO: Check if this is correct
 
         }

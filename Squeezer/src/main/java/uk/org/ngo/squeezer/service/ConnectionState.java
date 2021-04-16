@@ -219,11 +219,12 @@ public class ConnectionState {
             item.setNode(JiveItem.HOME.getId());
         }
         else {
-            item.setNode(JiveItem.ARCHIVE.getId());
+            if (item.getId() != JiveItem.ARCHIVE.getId()) {
+                item.setNode(JiveItem.ARCHIVE.getId());
+            }
         }
         if (!homeMenu.contains(JiveItem.ARCHIVE)) {
             homeMenu.add(JiveItem.ARCHIVE);
-//            mEventBus.postSticky(new HomeMenuEvent(homeMenu));
         }
         mEventBus.postSticky(new HomeMenuEvent(homeMenu));
     }

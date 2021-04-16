@@ -684,8 +684,8 @@ public class JiveItem extends Item {
     }
     private static final Set<String> title_parameters = new HashSet<>(Arrays.asList("track_id", "album_id", "artist_id", "genre_id", "year"));
 
-    public void setNode(String id) {
-        Log.d(TAG, "setNode: BEN BEN");
-//      TODO: Set id to the node that was pressed so it will be put into Archive
+    public void setNode(String node) {
+        Log.d(TAG, "setNode: BEN ");
+        this.node = node;
     }
 }

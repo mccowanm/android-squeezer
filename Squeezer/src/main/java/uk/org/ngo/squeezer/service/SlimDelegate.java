@@ -146,6 +146,11 @@ class SlimDelegate {
         return mClient.getConnectionState().getMediaDirs();
     }
 
+    public void archiveItem(JiveItem item) {
+        Log.d(TAG, "archiveItem: BEN - call mClient from here");
+        mClient.getConnectionState().archiveItem(item);
+    }
+
     static class Command extends SlimCommand {
         final SlimClient slimClient;
         final protected Player player;
@@ -201,7 +206,6 @@ class SlimDelegate {
     }
 
     static class Request<T> extends Command {
-        private static final String TAG = "BENJAMIN st cl Request";
         private final IServiceItemListCallback<T> callback;
         private final int start;
         private final int pageSize;

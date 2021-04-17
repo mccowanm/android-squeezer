@@ -353,9 +353,6 @@ public class SqueezeService extends Service {
                     addNode(JiveItem.EXTRAS);
                     addNode(JiveItem.SETTINGS);
                     addNode(JiveItem.ADVANCED_SETTINGS);
-                    addNode(JiveItem.HOMESUB);
-                    addNode(JiveItem.BENSUB);
-//                    TODO: check isArchive == true
                 }
 
                 private void addNode(JiveItem jiveItem) {

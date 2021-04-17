@@ -176,6 +176,22 @@ public class ConnectionState {
         }
     }
 
+    void archiveItem(JiveItem item) {
+        if (item.getNode().equals(JiveItem.ARCHIVE.getId())) {
+            item.setNode(item.getOldNodeWhenArchived());
+        }
+        else {
+            if (item.getId() != JiveItem.ARCHIVE.getId()) {
+                item.setOldNodeWhenArchived(item.getNode());
+                item.setNode(JiveItem.ARCHIVE.getId());
+            }
+        }
+        if (!homeMenu.contains(JiveItem.ARCHIVE)) {
+            homeMenu.add(JiveItem.ARCHIVE);
+            mEventBus.postSticky(new HomeMenuEvent(homeMenu));
+        }
+    }
+
     String getServerVersion() {
         return serverVersion.get();
     }
@@ -212,21 +228,6 @@ public class ConnectionState {
      */
     static boolean isConnectInProgress(@ConnectionStates int connectionState) {
         return connectionState == CONNECTION_STARTED;
-    }
-
-    void archiveItem(JiveItem item) {
-        if (item.getNode().equals(JiveItem.ARCHIVE.getId())) {
-            item.setNode(JiveItem.HOME.getId());
-        }
-        else {
-            if (item.getId() != JiveItem.ARCHIVE.getId()) {
-                item.setNode(JiveItem.ARCHIVE.getId());
-            }
-        }
-        if (!homeMenu.contains(JiveItem.ARCHIVE)) {
-            homeMenu.add(JiveItem.ARCHIVE);
-        }
-        mEventBus.postSticky(new HomeMenuEvent(homeMenu));
     }
 
     @Override

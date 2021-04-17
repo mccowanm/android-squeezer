@@ -53,8 +53,6 @@ public class JiveItem extends Item {
     public static final JiveItem SETTINGS = new JiveItem("settings", "homesub", R.string.SETTINGS, 1005, Window.WindowStyle.HOME_MENU);
     public static final JiveItem ADVANCED_SETTINGS = new JiveItem("advancedSettings", "settings", R.string.ADVANCED_SETTINGS, 105, Window.WindowStyle.TEXT_ONLY);
     public static final JiveItem ARCHIVE = new JiveItem("archiveNode", "home", R.string.ARCHIVE_NODE, 1010, Window.WindowStyle.HOME_MENU);
-    public static final JiveItem HOMESUB = new JiveItem("homesub", "home", R.string.HOMESUB, 105, Window.WindowStyle.TEXT_ONLY);
-    public static final JiveItem BENSUB = new JiveItem("bensubid", "homesub", R.string.BENNODE, 2005, Window.WindowStyle.TEXT_ONLY);
 
     /**
      * Information that will be requested about songs.
@@ -106,6 +104,7 @@ public class JiveItem extends Item {
     @NonNull private final Uri icon;
 
     private String node;
+    private String oldNodeWhenArchived;
     private int weight;
     private String type;
 
@@ -217,7 +216,8 @@ public class JiveItem extends Item {
         result.put("appletCustomizeHome", R.drawable.icon_settings_home);
         result.put("settingsPlayerNameChange", R.drawable.icon_settings_name);
         result.put("advancedSettings", R.drawable.icon_settings_adv);
-        result.put("homesub", R.drawable.icon_settings);
+//        result.put("archive", R.drawable.icon_settings);
+//        TODO: Icon for Archive
 
         return result;
     }
@@ -687,5 +687,13 @@ public class JiveItem extends Item {
     public void setNode(String node) {
         Log.d(TAG, "setNode: BEN ");
         this.node = node;
+    }
+
+    public void setOldNodeWhenArchived(String node) {
+        this.oldNodeWhenArchived = this.node;
+    }
+
+    public String getOldNodeWhenArchived() {
+        return this.oldNodeWhenArchived;
     }
 }

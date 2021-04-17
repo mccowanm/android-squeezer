@@ -112,6 +112,7 @@ public class HomeMenuActivity extends JiveItemListActivity {
                         super.bindView(item);
                         Log.d(TAG, "bindView: BEN setOnLongClickListener");
                         itemView.setOnLongClickListener(view -> {
+                            removeItem(getAdapterPosition());
                             getService().archiveItem(item);
                             return true;
                         });

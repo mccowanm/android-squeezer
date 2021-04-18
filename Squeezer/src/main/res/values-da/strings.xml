@@ -21,7 +21,6 @@
     <string name="on">Til</string>
     <string name="off">Fra</string>
     <string name="disabled">Deaktiveret</string>
-    <string name="volume">%s lydstyrke</string>
     <string name="menu_item_players">Afspillere</string>
     <string name="menu_item_settings_label">Indstillinger</string>
     <string name="menu_item_about_label">Om</string>

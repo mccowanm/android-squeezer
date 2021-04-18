@@ -361,7 +361,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public void onEvent(PlayerVolume event) {
         if (!mIgnoreVolumeChange && mVolumePanel != null && event.player == mService.getActivePlayer()) {
-            mVolumePanel.postVolumeChanged(event.volume, event.player.getName());
+            mVolumePanel.postVolumeChanged(event.muted, event.volume, event.player.getName());
         }
     }
 
@@ -372,7 +372,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             Player player = mService.getActivePlayer();
 
             if (playerState != null  && mVolumePanel != null) {
-                mVolumePanel.postVolumeChanged(playerState.getCurrentVolume(),
+                mVolumePanel.postVolumeChanged(playerState.isMuted(), playerState.getCurrentVolume(),
                         player == null ? "" : player.getName());
             }
 

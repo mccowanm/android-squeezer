@@ -132,7 +132,7 @@ abstract class BaseClient implements SlimClient {
 
         // Volume
         if (changedVolume) {
-            mEventBus.post(new PlayerVolume(playerState.getCurrentVolume(), player));
+            mEventBus.post(new PlayerVolume(playerState.isMuted(), playerState.getCurrentVolume(), player));
         }
 
         // Power status

@@ -169,8 +169,9 @@ class CometClient extends BaseClient {
                         String volume = (String) message.getDataAsMap().get("_volume");
                         if (volume != null) {
                             int newVolume = Integer.parseInt(volume);
-                            player.getPlayerState().setCurrentVolume(newVolume);
-                            mEventBus.post(new PlayerVolume(newVolume, player));
+                            PlayerState playerState = player.getPlayerState();
+                            playerState.setCurrentVolume(newVolume);
+                            mEventBus.post(new PlayerVolume(playerState.isMuted(), playerState.getCurrentVolume(), player));
                         } else {
                             // LMS delays player status for volume changes, so order it immediately to respond faster to user input
                             command(player, new String[]{"mixer", "volume", "?"}, Collections.emptyMap());

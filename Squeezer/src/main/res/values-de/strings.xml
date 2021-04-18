@@ -21,7 +21,6 @@
     <string name="on">An</string>
     <string name="off">Aus</string>
     <string name="disabled">Deaktiviert</string>
-    <string name="volume">Lautstärke %s</string>
     <string name="menu_item_players">Abspielgeräte</string>
     <string name="menu_item_settings_label">Einstellungen</string>
     <string name="menu_item_about_label">Über</string>

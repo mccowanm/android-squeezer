@@ -134,7 +134,7 @@ public class PlayerState implements Parcelable {
 
     public double statusSeen;
 
-    private int currentVolume = -1;
+    private int currentVolume = 101;
 
     private int sleepDuration;
 
@@ -310,8 +310,12 @@ public class PlayerState implements Parcelable {
         return true;
     }
 
+    public boolean isMuted() {
+        return currentVolume < 0;
+    }
+
     public int getCurrentVolume() {
-        return (currentVolume == -1 ? 0: currentVolume);
+        return (currentVolume == -1 ? 0: Math.abs(currentVolume));
     }
 
     public boolean setCurrentVolume(int value) {
@@ -320,7 +324,7 @@ public class PlayerState implements Parcelable {
 
         int current = currentVolume;
         currentVolume = value;
-        return (current != -1); // Do not report a change if previous volume was unknown
+        return (current != 101); // Do not report a change if previous volume was unknown
     }
 
     public int getSleepDuration() {

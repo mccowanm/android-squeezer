@@ -871,6 +871,18 @@ public class SqueezeService extends Service {
         }
 
         @Override
+        public void toggleMute() {
+            toggleMute(getActivePlayer());
+        }
+
+        @Override
+        public void toggleMute(Player player) {
+            if (player != null) {
+                mDelegate.command(player).cmd("mixer", "muting", player.getPlayerState().isMuted() ? "0" : "1").exec();
+            }
+        }
+
+        @Override
         public void adjustVolumeTo(Player player, int newVolume) {
             mDelegate.command(player).cmd("mixer", "volume", String.valueOf(Math.min(100, Math.max(0, newVolume)))).exec();
         }

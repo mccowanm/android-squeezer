@@ -1373,10 +1373,9 @@ public class SqueezeService extends Service {
             mDelegate.requestItems(-1, callback).params(command.params).cmd(command.cmd()).exec();
         }
 
-        @Override
-        public void archiveItem(JiveItem item) {
+        public void toggleArchiveItem(JiveItem item) {
             Log.d(TAG, "archiveItem: BEN - Call mDelegate.archive from here");
-            mDelegate.archiveItem(item);
+            mDelegate.toggleArchiveItem(item);
 //          TODO: set shared Preferences as a test
 //          TODO: Check if this is correct
 

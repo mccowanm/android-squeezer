@@ -16,19 +16,17 @@
 
 package uk.org.ngo.squeezer.service;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 
 import java.util.List;
 import java.util.Map;
 
 import de.greenrobot.event.EventBus;
-import uk.org.ngo.squeezer.model.JiveItem;
-import uk.org.ngo.squeezer.model.SlimCommand;
 import uk.org.ngo.squeezer.itemlist.IServiceItemListCallback;
+import uk.org.ngo.squeezer.model.JiveItem;
 import uk.org.ngo.squeezer.model.Player;
 import uk.org.ngo.squeezer.model.PlayerState;
+import uk.org.ngo.squeezer.model.SlimCommand;
 
 class SlimDelegate {
     private static final String TAG = "SlimDelegate";
@@ -146,9 +144,8 @@ class SlimDelegate {
         return mClient.getConnectionState().getMediaDirs();
     }
 
-    public void archiveItem(JiveItem item) {
-        Log.d(TAG, "archiveItem: BEN - call mClient from here");
-        mClient.getConnectionState().archiveItem(item);
+    public void toggleArchiveItem(JiveItem item) {
+        mClient.getConnectionState().toggleArchiveItem(item);
     }
 
     static class Command extends SlimCommand {

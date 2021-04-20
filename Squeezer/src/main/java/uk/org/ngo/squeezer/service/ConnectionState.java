@@ -154,8 +154,9 @@ public class ConnectionState {
         mEventBus.postSticky(new HomeMenuEvent(homeMenu));
     }
 
+//    For menu updates sent from LMS
+//    TODO: Handle node that is in Archive and gets an update from LMS here
     void menuStatusEvent(MenuStatusMessage event) {
-        Log.d(TAG, "menuStatusEvent: BEN BEN What is this?");
         if (event.playerId.equals(getActivePlayer().getId())) {
             for (JiveItem menuItem : event.menuItems) {
                 JiveItem item = null;
@@ -176,7 +177,7 @@ public class ConnectionState {
         }
     }
 
-    void archiveItem(JiveItem item) {
+    void toggleArchiveItem(JiveItem item) {
         if (item.getNode().equals(JiveItem.ARCHIVE.getId())) {
             item.setNode(item.getOldNodeWhenArchived());
         }

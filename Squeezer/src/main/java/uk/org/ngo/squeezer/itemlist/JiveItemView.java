@@ -117,9 +117,10 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
             onIcon();
         }
 
-        if (item.isSelectable()) {
-            itemView.setOnClickListener(view -> onItemSelected(item));
-        }
+        text1.setEnabled(isSelectable(item));
+        text2.setEnabled(isSelectable(item));
+        itemView.setOnClickListener(view -> onItemSelected(item));
+        itemView.setClickable(isSelectable(item));
 
         if (item.hasContextMenu()) {
             contextMenuButton.setVisibility(item.checkbox == null && item.radio == null ? View.VISIBLE : View.GONE);
@@ -154,6 +155,10 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
                 }
             }
         });
+    }
+
+    protected boolean isSelectable(JiveItem item) {
+        return item.isSelectable();
     }
 
     private ArtworkListLayout listLayout() {

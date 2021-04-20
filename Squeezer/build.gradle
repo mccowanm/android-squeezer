@@ -72,7 +72,7 @@ android {
 
         buildConfigField "String", "GIT_DESCRIPTION", "\"${gitDescription}\""
 
-        versionCode 95
+        versionCode 97
         versionName "2.2.3"
 
         vectorDrawables.useSupportLibrary = true

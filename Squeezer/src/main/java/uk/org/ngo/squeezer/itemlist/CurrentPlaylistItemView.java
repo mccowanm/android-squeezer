@@ -110,6 +110,11 @@ class CurrentPlaylistItemView extends JiveItemView {
     }
 
     @Override
+    protected boolean isSelectable(JiveItem item) {
+        return true;
+    }
+
+    @Override
     public void onIcon() {
         if (getAdapterPosition() == activity.getSelectedIndex()) {
             Drawable drawable = icon.getDrawable();

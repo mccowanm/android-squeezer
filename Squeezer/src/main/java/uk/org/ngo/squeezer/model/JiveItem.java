@@ -22,7 +22,6 @@ import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.Parcel;
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
@@ -49,8 +48,8 @@ public class JiveItem extends Item {
 
     public static final JiveItem HOME = new JiveItem("home", null, R.string.HOME, 1, Window.WindowStyle.HOME_MENU);
     public static final JiveItem CURRENT_PLAYLIST = new JiveItem("status", null, R.string.menu_item_playlist, 1, Window.WindowStyle.PLAY_LIST);
-    public static final JiveItem EXTRAS = new JiveItem("extras", "homesub", R.string.EXTRAS, 50, Window.WindowStyle.HOME_MENU);
-    public static final JiveItem SETTINGS = new JiveItem("settings", "homesub", R.string.SETTINGS, 1005, Window.WindowStyle.HOME_MENU);
+    public static final JiveItem EXTRAS = new JiveItem("extras", "home", R.string.EXTRAS, 50, Window.WindowStyle.HOME_MENU);
+    public static final JiveItem SETTINGS = new JiveItem("settings", "home", R.string.SETTINGS, 1005, Window.WindowStyle.HOME_MENU);
     public static final JiveItem ADVANCED_SETTINGS = new JiveItem("advancedSettings", "settings", R.string.ADVANCED_SETTINGS, 105, Window.WindowStyle.TEXT_ONLY);
     public static final JiveItem ARCHIVE = new JiveItem("archiveNode", "home", R.string.ARCHIVE_NODE, 1010, Window.WindowStyle.HOME_MENU);
 
@@ -685,7 +684,6 @@ public class JiveItem extends Item {
     private static final Set<String> title_parameters = new HashSet<>(Arrays.asList("track_id", "album_id", "artist_id", "genre_id", "year"));
 
     public void setNode(String node) {
-        Log.d(TAG, "setNode: BEN ");
         this.node = node;
     }
 

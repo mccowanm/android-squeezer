@@ -208,5 +208,5 @@ public interface ISqueezeService {
      *
      * @param item
      */
-    void archiveItem(JiveItem item);
+    void toggleArchiveItem(JiveItem item);
 }

@@ -1374,7 +1374,6 @@ public class SqueezeService extends Service {
         }
 
         public void toggleArchiveItem(JiveItem item) {
-            Log.d(TAG, "archiveItem: BEN - Call mDelegate.archive from here");
             mDelegate.toggleArchiveItem(item);
 //          TODO: set shared Preferences as a test
 //          TODO: Check if this is correct

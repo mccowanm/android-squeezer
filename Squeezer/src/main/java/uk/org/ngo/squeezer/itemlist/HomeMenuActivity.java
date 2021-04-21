@@ -19,7 +19,6 @@ package uk.org.ngo.squeezer.itemlist;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -110,7 +109,6 @@ public class HomeMenuActivity extends JiveItemListActivity {
                     @Override
                     public void bindView(JiveItem item) {
                         super.bindView(item);
-                        Log.d(TAG, "bindView: BEN setOnLongClickListener");
                         itemView.setOnLongClickListener(view -> {
                             removeItem(getAdapterPosition());
                             getService().toggleArchiveItem(item);

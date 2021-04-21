@@ -177,11 +177,61 @@ public class ConnectionState {
         }
     }
 
+//  Finds the last grandparent of a (grandchild) - but does not work
+    public String getRootOfArchived(String node) {
+        String rootID = "";
+        String parent = "";
+        Log.d(TAG, "getRootOfArchived: BEN node: " + node);
+        for (JiveItem menuItem : homeMenu) {
+            if (menuItem.getId().equals(node)) {
+                if ((menuItem.getNode()).equals(JiveItem.HOME.getId())) {
+                    Log.d(TAG, "getRootOfArchived: BEN parent of this parent is home");
+                    rootID = menuItem.getId();
+                    Log.d(TAG, "getRootOfArchived: BEN - will now return rootID: " + rootID);
+                    return rootID;
+                }
+
+                else {
+                    Log.d(TAG, "getRootOfArchived: BEN in else");
+                    parent = menuItem.getNode();
+                    getRootOfArchived(parent);
+                }
+                Log.d(TAG, "getRootOfArchived: BEN Why is this happening?");
+            }
+            Log.d(TAG, "getRootOfArchived: BEN and this?");
+        }
+        Log.d(TAG, "getRootOfArchived: BEN rootID is " + rootID);
+        return rootID;
+    }
+
     void toggleArchiveItem(JiveItem item) {
+
+//      this should find the last grandparent, but the return statement from the method does not work
+//      as expected
+        String bennode = getRootOfArchived(item.getOldNodeWhenArchived());
+        Log.d(TAG, "toggleArchiveItem: BEN bennode final grandparent is : " + bennode.toString());
+
+//      get current items in archive
+        for (JiveItem menuItem : homeMenu) {
+            if (menuItem.getNode().equals(JiveItem.ARCHIVE.getId())) {
+                Log.d(TAG, "toggleArchiveItem: BEN old archive was: " + menuItem.toString());
+//                if new item ID == old item parent ID
+                if (item.getId().equals(menuItem.getOldNodeWhenArchived())) {
+//                  If the newly archived item is the parent of an already archived item put the
+//                  older item back into its old parent
+                    menuItem.setNode(menuItem.getOldNodeWhenArchived());
+                    Log.d(TAG, "toggleArchiveItem: BEN old item moved from root into parent (in archive)");
+                }
+            }
+        }
+
+//        put item back
         if (item.getNode().equals(JiveItem.ARCHIVE.getId())) {
+            Log.d(TAG, "toggleArchiveItem: BEN put it back wrong");
             item.setNode(item.getOldNodeWhenArchived());
         }
         else {
+//            put item into archive (if it is not the archive itself)
             if (item.getId() != JiveItem.ARCHIVE.getId()) {
                 item.setOldNodeWhenArchived(item.getNode());
                 item.setNode(JiveItem.ARCHIVE.getId());

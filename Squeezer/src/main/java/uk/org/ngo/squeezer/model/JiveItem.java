@@ -464,7 +464,8 @@ public class JiveItem extends Item {
                 + ", add: " + addAction
                 + ", insert: " + insertAction
                 + ", more: " + moreAction
-                + ", window: " + window;
+                + ", window: " + window
+                + ", oldNodeWhenArchived: " + oldNodeWhenArchived;
 
     }
 

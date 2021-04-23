@@ -103,7 +103,7 @@ public class JiveItem extends Item {
     @NonNull private final Uri icon;
 
     private String node;
-    private String oldNodeWhenArchived;
+    private String originalNode;
     private int weight;
     private String type;
 
@@ -285,7 +285,7 @@ public class JiveItem extends Item {
         setId(getString(record, record.containsKey("cmd") ? "cmd" : "id"));
         splitItemText(getStringOrEmpty(record, record.containsKey("name") ? "name" : "text"));
         icon = getImageUrl(record, record.containsKey("icon-id") ? "icon-id" : "icon");
-        node = getString(record, "node");
+        node = originalNode = getString(record, "node");
         weight = getInt(record, "weight");
         type = getString(record, "type");
         Map<String, Object> baseRecord = getRecord(record, "base");
@@ -465,7 +465,7 @@ public class JiveItem extends Item {
                 + ", insert: " + insertAction
                 + ", more: " + moreAction
                 + ", window: " + window
-                + ", oldNodeWhenArchived: " + oldNodeWhenArchived;
+                + ", originalNode: " + originalNode;
 
     }
 
@@ -688,11 +688,11 @@ public class JiveItem extends Item {
         this.node = node;
     }
 
-    public void setOldNodeWhenArchived(String node) {
-        this.oldNodeWhenArchived = this.node;
+    public void setOriginalNode(String node) {
+        this.originalNode = this.node;
     }
 
-    public String getOldNodeWhenArchived() {
-        return this.oldNodeWhenArchived;
+    public String getOriginalNode() {
+        return this.originalNode;
     }
 }

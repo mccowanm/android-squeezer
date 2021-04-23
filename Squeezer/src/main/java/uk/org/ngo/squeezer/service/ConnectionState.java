@@ -179,68 +179,45 @@ public class ConnectionState {
         }
     }
 
-    public String rootID = "";
-    public Set<String> rootID_set = new HashSet<String>();
 
-    public String getRootOfArchived(String node) {
-        String parent = "";
-        for (JiveItem menuItem : homeMenu) {
-            if (menuItem.getId().equals(node)) {
-                if ((menuItem.getNode()).equals(JiveItem.HOME.getId())) {          // if we are done
-                    this.rootID = menuItem.getId();
-                    return this.rootID;
-                }
-                else {
-//                  if the item we found is not in the archive it might not have an oldNode
-                    if (menuItem.getOldNodeWhenArchived() == null) {
-                        rootID_set.add(menuItem.getNode());
-                        parent = menuItem.getNode();
-                    }
-                    else {
-                        rootID_set.add(menuItem.getOldNodeWhenArchived());
-                        parent = menuItem.getOldNodeWhenArchived();
-                    }
-                    getRootOfArchived(parent);
-                }
-            }
-        }
-        Log.d(TAG, "getRootOfArchived: BEN " + this.rootID_set.toString());
-        return this.rootID;
+    private Set<JiveItem> getParents(String node) {
+        Set<JiveItem> parents = new HashSet<>();
+        getParents(node, parents);
+        return parents;
     }
 
-    public JiveItem getJiveItemWithId(String id) {
+    private void getParents(String node, Set<JiveItem> parents) {
+        if (node.equals(JiveItem.HOME.getId())) {          // if we are done
+            return;
+        }
         for (JiveItem menuItem : homeMenu) {
-            if (menuItem.getId().equals(id)) {
-                return menuItem;
+            if (menuItem.getId().equals(node)) {
+                String parent = menuItem.getOriginalNode();
+                parents.add(menuItem);
+                getParents(parent, parents);
             }
         }
-        return null;
+    }
+
+    void cleanupArchive(JiveItem toggledItem) {
+        for (JiveItem archiveItem : homeMenu) {
+            if (archiveItem.getNode().equals(JiveItem.ARCHIVE.getId())) {
+                Set<JiveItem> parents = getParents(archiveItem.getOriginalNode());
+                if ( parents.contains(toggledItem)) {
+                    archiveItem.setNode(archiveItem.getOriginalNode());
+                }
+            }
+        }
     }
 
     void toggleArchiveItem(JiveItem toggledItem) {
-//      put item back
         if (toggledItem.getNode().equals(JiveItem.ARCHIVE.getId())) {
-            toggledItem.setNode(toggledItem.getOldNodeWhenArchived());
+            toggledItem.setNode(toggledItem.getOriginalNode());
         } else {
-//          put item into archive (if it is not the archive itself)
-            if (!toggledItem.getId().equals(JiveItem.ARCHIVE.getId())) {
-//              get all archived items
-                rootID_set.clear();
-                for (JiveItem menuItem : homeMenu) {
-                    if (menuItem.getNode().equals(JiveItem.ARCHIVE.getId())) {
-                        getRootOfArchived(menuItem.getId()); // get all nodes of this item
-                        if (rootID_set.contains(toggledItem.getId())) {
-//                          set the node back to its original
-                            getJiveItemWithId(menuItem.getId()).setNode(menuItem.getOldNodeWhenArchived());
-                        };
-                    }
-                }
-
-//              set the toggled item into archive
-                toggledItem.setOldNodeWhenArchived(toggledItem.getNode());
+                cleanupArchive(toggledItem);
+                toggledItem.setOriginalNode(toggledItem.getNode());
                 toggledItem.setNode(JiveItem.ARCHIVE.getId());
             }
-        }
         if (!homeMenu.contains(JiveItem.ARCHIVE)) {
             homeMenu.add(JiveItem.ARCHIVE);
             mEventBus.postSticky(new HomeMenuEvent(homeMenu));

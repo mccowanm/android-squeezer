@@ -315,7 +315,7 @@ public class PlayerState implements Parcelable {
     }
 
     public int getCurrentVolume() {
-        return (currentVolume == -1 ? 0: Math.abs(currentVolume));
+        return (currentVolume == 101 ? 0: Math.abs(currentVolume));
     }
 
     public boolean setCurrentVolume(int value) {

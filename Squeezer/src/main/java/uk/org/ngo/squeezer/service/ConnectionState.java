@@ -210,9 +210,20 @@ public class ConnectionState {
         }
     }
 
+    void removeArchiveNodeWhenEmpty() {
+        for (JiveItem menuItem : homeMenu) {
+            if (menuItem.getNode().equals(JiveItem.ARCHIVE.getId())) {
+                return;
+            }
+        }
+        homeMenu.remove(JiveItem.ARCHIVE);
+    }
+
     void toggleArchiveItem(JiveItem toggledItem) {
         if (toggledItem.getNode().equals(JiveItem.ARCHIVE.getId())) {
             toggledItem.setNode(toggledItem.getOriginalNode());
+            removeArchiveNodeWhenEmpty();
+            return;
         } else {
                 cleanupArchive(toggledItem);
                 toggledItem.setOriginalNode(toggledItem.getNode());

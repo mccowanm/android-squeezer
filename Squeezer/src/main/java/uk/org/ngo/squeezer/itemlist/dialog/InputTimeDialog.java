@@ -36,7 +36,7 @@ public class InputTimeDialog {
                 .build();
         picker.addOnPositiveButtonClickListener(view -> {
             preferences.setTimeInputMode(picker.getInputMode());
-            item.inputValue = String.valueOf(picker.getHour() * 60 + picker.getMinute() * 60);
+            item.inputValue = String.valueOf((picker.getHour() * 60 + picker.getMinute()) * 60);
             activity.action(item, item.goAction, alreadyPopped);
         });
         picker.show(activity.getSupportFragmentManager(), InputTimeDialog.class.getSimpleName());

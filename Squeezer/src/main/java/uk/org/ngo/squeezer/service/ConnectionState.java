@@ -199,6 +199,25 @@ public class ConnectionState {
         }
     }
 
+    private Set<JiveItem> getParentsIfArchived(String node) {
+        Set<JiveItem> parents = new HashSet<>();
+        getParentsIfArchived(node, parents);
+        return parents;
+    }
+
+    private void getParentsIfArchived(String node, Set<JiveItem> parents) {
+        if (node.equals(JiveItem.HOME.getId())) {          // if we are done
+            return;
+        }
+        for (JiveItem menuItem : homeMenu) {
+            if (menuItem.getId().equals(node)) {
+                String parent = menuItem.getNode();
+                parents.add(menuItem);
+                getParentsIfArchived(parent, parents);
+            }
+        }
+    }
+
     void cleanupArchive(JiveItem toggledItem) {
         for (JiveItem archiveItem : homeMenu) {
             if (archiveItem.getNode().equals(JiveItem.ARCHIVE.getId())) {
@@ -213,10 +232,22 @@ public class ConnectionState {
     void removeArchiveNodeWhenEmpty() {
         for (JiveItem menuItem : homeMenu) {
             if (menuItem.getNode().equals(JiveItem.ARCHIVE.getId())) {
+//                TODO: Switch menu like pressing home button
                 return;
             }
         }
         homeMenu.remove(JiveItem.ARCHIVE);
+    }
+
+    Boolean checkIfItemIsAlreadyInArchive(JiveItem toggledItem) {
+        if (getParentsIfArchived(toggledItem.getNode()).contains(JiveItem.ARCHIVE)) {
+//            TODO: Message to the user
+            Log.d(TAG, "toggleArchiveItem: BEN - Your are already in Archive");
+            return Boolean.TRUE;
+        }
+        else {
+            return Boolean.FALSE;
+        }
     }
 
     void toggleArchiveItem(JiveItem toggledItem) {
@@ -225,10 +256,11 @@ public class ConnectionState {
             removeArchiveNodeWhenEmpty();
             return;
         } else {
+            if (!toggledItem.getId().equals(JiveItem.ARCHIVE.getId())) {
                 cleanupArchive(toggledItem);
-                toggledItem.setOriginalNode(toggledItem.getNode());
                 toggledItem.setNode(JiveItem.ARCHIVE.getId());
             }
+        }
         if (!homeMenu.contains(JiveItem.ARCHIVE)) {
             homeMenu.add(JiveItem.ARCHIVE);
             mEventBus.postSticky(new HomeMenuEvent(homeMenu));

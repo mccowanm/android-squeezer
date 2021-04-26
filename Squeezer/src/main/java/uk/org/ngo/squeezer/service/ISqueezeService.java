@@ -209,4 +209,12 @@ public interface ISqueezeService {
      * @param item
      */
     void toggleArchiveItem(JiveItem item);
+
+    /**
+     * Check if this is a subitem in the archive
+     *
+     * @param item
+     * @return
+     */
+    Boolean checkIfItemIsAlreadyInArchive(JiveItem item);
 }

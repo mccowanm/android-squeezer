@@ -1391,6 +1391,11 @@ public class SqueezeService extends Service {
 //          TODO: Check if this is correct
 
         }
+
+        @Override
+        public Boolean checkIfItemIsAlreadyInArchive(JiveItem item) {
+           return mDelegate.checkIfItemIsAlreadyInArchive(item);
+        }
     }
 
     /**

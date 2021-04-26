@@ -19,6 +19,7 @@ package uk.org.ngo.squeezer.itemlist;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -110,8 +111,19 @@ public class HomeMenuActivity extends JiveItemListActivity {
                     public void bindView(JiveItem item) {
                         super.bindView(item);
                         itemView.setOnLongClickListener(view -> {
-                            removeItem(getAdapterPosition());
-                            getService().toggleArchiveItem(item);
+                            if (!item.getId().equals(JiveItem.ARCHIVE.getId())) {
+                                if (!item.getNode().equals(JiveItem.ARCHIVE.getId())) {
+                                    if (getService().checkIfItemIsAlreadyInArchive(item) == Boolean.TRUE) {
+                                        return true;
+                                    }
+                                }
+                                removeItem(getAdapterPosition());
+                                getService().toggleArchiveItem(item);
+                            }
+                            else {
+//                               TODO: Message to the User
+                                 Log.d(TAG, "bindView: BEN - Archive can not be archived");
+                            }
                             return true;
                         });
                     }

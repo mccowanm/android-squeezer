@@ -148,6 +148,10 @@ class SlimDelegate {
         mClient.getConnectionState().toggleArchiveItem(item);
     }
 
+    public Boolean checkIfItemIsAlreadyInArchive(JiveItem item) {
+        return mClient.getConnectionState().checkIfItemIsAlreadyInArchive(item);
+    }
+
     static class Command extends SlimCommand {
         final SlimClient slimClient;
         final protected Player player;

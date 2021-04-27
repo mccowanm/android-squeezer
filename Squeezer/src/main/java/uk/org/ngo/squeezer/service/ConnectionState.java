@@ -179,43 +179,33 @@ public class ConnectionState {
         }
     }
 
-
     private Set<JiveItem> getOriginalParents(String node) {
         Set<JiveItem> parents = new HashSet<>();
-        getOriginalParents(node, parents);
+        getParents(node, parents, JiveItem::getOriginalNode);
         return parents;
-    }
-
-    private void getOriginalParents(String node, Set<JiveItem> parents) {
-        if (node.equals(JiveItem.HOME.getId())) {          // if we are done
-            return;
-        }
-        for (JiveItem menuItem : homeMenu) {
-            if (menuItem.getId().equals(node)) {
-                String parent = menuItem.getOriginalNode();
-                parents.add(menuItem);
-                getOriginalParents(parent, parents);
-            }
-        }
     }
 
     private Set<JiveItem> getParents(String node) {
         Set<JiveItem> parents = new HashSet<>();
-        getParents(node, parents);
+        getParents(node, parents, JiveItem::getNode);
         return parents;
     }
 
-    private void getParents(String node, Set<JiveItem> parents) {
+    private void getParents(String node, Set<JiveItem> parents, GetParent getParent) {
         if (node.equals(JiveItem.HOME.getId())) {          // if we are done
             return;
         }
         for (JiveItem menuItem : homeMenu) {
             if (menuItem.getId().equals(node)) {
-                String parent = menuItem.getNode();
+                String parent = getParent.getNode(menuItem);
                 parents.add(menuItem);
-                getParents(parent, parents);
+                getParents(parent, parents, getParent);
             }
         }
+    }
+
+    private interface GetParent {
+        String getNode(JiveItem item);
     }
 
     void cleanupArchive(JiveItem toggledItem) {

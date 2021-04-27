@@ -31,6 +31,7 @@ import java.util.List;
 
 import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
+import uk.org.ngo.squeezer.Squeezer;
 import uk.org.ngo.squeezer.framework.ItemAdapter;
 import uk.org.ngo.squeezer.itemlist.dialog.ArtworkListLayout;
 import uk.org.ngo.squeezer.model.JiveItem;
@@ -57,6 +58,14 @@ public class HomeMenuActivity extends JiveItemListActivity {
         new Preferences(this).setHomeMenuLayout(listLayout);
     }
 
+//    public List<JiveItem> getArchivedMenuItems() {
+//        return new Preferences(this).getArchivedMenuItems();
+//    }
+//
+//    public void setArchivedMenuItems(List<JiveItem> list) {
+//        new Preferences(this).setArchivedMenuItems(list);
+//    }
+//
     public void onEvent(HomeMenuEvent event) {
         runOnUiThread(new Runnable() {
             @Override
@@ -118,7 +127,9 @@ public class HomeMenuActivity extends JiveItemListActivity {
                                     }
                                 }
                                 removeItem(getAdapterPosition());
-                                getService().toggleArchiveItem(item);
+                                if (getService().toggleArchiveItem(item) == Boolean.TRUE) {
+                                    HomeActivity.show(Squeezer.getContext());
+                                };
                             }
                             else {
 //                               TODO: Message to the User

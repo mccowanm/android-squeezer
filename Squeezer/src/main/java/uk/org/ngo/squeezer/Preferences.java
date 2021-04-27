@@ -31,7 +31,6 @@ import java.util.UUID;
 import uk.org.ngo.squeezer.download.DownloadFilenameStructure;
 import uk.org.ngo.squeezer.download.DownloadPathStructure;
 import uk.org.ngo.squeezer.itemlist.dialog.ArtworkListLayout;
-import uk.org.ngo.squeezer.model.JiveItem;
 import uk.org.ngo.squeezer.model.Player;
 import uk.org.ngo.squeezer.util.ThemeManager;
 
@@ -501,15 +500,17 @@ public final class Preferences {
         return uuid;
     }
 
-    public boolean isArchive(JiveItem item) {
-        return sharedPreferences.getBoolean(MAP_MENU_ITEMS, false);
-//    TODO: isArchive
-    }
-
-//    public void setArchive(JiveItem item) {
-//        sharedPreferences.edit().putBoolean(Preferences.MAP_MENU_ITEMS, item).apply();
-//  TODO: setArchive
+//    public List<JiveItem> getArchivedMenuItems() {
+//        ArrayList<JiveItem> list = new ArrayList<>();
+//        list.add(JiveItem.EXTRAS);
+//        return list;
+////    TODO: load actual list of archived items from preferences file
 //    }
+//
+//    public void setArchivedMenuItems(List<JiveItem> list) {
+//        Log.d(TAG, "setArchivedMenuItems: BEN - received a list: " + list.toString());
+//    }
+////  TODO: actually persist this list
 
     public boolean isDownloadEnabled() {
         return sharedPreferences.getBoolean(KEY_DOWNLOAD_ENABLED, true);

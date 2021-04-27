@@ -144,8 +144,8 @@ class SlimDelegate {
         return mClient.getConnectionState().getMediaDirs();
     }
 
-    public void toggleArchiveItem(JiveItem item) {
-        mClient.getConnectionState().toggleArchiveItem(item);
+    public boolean toggleArchiveItem(JiveItem item) {
+        return mClient.getConnectionState().toggleArchiveItem(item);
     }
 
     public Boolean checkIfItemIsAlreadyInArchive(JiveItem item) {

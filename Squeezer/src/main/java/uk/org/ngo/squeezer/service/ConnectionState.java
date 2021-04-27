@@ -219,14 +219,14 @@ public class ConnectionState {
         }
     }
 
-    void removeArchiveNodeWhenEmpty() {
+    boolean removeArchiveNodeWhenEmpty() {
         for (JiveItem menuItem : homeMenu) {
             if (menuItem.getNode().equals(JiveItem.ARCHIVE.getId())) {
-//                TODO: Switch menu like pressing home button
-                return;
+                return false;
             }
         }
         homeMenu.remove(JiveItem.ARCHIVE);
+        return true;  // is empty
     }
 
     boolean checkIfItemIsAlreadyInArchive(JiveItem toggledItem) {
@@ -240,11 +240,10 @@ public class ConnectionState {
         }
     }
 
-    void toggleArchiveItem(JiveItem toggledItem) {
+    boolean toggleArchiveItem(JiveItem toggledItem) {
         if (toggledItem.getNode().equals(JiveItem.ARCHIVE.getId())) {
             toggledItem.setNode(toggledItem.getOriginalNode());
-            removeArchiveNodeWhenEmpty();
-            return;
+            return removeArchiveNodeWhenEmpty();
         } else {
             if (!toggledItem.getId().equals(JiveItem.ARCHIVE.getId())) {
                 cleanupArchive(toggledItem);
@@ -255,6 +254,7 @@ public class ConnectionState {
             homeMenu.add(JiveItem.ARCHIVE);
             mEventBus.postSticky(new HomeMenuEvent(homeMenu));
         }
+        return false;
     }
 
     String getServerVersion() {

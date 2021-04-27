@@ -180,6 +180,25 @@ public class ConnectionState {
     }
 
 
+    private Set<JiveItem> getOriginalParents(String node) {
+        Set<JiveItem> parents = new HashSet<>();
+        getOriginalParents(node, parents);
+        return parents;
+    }
+
+    private void getOriginalParents(String node, Set<JiveItem> parents) {
+        if (node.equals(JiveItem.HOME.getId())) {          // if we are done
+            return;
+        }
+        for (JiveItem menuItem : homeMenu) {
+            if (menuItem.getId().equals(node)) {
+                String parent = menuItem.getOriginalNode();
+                parents.add(menuItem);
+                getOriginalParents(parent, parents);
+            }
+        }
+    }
+
     private Set<JiveItem> getParents(String node) {
         Set<JiveItem> parents = new HashSet<>();
         getParents(node, parents);
@@ -192,28 +211,9 @@ public class ConnectionState {
         }
         for (JiveItem menuItem : homeMenu) {
             if (menuItem.getId().equals(node)) {
-                String parent = menuItem.getOriginalNode();
-                parents.add(menuItem);
-                getParents(parent, parents);
-            }
-        }
-    }
-
-    private Set<JiveItem> getParentsIfArchived(String node) {
-        Set<JiveItem> parents = new HashSet<>();
-        getParentsIfArchived(node, parents);
-        return parents;
-    }
-
-    private void getParentsIfArchived(String node, Set<JiveItem> parents) {
-        if (node.equals(JiveItem.HOME.getId())) {          // if we are done
-            return;
-        }
-        for (JiveItem menuItem : homeMenu) {
-            if (menuItem.getId().equals(node)) {
                 String parent = menuItem.getNode();
                 parents.add(menuItem);
-                getParentsIfArchived(parent, parents);
+                getParents(parent, parents);
             }
         }
     }
@@ -221,7 +221,7 @@ public class ConnectionState {
     void cleanupArchive(JiveItem toggledItem) {
         for (JiveItem archiveItem : homeMenu) {
             if (archiveItem.getNode().equals(JiveItem.ARCHIVE.getId())) {
-                Set<JiveItem> parents = getParents(archiveItem.getOriginalNode());
+                Set<JiveItem> parents = getOriginalParents(archiveItem.getOriginalNode());
                 if ( parents.contains(toggledItem)) {
                     archiveItem.setNode(archiveItem.getOriginalNode());
                 }
@@ -239,8 +239,8 @@ public class ConnectionState {
         homeMenu.remove(JiveItem.ARCHIVE);
     }
 
-    Boolean checkIfItemIsAlreadyInArchive(JiveItem toggledItem) {
-        if (getParentsIfArchived(toggledItem.getNode()).contains(JiveItem.ARCHIVE)) {
+    boolean checkIfItemIsAlreadyInArchive(JiveItem toggledItem) {
+        if (getParents(toggledItem.getNode()).contains(JiveItem.ARCHIVE)) {
 //            TODO: Message to the user
             Log.d(TAG, "toggleArchiveItem: BEN - Your are already in Archive");
             return Boolean.TRUE;

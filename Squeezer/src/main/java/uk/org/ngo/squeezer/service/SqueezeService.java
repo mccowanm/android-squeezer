@@ -327,6 +327,17 @@ public class SqueezeService extends Service {
         new Preferences(this).setLastPlayer(newActivePlayer);
     }
 
+    public boolean setArchivedMenuItemsToPreferences() {
+        List<String> list= mDelegate.getArchivedItems();
+        return new Preferences(this).setArchivedMenuItemsToPreferences(list);
+    }
+
+    public List<String> getArchivedMenuItemsFromPreferences() {
+        List<String> list = new Preferences(this).getArchivedMenuItemsFromPreferences();
+        mDelegate.setArchivedItems(list);
+        return list;
+    }
+
     private void requestPlayerData() {
         Log.d(TAG, "requestPlayerData:");
         Player activePlayer = mDelegate.getActivePlayer();
@@ -345,6 +356,19 @@ public class SqueezeService extends Service {
                     homeMenu.addAll(items);
                     if (homeMenu.size() == count) {
                         jiveMainNodes();
+                        List<String> list = getArchivedMenuItemsFromPreferences();
+                        if (!(list.isEmpty()) && (!homeMenu.contains(JiveItem.ARCHIVE))) {
+                            homeMenu.add(JiveItem.ARCHIVE);
+                        }
+                        for (String s : list) {
+                            for (JiveItem item : homeMenu) {
+                                if  (item.getId().equals(s)) {
+                                    item.setNode(JiveItem.ARCHIVE.getId());
+                                }
+                            }
+
+                        }
+                        getArchivedMenuItemsFromPreferences();
                         mDelegate.setHomeMenu(homeMenu);
                     }
                 }
@@ -1386,11 +1410,14 @@ public class SqueezeService extends Service {
         }
 
         public boolean toggleArchiveItem(JiveItem item) {
-            return mDelegate.toggleArchiveItem(item);
+            boolean isArchiveEmpty = mDelegate.toggleArchiveItem(item);
+            setArchivedMenuItemsToPreferences();
+            return isArchiveEmpty;
+
         }
 
         @Override
-        public Boolean checkIfItemIsAlreadyInArchive(JiveItem item) {
+        public boolean checkIfItemIsAlreadyInArchive(JiveItem item) {
            return mDelegate.checkIfItemIsAlreadyInArchive(item);
         }
     }

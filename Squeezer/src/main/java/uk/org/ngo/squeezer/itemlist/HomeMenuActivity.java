@@ -58,14 +58,6 @@ public class HomeMenuActivity extends JiveItemListActivity {
         new Preferences(this).setHomeMenuLayout(listLayout);
     }
 
-//    public List<JiveItem> getArchivedMenuItems() {
-//        return new Preferences(this).getArchivedMenuItems();
-//    }
-//
-//    public void setArchivedMenuItems(List<JiveItem> list) {
-//        new Preferences(this).setArchivedMenuItems(list);
-//    }
-//
     public void onEvent(HomeMenuEvent event) {
         runOnUiThread(new Runnable() {
             @Override
@@ -122,12 +114,12 @@ public class HomeMenuActivity extends JiveItemListActivity {
                         itemView.setOnLongClickListener(view -> {
                             if (!item.getId().equals(JiveItem.ARCHIVE.getId())) {
                                 if (!item.getNode().equals(JiveItem.ARCHIVE.getId())) {
-                                    if (getService().checkIfItemIsAlreadyInArchive(item) == Boolean.TRUE) {
+                                    if (getService().checkIfItemIsAlreadyInArchive(item)) {
                                         return true;
                                     }
                                 }
                                 removeItem(getAdapterPosition());
-                                if (getService().toggleArchiveItem(item) == Boolean.TRUE) {
+                                if (getService().toggleArchiveItem(item)) {
                                     HomeActivity.show(Squeezer.getContext());
                                 };
                             }

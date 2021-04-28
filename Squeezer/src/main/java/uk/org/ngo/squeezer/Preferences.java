@@ -21,10 +21,13 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -500,17 +503,29 @@ public final class Preferences {
         return uuid;
     }
 
-//    public List<JiveItem> getArchivedMenuItems() {
-//        ArrayList<JiveItem> list = new ArrayList<>();
-//        list.add(JiveItem.EXTRAS);
-//        return list;
-////    TODO: load actual list of archived items from preferences file
-//    }
-//
-//    public void setArchivedMenuItems(List<JiveItem> list) {
-//        Log.d(TAG, "setArchivedMenuItems: BEN - received a list: " + list.toString());
-//    }
-////  TODO: actually persist this list
+    public List<String> getArchivedMenuItemsFromPreferences() {
+        List<String> list = new ArrayList<>();
+        String string = sharedPreferences.getString(MAP_MENU_ITEMS, null);
+        if ( (string == null) || (string.length() == 0)) {
+            return list;
+        }
+        for (String s : string.split(";")) {
+            list.add(s);
+        }
+        return list;
+    }
+
+    public boolean setArchivedMenuItemsToPreferences(List<String> list) {
+        try {
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString(MAP_MENU_ITEMS, TextUtils.join(";", list));
+            editor.apply();
+        } catch (Exception e) {
+            Log.d(TAG, "setArchivedMenuItemsToPreferences: " + e);
+            return false;
+        }
+        return true;
+    }
 
     public boolean isDownloadEnabled() {
         return sharedPreferences.getBoolean(KEY_DOWNLOAD_ENABLED, true);

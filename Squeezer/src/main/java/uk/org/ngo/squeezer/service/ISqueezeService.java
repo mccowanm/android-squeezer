@@ -216,5 +216,5 @@ public interface ISqueezeService {
      * @param item
      * @return
      */
-    Boolean checkIfItemIsAlreadyInArchive(JiveItem item);
+    boolean checkIfItemIsAlreadyInArchive(JiveItem item);
 }

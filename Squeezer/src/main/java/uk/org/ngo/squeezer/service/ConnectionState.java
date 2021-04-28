@@ -23,6 +23,7 @@ import androidx.annotation.NonNull;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +55,14 @@ public class ConnectionState {
 
     public final static String MEDIA_DIRS = "mediadirs";
 
+    public List<String> getArchivedItems() {
+        return mArchivedItems;
+    }
+
+    public void setArchivedItems(List<String> list) {
+        mArchivedItems = list;
+    }
+
     // Connection state machine
     @IntDef({DISCONNECTED, CONNECTION_STARTED, CONNECTION_FAILED, CONNECTION_COMPLETED})
     @Retention(RetentionPolicy.SOURCE)
@@ -82,6 +91,8 @@ public class ConnectionState {
     private final AtomicReference<String> serverVersion = new AtomicReference<>();
 
     private final AtomicReference<String[]> mediaDirs = new AtomicReference<>();
+
+    private List<String> mArchivedItems = new ArrayList<>();
 
     /**
      * Sets a new connection state, and posts a sticky
@@ -243,11 +254,18 @@ public class ConnectionState {
     boolean toggleArchiveItem(JiveItem toggledItem) {
         if (toggledItem.getNode().equals(JiveItem.ARCHIVE.getId())) {
             toggledItem.setNode(toggledItem.getOriginalNode());
+            mArchivedItems.remove(toggledItem.getId()); // set for persistance
             return removeArchiveNodeWhenEmpty();
         } else {
             if (!toggledItem.getId().equals(JiveItem.ARCHIVE.getId())) {
                 cleanupArchive(toggledItem);
                 toggledItem.setNode(JiveItem.ARCHIVE.getId());
+                mArchivedItems.clear();
+                for (JiveItem item : homeMenu) {
+                    if ( item.getNode().equals(JiveItem.ARCHIVE.getId())) {
+                        mArchivedItems.add(item.getId()); // set for persistance
+                    }
+                }
             }
         }
         if (!homeMenu.contains(JiveItem.ARCHIVE)) {

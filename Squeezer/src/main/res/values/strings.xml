@@ -398,4 +398,5 @@ of your accepting any such warranty or additional liability.&lt;/p&gt;</string>
     <string name="BENNODE">bennode</string>
     <string name="HOMESUB">homesub</string>
     <string name="ARCHIVE_NODE">Archive</string>
+    <string name="MENU_ITEM_MOVED">Menu item moved</string>
 </resources>

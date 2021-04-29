@@ -1420,6 +1420,10 @@ public class SqueezeService extends Service {
         public boolean checkIfItemIsAlreadyInArchive(JiveItem item) {
            return mDelegate.checkIfItemIsAlreadyInArchive(item);
         }
+
+        public void triggerHomeMenuEvent() {
+            mDelegate.triggerHomeMenuEvent();
+        }
     }
 
     /**

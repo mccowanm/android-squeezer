@@ -38,6 +38,7 @@ import uk.org.ngo.squeezer.model.JiveItem;
 import uk.org.ngo.squeezer.model.Window;
 import uk.org.ngo.squeezer.service.ISqueezeService;
 import uk.org.ngo.squeezer.service.event.HomeMenuEvent;
+import uk.org.ngo.squeezer.widget.UndoBarController;
 
 public class HomeMenuActivity extends JiveItemListActivity {
 
@@ -100,6 +101,8 @@ public class HomeMenuActivity extends JiveItemListActivity {
         activity.startActivity(intent);
     }
 
+    Activity mActivity = this;
+
     @Override
     protected ItemAdapter<JiveItemView, JiveItem> createItemListAdapter() {
 
@@ -115,10 +118,22 @@ public class HomeMenuActivity extends JiveItemListActivity {
                             if (!item.getId().equals(JiveItem.ARCHIVE.getId())) {
                                 if (!item.getNode().equals(JiveItem.ARCHIVE.getId())) {
                                     if (getService().checkIfItemIsAlreadyInArchive(item)) {
+//                                        TODO: Message to the user: Archived item cannot be archived (not UndoBar)
                                         return true;
                                     }
                                 }
                                 removeItem(getAdapterPosition());
+                                UndoBarController.show(mActivity, R.string.MENU_ITEM_MOVED, new UndoBarController.UndoListener() {
+                                    @Override
+                                    public void onUndo() {
+                                        getService().toggleArchiveItem(item);
+                                        getService().triggerHomeMenuEvent();
+                                    }
+                                    @Override
+                                    public void onDone() {
+                                    }
+                                });
+
                                 if (getService().toggleArchiveItem(item)) {
                                     HomeActivity.show(Squeezer.getContext());
                                 };

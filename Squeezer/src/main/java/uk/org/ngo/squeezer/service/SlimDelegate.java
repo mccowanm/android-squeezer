@@ -160,6 +160,10 @@ class SlimDelegate {
         mClient.getConnectionState().setArchivedItems(list);
     }
 
+    public void triggerHomeMenuEvent() {
+        mClient.getConnectionState().triggerHomeMenuEvent();
+    }
+
     static class Command extends SlimCommand {
         final SlimClient slimClient;
         final protected Player player;

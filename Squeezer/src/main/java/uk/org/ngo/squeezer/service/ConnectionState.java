@@ -63,6 +63,10 @@ public class ConnectionState {
         mArchivedItems = list;
     }
 
+    public void triggerHomeMenuEvent() {
+        mEventBus.postSticky(new HomeMenuEvent(homeMenu));
+    }
+
     // Connection state machine
     @IntDef({DISCONNECTED, CONNECTION_STARTED, CONNECTION_FAILED, CONNECTION_COMPLETED})
     @Retention(RetentionPolicy.SOURCE)
@@ -232,6 +236,7 @@ public class ConnectionState {
 
     boolean removeArchiveNodeWhenEmpty() {
         for (JiveItem menuItem : homeMenu) {
+//            TODO: handle UnDo better (now it is not displayed because screen changes)
             if (menuItem.getNode().equals(JiveItem.ARCHIVE.getId())) {
                 return false;
             }
@@ -262,7 +267,7 @@ public class ConnectionState {
                 toggledItem.setNode(JiveItem.ARCHIVE.getId());
                 mArchivedItems.clear();
                 for (JiveItem item : homeMenu) {
-                    if ( item.getNode().equals(JiveItem.ARCHIVE.getId())) {
+                    if (item.getNode().equals(JiveItem.ARCHIVE.getId())) {
                         mArchivedItems.add(item.getId()); // set for persistance
                     }
                 }

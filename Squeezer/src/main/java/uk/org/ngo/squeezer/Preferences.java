@@ -26,10 +26,11 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
 import com.google.android.material.timepicker.MaterialTimePicker;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -509,27 +510,20 @@ public final class Preferences {
         return uuid;
     }
 
-    public List<String> getArchivedMenuItemsFromPreferences() {
+    public List<String> getArchivedMenuItems() {
         List<String> list = new ArrayList<>();
         String string = sharedPreferences.getString(MAP_MENU_ITEMS, null);
-        if ( (string == null) || (string.length() == 0)) {
+        if ( TextUtils.isEmpty(string)) {
             return list;
         }
-        for (String s : string.split(";")) {
-            list.add(s);
-        }
+        Collections.addAll(list, string.split(";"));
         return list;
     }
 
-    public boolean setArchivedMenuItemsToPreferences(List<String> list) {
-        try {
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString(MAP_MENU_ITEMS, TextUtils.join(";", list));
-            editor.apply();
-        } catch (Exception e) {
-            Log.d(TAG, "setArchivedMenuItemsToPreferences: " + e);
-            return false;
-        }
+    public boolean setArchivedMenuItems(List<String> list) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(MAP_MENU_ITEMS, TextUtils.join(";", list));
+        editor.apply();
         return true;
     }
 

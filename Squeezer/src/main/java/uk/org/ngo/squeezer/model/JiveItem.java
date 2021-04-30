@@ -688,10 +688,6 @@ public class JiveItem extends Item {
         this.node = node;
     }
 
-    public void setOriginalNode(String node) {
-        this.originalNode = this.node;
-    }
-
     public String getOriginalNode() {
         return this.originalNode;
     }

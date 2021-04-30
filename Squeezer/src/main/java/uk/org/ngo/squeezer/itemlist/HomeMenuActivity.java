@@ -140,7 +140,7 @@ public class HomeMenuActivity extends JiveItemListActivity {
                             }
                             else {
 //                               TODO: Message to the User
-                                 Log.d(TAG, "bindView: BEN - Archive can not be archived");
+                                 Log.d(TAG, "bindView: Archive can not be archived");
                             }
                             return true;
                         });

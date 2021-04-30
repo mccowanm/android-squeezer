@@ -218,5 +218,8 @@ public interface ISqueezeService {
      */
     boolean checkIfItemIsAlreadyInArchive(JiveItem item);
 
+    /**
+     * Trigger the event from another class
+     */
     void triggerHomeMenuEvent();
 }

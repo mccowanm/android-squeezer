@@ -248,7 +248,6 @@ public class ConnectionState {
     boolean checkIfItemIsAlreadyInArchive(JiveItem toggledItem) {
         if (getParents(toggledItem.getNode()).contains(JiveItem.ARCHIVE)) {
 //            TODO: Message to the user
-            Log.d(TAG, "toggleArchiveItem: BEN - Your are already in Archive");
             return Boolean.TRUE;
         }
         else {

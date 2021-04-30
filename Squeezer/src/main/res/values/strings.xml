@@ -395,8 +395,6 @@ of your accepting any such warranty or additional liability.&lt;/p&gt;</string>
     <string name="remote_preset4Description">Preset 4</string>
     <string name="remote_preset5Description">Preset 5</string>
     <string name="remote_preset6Description">Preset 6</string>
-    <string name="BENNODE">bennode</string>
-    <string name="HOMESUB">homesub</string>
     <string name="ARCHIVE_NODE">Archive</string>
     <string name="MENU_ITEM_MOVED">Menu item moved</string>
 </resources>

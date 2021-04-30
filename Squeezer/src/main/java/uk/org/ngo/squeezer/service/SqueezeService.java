@@ -329,11 +329,11 @@ public class SqueezeService extends Service {
 
     public boolean setArchivedMenuItemsToPreferences() {
         List<String> list= mDelegate.getArchivedItems();
-        return new Preferences(this).setArchivedMenuItemsToPreferences(list);
+        return new Preferences(this).setArchivedMenuItems(list);
     }
 
     public List<String> getArchivedMenuItemsFromPreferences() {
-        List<String> list = new Preferences(this).getArchivedMenuItemsFromPreferences();
+        List<String> list = new Preferences(this).getArchivedMenuItems();
         mDelegate.setArchivedItems(list);
         return list;
     }
@@ -366,7 +366,6 @@ public class SqueezeService extends Service {
                                     item.setNode(JiveItem.ARCHIVE.getId());
                                 }
                             }
-
                         }
                         getArchivedMenuItemsFromPreferences();
                         mDelegate.setHomeMenu(homeMenu);

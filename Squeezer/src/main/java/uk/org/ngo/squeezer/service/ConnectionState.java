@@ -23,12 +23,8 @@ import androidx.annotation.NonNull;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -51,20 +47,24 @@ public class ConnectionState {
         mEventBus = eventBus;
     }
 
+//    TODO: Maybe get the EventBus also in HomeMenuHandling?
     private final EventBus mEventBus;
 
     public final static String MEDIA_DIRS = "mediadirs";
 
+//    TODO Move both to HomeMenuHandling (called in SlimDelegate)
     public List<String> getArchivedItems() {
-        return mArchivedItems;
+        return mHomeMenuHandling.mArchivedItems;
     }
 
     public void setArchivedItems(List<String> list) {
-        mArchivedItems = list;
+        mHomeMenuHandling.mArchivedItems = list;
     }
 
+    public HomeMenuHandling mHomeMenuHandling = new HomeMenuHandling();
+
     public void triggerHomeMenuEvent() {
-        mEventBus.postSticky(new HomeMenuEvent(homeMenu));
+        mEventBus.postSticky(new HomeMenuEvent(mHomeMenuHandling.homeMenu));
     }
 
     // Connection state machine
@@ -89,14 +89,9 @@ public class ConnectionState {
     /** The active player (the player to which commands are sent by default). */
     private final AtomicReference<Player> mActivePlayer = new AtomicReference<>();
 
-    /** Home menu tree as received from slimserver */
-    private final List<JiveItem> homeMenu = new Vector<>();
-
     private final AtomicReference<String> serverVersion = new AtomicReference<>();
 
     private final AtomicReference<String[]> mediaDirs = new AtomicReference<>();
-
-    private List<String> mArchivedItems = new ArrayList<>();
 
     /**
      * Sets a new connection state, and posts a sticky
@@ -165,116 +160,46 @@ public class ConnectionState {
         this.mediaDirs.set(mediaDirs);
     }
 
+//  TODO: Move to HomeMenuHandling
     void setHomeMenu(List<JiveItem> items) {
-        homeMenu.clear();
-        homeMenu.addAll(items);
-        mEventBus.postSticky(new HomeMenuEvent(homeMenu));
+        mEventBus.postSticky(new HomeMenuEvent(mHomeMenuHandling.setHomeMenu(items)));
     }
 
 //    For menu updates sent from LMS
 //    TODO: Handle node that is in Archive and gets an update from LMS here
+//    TODO: Move to HomeMenuHandling
     void menuStatusEvent(MenuStatusMessage event) {
         if (event.playerId.equals(getActivePlayer().getId())) {
-            for (JiveItem menuItem : event.menuItems) {
-                JiveItem item = null;
-                for (JiveItem menu : homeMenu) {
-                    if (menuItem.getId().equals(menu.getId())) {
-                        item = menu;
-                        break;
-                    }
-                }
-                if (item != null) {
-                    homeMenu.remove(item);
-                }
-                if (MenuStatusMessage.ADD.equals(event.menuDirective)) {
-                    homeMenu.add(menuItem);
-                }
-            }
-            mEventBus.postSticky(new HomeMenuEvent(homeMenu));
+            mHomeMenuHandling.handleMenuStatusEvent(event);
+            mEventBus.postSticky(new HomeMenuEvent(mHomeMenuHandling.homeMenu));
         }
     }
 
-    private Set<JiveItem> getOriginalParents(String node) {
-        Set<JiveItem> parents = new HashSet<>();
-        getParents(node, parents, JiveItem::getOriginalNode);
-        return parents;
-    }
-
-    private Set<JiveItem> getParents(String node) {
-        Set<JiveItem> parents = new HashSet<>();
-        getParents(node, parents, JiveItem::getNode);
-        return parents;
-    }
-
-    private void getParents(String node, Set<JiveItem> parents, GetParent getParent) {
-        if (node.equals(JiveItem.HOME.getId())) {          // if we are done
-            return;
-        }
-        for (JiveItem menuItem : homeMenu) {
-            if (menuItem.getId().equals(node)) {
-                String parent = getParent.getNode(menuItem);
-                parents.add(menuItem);
-                getParents(parent, parents, getParent);
-            }
-        }
-    }
-
-    private interface GetParent {
-        String getNode(JiveItem item);
-    }
-
-    void cleanupArchive(JiveItem toggledItem) {
-        for (JiveItem archiveItem : homeMenu) {
-            if (archiveItem.getNode().equals(JiveItem.ARCHIVE.getId())) {
-                Set<JiveItem> parents = getOriginalParents(archiveItem.getOriginalNode());
-                if ( parents.contains(toggledItem)) {
-                    archiveItem.setNode(archiveItem.getOriginalNode());
-                }
-            }
-        }
-    }
-
-    boolean removeArchiveNodeWhenEmpty() {
-        for (JiveItem menuItem : homeMenu) {
-//            TODO: handle UnDo better (now it is not displayed because screen changes)
-            if (menuItem.getNode().equals(JiveItem.ARCHIVE.getId())) {
-                return false;
-            }
-        }
-        homeMenu.remove(JiveItem.ARCHIVE);
-        return true;  // is empty
-    }
-
+//    TODO: Move to HomeMenuHandling
     boolean checkIfItemIsAlreadyInArchive(JiveItem toggledItem) {
-        if (getParents(toggledItem.getNode()).contains(JiveItem.ARCHIVE)) {
-//            TODO: Message to the user
-            return Boolean.TRUE;
-        }
-        else {
-            return Boolean.FALSE;
-        }
+        return mHomeMenuHandling.checkIfItemIsAlreadyInArchive(toggledItem);
     }
 
     boolean toggleArchiveItem(JiveItem toggledItem) {
         if (toggledItem.getNode().equals(JiveItem.ARCHIVE.getId())) {
             toggledItem.setNode(toggledItem.getOriginalNode());
-            mArchivedItems.remove(toggledItem.getId()); // set for persistance
-            return removeArchiveNodeWhenEmpty();
+            mHomeMenuHandling.mArchivedItems.remove(toggledItem.getId()); // set for persistance
+            return mHomeMenuHandling.removeArchiveNodeWhenEmpty();
         } else {
             if (!toggledItem.getId().equals(JiveItem.ARCHIVE.getId())) {
-                cleanupArchive(toggledItem);
+                mHomeMenuHandling.cleanupArchive(toggledItem);
                 toggledItem.setNode(JiveItem.ARCHIVE.getId());
-                mArchivedItems.clear();
-                for (JiveItem item : homeMenu) {
+                mHomeMenuHandling.mArchivedItems.clear();
+                for (JiveItem item : mHomeMenuHandling.homeMenu) {
                     if (item.getNode().equals(JiveItem.ARCHIVE.getId())) {
-                        mArchivedItems.add(item.getId()); // set for persistance
+                        mHomeMenuHandling.mArchivedItems.add(item.getId()); // set for persistance
                     }
                 }
             }
         }
-        if (!homeMenu.contains(JiveItem.ARCHIVE)) {
-            homeMenu.add(JiveItem.ARCHIVE);
-            mEventBus.postSticky(new HomeMenuEvent(homeMenu));
+        if (!mHomeMenuHandling.homeMenu.contains(JiveItem.ARCHIVE)) {
+            mHomeMenuHandling.homeMenu.add(JiveItem.ARCHIVE);
+            mEventBus.postSticky(new HomeMenuEvent(mHomeMenuHandling.homeMenu));
         }
         return false;
     }

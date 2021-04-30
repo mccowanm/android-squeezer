@@ -119,6 +119,7 @@ public class HomeMenuActivity extends JiveItemListActivity {
                                 if (!item.getNode().equals(JiveItem.ARCHIVE.getId())) {
                                     if (getService().checkIfItemIsAlreadyInArchive(item)) {
 //                                        TODO: Message to the user: Archived item cannot be archived (not UndoBar)
+//                                        TODO: Find out how to call HomeMenuHandling.checkIfItemIsAlreadyInArchive directly
                                         return true;
                                     }
                                 }

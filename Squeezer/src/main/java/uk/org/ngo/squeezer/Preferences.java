@@ -28,6 +28,8 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.google.android.material.timepicker.MaterialTimePicker;
+
 import java.util.Random;
 import java.util.UUID;
 
@@ -149,8 +151,12 @@ public final class Preferences {
     // Store a unique id for this app instance.
     private static final String KEY_UUID = "squeezer.uuid";
 
+
     // Map JiveItems to archive
     private static final String MAP_MENU_ITEMS = "squeezer.map_menu_items";
+
+    // Preferred time input method.
+    private static final String KEY_TIME_INPUT_MODE = "squeezer.time_input_mode";
 
     private final Context context;
     private final SharedPreferences sharedPreferences;
@@ -555,5 +561,13 @@ public final class Preferences {
     public DownloadFilenameStructure getDownloadFilenameStructure() {
         final String string = sharedPreferences.getString(KEY_DOWNLOAD_FILENAME_STRUCTURE, null);
         return (string == null ? DownloadFilenameStructure.NUMBER_TITLE: DownloadFilenameStructure.valueOf(string));
+    }
+
+    public int getTimeInputMode() {
+        return sharedPreferences.getInt(KEY_TIME_INPUT_MODE, MaterialTimePicker.INPUT_MODE_CLOCK);
+    }
+
+    public void setTimeInputMode(int mode) {
+        sharedPreferences.edit().putInt(Preferences.KEY_TIME_INPUT_MODE, mode).apply();
     }
 }

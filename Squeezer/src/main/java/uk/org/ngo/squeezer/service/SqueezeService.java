@@ -327,12 +327,12 @@ public class SqueezeService extends Service {
         new Preferences(this).setLastPlayer(newActivePlayer);
     }
 
-    public boolean setArchivedMenuItemsToPreferences() {
+    public boolean setArchivedMenuItems() {
         List<String> list= mDelegate.getArchivedItems();
         return new Preferences(this).setArchivedMenuItems(list);
     }
 
-    public List<String> getArchivedMenuItemsFromPreferences() {
+    public List<String> getArchivedMenuItems() {
         List<String> list = new Preferences(this).getArchivedMenuItems();
         mDelegate.setArchivedItems(list);
         return list;
@@ -356,7 +356,7 @@ public class SqueezeService extends Service {
                     homeMenu.addAll(items);
                     if (homeMenu.size() == count) {
                         jiveMainNodes();
-                        List<String> list = getArchivedMenuItemsFromPreferences();
+                        List<String> list = getArchivedMenuItems();
                         if (!(list.isEmpty()) && (!homeMenu.contains(JiveItem.ARCHIVE))) {
                             homeMenu.add(JiveItem.ARCHIVE);
                         }
@@ -367,7 +367,7 @@ public class SqueezeService extends Service {
                                 }
                             }
                         }
-                        getArchivedMenuItemsFromPreferences();
+                        getArchivedMenuItems();
                         mDelegate.setHomeMenu(homeMenu);
                     }
                 }
@@ -1410,7 +1410,7 @@ public class SqueezeService extends Service {
 
         public boolean toggleArchiveItem(JiveItem item) {
             boolean isArchiveEmpty = mDelegate.toggleArchiveItem(item);
-            setArchivedMenuItemsToPreferences();
+            setArchivedMenuItems();
             return isArchiveEmpty;
 
         }

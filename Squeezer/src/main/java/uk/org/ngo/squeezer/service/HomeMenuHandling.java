@@ -1,6 +1,5 @@
 package uk.org.ngo.squeezer.service;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -14,23 +13,10 @@ public class HomeMenuHandling {
     /** Home menu tree as received from slimserver */
     public final List<JiveItem> homeMenu = new Vector<>();
 
-    public List<String> mArchivedItems = new ArrayList<>();
-
     public List<JiveItem> setHomeMenu(List<JiveItem> items) {
         homeMenu.clear();
         homeMenu.addAll(items);
         return homeMenu; // return it to ConnectionState
-    }
-
-    boolean removeArchiveNodeWhenEmpty() {
-        for (JiveItem menuItem : homeMenu) {
-//            TODO: handle UnDo better (now it is not displayed because screen changes)
-            if (menuItem.getNode().equals(JiveItem.ARCHIVE.getId())) {
-                return false;
-            }
-        }
-        homeMenu.remove(JiveItem.ARCHIVE);
-        return true;  // is empty
     }
 
     boolean checkIfItemIsAlreadyInArchive(JiveItem toggledItem) {
@@ -43,7 +29,7 @@ public class HomeMenuHandling {
         }
     }
 
-    void cleanupArchive(JiveItem toggledItem) {
+        void cleanupArchive(JiveItem toggledItem) {
         for (JiveItem archiveItem : homeMenu) {
             if (archiveItem.getNode().equals(JiveItem.ARCHIVE.getId())) {
                 Set<JiveItem> parents = getOriginalParents(archiveItem.getOriginalNode());

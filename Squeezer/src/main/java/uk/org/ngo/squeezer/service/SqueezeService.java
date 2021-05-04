@@ -327,14 +327,16 @@ public class SqueezeService extends Service {
         new Preferences(this).setLastPlayer(newActivePlayer);
     }
 
-    public boolean setArchivedMenuItems() {
-        List<String> list= mDelegate.getArchivedItems();
-        return new Preferences(this).setArchivedMenuItems(list);
+    public void setArchivedMenuItems(Player player) {
+        Log.d(TAG, "setArchivedMenuItems: BEN player is: " + player.getName());
+        List<String> list = mDelegate.getArchivedItems();
+        Log.d(TAG, "setArchivedMenuItems: giving list and player to setArchivedMenuItems: " + list);
+        new Preferences(this).setArchivedMenuItems(list, player);
+        return;
     }
 
-    public List<String> getArchivedMenuItems() {
-        List<String> list = new Preferences(this).getArchivedMenuItems();
-        mDelegate.setArchivedItems(list);
+    public List<String> getArchivedMenuItems(Player player) {
+        List<String> list = new Preferences(this).getArchivedMenuItems(player);
         return list;
     }
 
@@ -356,7 +358,7 @@ public class SqueezeService extends Service {
                     homeMenu.addAll(items);
                     if (homeMenu.size() == count) {
                         jiveMainNodes();
-                        List<String> list = getArchivedMenuItems();
+                        List<String> list = getArchivedMenuItems(activePlayer);
                         if (!(list.isEmpty()) && (!homeMenu.contains(JiveItem.ARCHIVE))) {
                             homeMenu.add(JiveItem.ARCHIVE);
                         }
@@ -367,7 +369,6 @@ public class SqueezeService extends Service {
                                 }
                             }
                         }
-                        getArchivedMenuItems();
                         mDelegate.setHomeMenu(homeMenu);
                     }
                 }
@@ -1408,10 +1409,10 @@ public class SqueezeService extends Service {
             mDelegate.requestItems(-1, callback).params(command.params).cmd(command.cmd()).exec();
         }
 
-        public boolean toggleArchiveItem(JiveItem item) {
-            boolean isArchiveEmpty = mDelegate.toggleArchiveItem(item);
-            setArchivedMenuItems();
-            return isArchiveEmpty;
+        public List<JiveItem> toggleArchiveItem(JiveItem item) {
+            List<JiveItem> menu = mDelegate.toggleArchiveItem(item);
+            setArchivedMenuItems(getActivePlayer());
+            return menu;
 
         }
 

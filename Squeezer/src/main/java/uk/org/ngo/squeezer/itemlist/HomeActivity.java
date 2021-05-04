@@ -24,6 +24,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.MainThread;
 import androidx.appcompat.app.ActionBar;
@@ -91,7 +92,10 @@ public class HomeActivity extends HomeMenuActivity {
         super.onDestroy();
     }
 
+    private static final String TAG = "HomeActivity";
+    
     public static void show(Context context) {
+        Log.d(TAG, "show: BEN show home menu");
         Intent intent = new Intent(context, HomeActivity.class)
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);

@@ -144,7 +144,7 @@ class SlimDelegate {
         return mClient.getConnectionState().getMediaDirs();
     }
 
-    public boolean toggleArchiveItem(JiveItem item) {
+    List<JiveItem> toggleArchiveItem(JiveItem item) {
         return mClient.getConnectionState().toggleArchiveItem(item);
     }
 
@@ -154,10 +154,6 @@ class SlimDelegate {
 
     public List<String> getArchivedItems() {
         return mClient.getConnectionState().getArchivedItems();
-    }
-
-    public void setArchivedItems(List<String> list) {
-        mClient.getConnectionState().setArchivedItems(list);
     }
 
     public void triggerHomeMenuEvent() {

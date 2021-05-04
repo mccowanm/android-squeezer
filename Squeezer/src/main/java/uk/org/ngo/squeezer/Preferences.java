@@ -154,7 +154,7 @@ public final class Preferences {
 
 
     // Map JiveItems to archive
-    private static final String MAP_MENU_ITEMS = "squeezer.map_menu_items";
+    private static final String KEY_PLAYER_ARCHIVED_ITEMS_FORMAT = "squeezer.archived_menu_items.%s";
 
     // Preferred time input method.
     private static final String KEY_TIME_INPUT_MODE = "squeezer.time_input_mode";
@@ -510,9 +510,11 @@ public final class Preferences {
         return uuid;
     }
 
-    public List<String> getArchivedMenuItems() {
+    public List<String> getArchivedMenuItems(Player player) {
+        Log.d(TAG, "getArchivedMenuItems: BEN loading from preferences for player: " + player);
         List<String> list = new ArrayList<>();
-        String string = sharedPreferences.getString(MAP_MENU_ITEMS, null);
+        String string = sharedPreferences.getString(String.format(KEY_PLAYER_ARCHIVED_ITEMS_FORMAT, player.getId()), null);
+        Log.d(TAG, "getArchivedMenuItems: BEN list: " + string);
         if ( TextUtils.isEmpty(string)) {
             return list;
         }
@@ -520,11 +522,12 @@ public final class Preferences {
         return list;
     }
 
-    public boolean setArchivedMenuItems(List<String> list) {
+    public void setArchivedMenuItems(List<String> list, Player player) {
+        Log.d(TAG, "setArchivedMenuItems: BEN saving to preferences the list for player");
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(MAP_MENU_ITEMS, TextUtils.join(";", list));
+        editor.putString(String.format(KEY_PLAYER_ARCHIVED_ITEMS_FORMAT, player.getId()), TextUtils.join(";", list));
         editor.apply();
-        return true;
+        return;
     }
 
     public boolean isDownloadEnabled() {

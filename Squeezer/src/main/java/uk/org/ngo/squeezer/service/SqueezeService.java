@@ -328,16 +328,13 @@ public class SqueezeService extends Service {
     }
 
     public void setArchivedMenuItems(Player player) {
-        Log.d(TAG, "setArchivedMenuItems: BEN player is: " + player.getName());
         List<String> list = mDelegate.getArchivedItems();
-        Log.d(TAG, "setArchivedMenuItems: giving list and player to setArchivedMenuItems: " + list);
         new Preferences(this).setArchivedMenuItems(list, player);
         return;
     }
 
     public List<String> getArchivedMenuItems(Player player) {
-        List<String> list = new Preferences(this).getArchivedMenuItems(player);
-        return list;
+        return new Preferences(this).getArchivedMenuItems(player);
     }
 
     private void requestPlayerData() {
@@ -357,33 +354,11 @@ public class SqueezeService extends Service {
                 public void onItemsReceived(int count, int start, Map<String, Object> parameters, List<JiveItem> items, Class<JiveItem> dataType) {
                     homeMenu.addAll(items);
                     if (homeMenu.size() == count) {
-                        jiveMainNodes();
                         List<String> list = getArchivedMenuItems(activePlayer);
-                        if (!(list.isEmpty()) && (!homeMenu.contains(JiveItem.ARCHIVE))) {
-                            homeMenu.add(JiveItem.ARCHIVE);
-                        }
-                        for (String s : list) {
-                            for (JiveItem item : homeMenu) {
-                                if  (item.getId().equals(s)) {
-                                    item.setNode(JiveItem.ARCHIVE.getId());
-                                }
-                            }
-                        }
+                        mDelegate.prepareHomeMenu(homeMenu, list);
                         mDelegate.setHomeMenu(homeMenu);
                     }
                 }
-
-                private void jiveMainNodes() {
-                    addNode(JiveItem.EXTRAS);
-                    addNode(JiveItem.SETTINGS);
-                    addNode(JiveItem.ADVANCED_SETTINGS);
-                }
-
-                private void addNode(JiveItem jiveItem) {
-                    if (!homeMenu.contains(jiveItem))
-                        homeMenu.add(jiveItem);
-                }
-
                 @Override
                 public Object getClient() {
                     return SqueezeService.this;

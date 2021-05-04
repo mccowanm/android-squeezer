@@ -48,33 +48,22 @@ public class ConnectionState {
         mEventBus = eventBus;
     }
 
-//    TODO: Maybe get the EventBus also in HomeMenuHandling?
     private final EventBus mEventBus;
-
-    public final static String MEDIA_DIRS = "mediadirs";
-
-//    TODO Move both to HomeMenuHandling (called in SlimDelegate)
-    public List<String> getArchivedItems() {
-        Log.d(TAG, "getArchivedItems: BEN getting the homeMenu and returning archived Items to save them");
-        List<JiveItem> list = mHomeMenuHandling.homeMenu;
-        List<String> archivedItems = new ArrayList<>();
-        for (JiveItem item : list) {
-            if (item.getNode().equals(JiveItem.ARCHIVE.getId())) {
-                archivedItems.add(item.getId());
-                Log.d(TAG, "getArchivedItems: BEN - added this itemID to be saved as archivedItems: " + item.getId());
-            }
-        }
-        return archivedItems;
-    }
-
-//    public void setArchivedItems(List<String> list) {
-//        mHomeMenuHandling.mArchivedItems = list;
-//    }
 
     public HomeMenuHandling mHomeMenuHandling = new HomeMenuHandling();
 
+    public final static String MEDIA_DIRS = "mediadirs";
+
+    public List<String> getArchivedItems() {
+        return mHomeMenuHandling.getArchivedItems();
+    }
+
     public void triggerHomeMenuEvent() {
         mEventBus.postSticky(new HomeMenuEvent(mHomeMenuHandling.homeMenu));
+    }
+
+    public void prepareHomeMenu(List<JiveItem> homeMenu, List<String> list) {
+        mHomeMenuHandling.prepareHomeMenu(homeMenu, list);
     }
 
     // Connection state machine

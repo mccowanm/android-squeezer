@@ -160,6 +160,10 @@ class SlimDelegate {
         mClient.getConnectionState().triggerHomeMenuEvent();
     }
 
+    public void prepareHomeMenu(List<JiveItem> homeMenu, List<String> list) {
+        mClient.getConnectionState().prepareHomeMenu(homeMenu, list);
+    }
+
     static class Command extends SlimCommand {
         final SlimClient slimClient;
         final protected Player player;

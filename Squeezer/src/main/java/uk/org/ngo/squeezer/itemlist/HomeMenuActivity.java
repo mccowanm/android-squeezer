@@ -136,8 +136,6 @@ public class HomeMenuActivity extends JiveItemListActivity {
                                 });
 
                                 if ((getService().toggleArchiveItem(item)).isEmpty()) {
-                                    Log.d(TAG, "bindView: BEN - if isEmpty menu - this should show the home menu without Archive node");
-
                                     HomeActivity.show(Squeezer.getContext());
                                 };
                             }

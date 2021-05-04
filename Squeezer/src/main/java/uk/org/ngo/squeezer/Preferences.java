@@ -511,10 +511,8 @@ public final class Preferences {
     }
 
     public List<String> getArchivedMenuItems(Player player) {
-        Log.d(TAG, "getArchivedMenuItems: BEN loading from preferences for player: " + player);
         List<String> list = new ArrayList<>();
         String string = sharedPreferences.getString(String.format(KEY_PLAYER_ARCHIVED_ITEMS_FORMAT, player.getId()), null);
-        Log.d(TAG, "getArchivedMenuItems: BEN list: " + string);
         if ( TextUtils.isEmpty(string)) {
             return list;
         }
@@ -523,7 +521,6 @@ public final class Preferences {
     }
 
     public void setArchivedMenuItems(List<String> list, Player player) {
-        Log.d(TAG, "setArchivedMenuItems: BEN saving to preferences the list for player");
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(String.format(KEY_PLAYER_ARCHIVED_ITEMS_FORMAT, player.getId()), TextUtils.join(";", list));
         editor.apply();

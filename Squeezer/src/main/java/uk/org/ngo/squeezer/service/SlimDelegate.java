@@ -29,8 +29,6 @@ import uk.org.ngo.squeezer.model.PlayerState;
 import uk.org.ngo.squeezer.model.SlimCommand;
 
 class SlimDelegate {
-    private static final String TAG = "SlimDelegate";
-
     @NonNull private final SlimClient mClient;
 
     SlimDelegate(@NonNull EventBus eventBus) {
@@ -124,8 +122,8 @@ class SlimDelegate {
         return mClient.getConnectionState().getPlayers();
     }
 
-    void setHomeMenu(List<JiveItem> items) {
-        mClient.getConnectionState().setHomeMenu(items);
+    void setHomeMenu(List<JiveItem> items, List<String> list) {
+        mClient.getConnectionState().setHomeMenu(items, list);
     }
 
     public String getUsername() {
@@ -144,7 +142,7 @@ class SlimDelegate {
         return mClient.getConnectionState().getMediaDirs();
     }
 
-    List<JiveItem> toggleArchiveItem(JiveItem item) {
+    List<String> toggleArchiveItem(JiveItem item) {
         return mClient.getConnectionState().toggleArchiveItem(item);
     }
 
@@ -152,16 +150,8 @@ class SlimDelegate {
         return mClient.getConnectionState().checkIfItemIsAlreadyInArchive(item);
     }
 
-    public List<String> getArchivedItems() {
-        return mClient.getConnectionState().getArchivedItems();
-    }
-
     public void triggerHomeMenuEvent() {
         mClient.getConnectionState().triggerHomeMenuEvent();
-    }
-
-    public void prepareHomeMenu(List<JiveItem> homeMenu, List<String> list) {
-        mClient.getConnectionState().prepareHomeMenu(homeMenu, list);
     }
 
     static class Command extends SlimCommand {

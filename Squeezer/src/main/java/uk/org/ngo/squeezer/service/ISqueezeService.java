@@ -20,7 +20,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.Collection;
-import java.util.List;
 
 import de.greenrobot.event.EventBus;
 import uk.org.ngo.squeezer.itemlist.IServiceItemListCallback;
@@ -206,16 +205,11 @@ public interface ISqueezeService {
 
     /**
      * Put menu item into the Archive node
-     *
-     * @param item
      */
-    List<JiveItem> toggleArchiveItem(JiveItem item);
+    boolean toggleArchiveItem(JiveItem item);
 
     /**
-     * Check if this is a subitem in the archive
-     *
-     * @param item
-     * @return
+     * Check if this is a sub item in the archive
      */
     boolean checkIfItemIsAlreadyInArchive(JiveItem item);
 

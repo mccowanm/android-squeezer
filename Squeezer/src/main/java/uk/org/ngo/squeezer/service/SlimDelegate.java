@@ -123,7 +123,7 @@ class SlimDelegate {
     }
 
     void setHomeMenu(List<JiveItem> items, List<String> list) {
-        mClient.getConnectionState().setHomeMenu(items, list);
+        mClient.getConnectionState().getHomeMenuHandling().setHomeMenuWithEvent(items, list);
     }
 
     public String getUsername() {
@@ -143,15 +143,15 @@ class SlimDelegate {
     }
 
     List<String> toggleArchiveItem(JiveItem item) {
-        return mClient.getConnectionState().toggleArchiveItem(item);
+        return mClient.getConnectionState().getHomeMenuHandling().toggleArchiveItem(item);
     }
 
     public boolean checkIfItemIsAlreadyInArchive(JiveItem item) {
-        return mClient.getConnectionState().checkIfItemIsAlreadyInArchive(item);
+        return mClient.getConnectionState().getHomeMenuHandling().checkIfItemIsAlreadyInArchive(item);
     }
 
     public void triggerHomeMenuEvent() {
-        mClient.getConnectionState().triggerHomeMenuEvent();
+        mClient.getConnectionState().getHomeMenuHandling().triggerHomeMenuEvent();
     }
 
     static class Command extends SlimCommand {

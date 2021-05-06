@@ -67,6 +67,11 @@ public class HomeMenuHandling {
                 homeMenu.add(menuItem);
             }
         }
+        mEventBus.postSticky(new HomeMenuEvent(homeMenu));
+    }
+
+    public void triggerHomeMenuEvent() {
+        mEventBus.postSticky(new HomeMenuEvent(homeMenu));
     }
 
     List<String> toggleArchiveItem(JiveItem toggledItem) {
@@ -127,6 +132,10 @@ public class HomeMenuHandling {
             }
         }
         return archivedItems;
+    }
+
+    public void setHomeMenuWithEvent(List<JiveItem> homeMenu, List<String> archivedItems) {
+        mEventBus.postSticky(new HomeMenuEvent(setHomeMenu(homeMenu, archivedItems)));
     }
 
     public List<JiveItem> setHomeMenu(List<JiveItem> homeMenu, List<String> archivedItems) {

@@ -23,20 +23,17 @@ import androidx.annotation.NonNull;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 import de.greenrobot.event.EventBus;
 import uk.org.ngo.squeezer.Util;
-import uk.org.ngo.squeezer.model.JiveItem;
 import uk.org.ngo.squeezer.model.MenuStatusMessage;
 import uk.org.ngo.squeezer.model.Player;
 import uk.org.ngo.squeezer.service.event.ActivePlayerChanged;
 import uk.org.ngo.squeezer.service.event.ConnectionChanged;
 import uk.org.ngo.squeezer.service.event.HandshakeComplete;
-import uk.org.ngo.squeezer.service.event.HomeMenuEvent;
 import uk.org.ngo.squeezer.service.event.PlayersChanged;
 
 public class ConnectionState {
@@ -52,10 +49,6 @@ public class ConnectionState {
     private final HomeMenuHandling mHomeMenuHandling;
 
     public final static String MEDIA_DIRS = "mediadirs";
-
-    public void triggerHomeMenuEvent() {
-        mEventBus.postSticky(new HomeMenuEvent(mHomeMenuHandling.homeMenu));
-    }
 
     // Connection state machine
     @IntDef({DISCONNECTED, CONNECTION_STARTED, CONNECTION_FAILED, CONNECTION_COMPLETED})
@@ -149,8 +142,8 @@ public class ConnectionState {
         this.mediaDirs.set(mediaDirs);
     }
 
-    void setHomeMenu(List<JiveItem> items, List<String> archivedItems) {
-        mEventBus.postSticky(new HomeMenuEvent(mHomeMenuHandling.setHomeMenu(items, archivedItems)));
+    public HomeMenuHandling getHomeMenuHandling() {
+        return mHomeMenuHandling;
     }
 
 //    For menu updates sent from LMS
@@ -158,16 +151,7 @@ public class ConnectionState {
     void menuStatusEvent(MenuStatusMessage event) {
         if (event.playerId.equals(getActivePlayer().getId())) {
             mHomeMenuHandling.handleMenuStatusEvent(event);
-            triggerHomeMenuEvent();
         }
-    }
-
-    boolean checkIfItemIsAlreadyInArchive(JiveItem toggledItem) {
-        return mHomeMenuHandling.checkIfItemIsAlreadyInArchive(toggledItem);
-    }
-
-    List<String> toggleArchiveItem(JiveItem toggledItem) {
-        return  mHomeMenuHandling.toggleArchiveItem(toggledItem);
     }
 
     String getServerVersion() {

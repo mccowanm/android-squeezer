@@ -1,18 +1,28 @@
 package uk.org.ngo.squeezer.service;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
+import de.greenrobot.event.EventBus;
 import uk.org.ngo.squeezer.model.JiveItem;
 import uk.org.ngo.squeezer.model.MenuStatusMessage;
+import uk.org.ngo.squeezer.service.event.HomeMenuEvent;
 
 public class HomeMenuHandling {
 
     /** Home menu tree as received from slimserver */
     public final List<JiveItem> homeMenu = new Vector<>();
+
+    public HomeMenuHandling(@NonNull EventBus eventBus) {
+        mEventBus = eventBus;
+    }
+
+    private final EventBus mEventBus;
 
     private List<JiveItem> resetHomeMenu(List<JiveItem> items) {
         homeMenu.clear();
@@ -57,6 +67,27 @@ public class HomeMenuHandling {
                 homeMenu.add(menuItem);
             }
         }
+    }
+
+    List<String> toggleArchiveItem(JiveItem toggledItem) {
+        if (toggledItem.getNode().equals(JiveItem.ARCHIVE.getId())) {
+            toggledItem.setNode(toggledItem.getOriginalNode());
+            List<String> archivedItems = getArchivedItems();
+            if (archivedItems.isEmpty()) {
+                homeMenu.remove(JiveItem.ARCHIVE);
+            }
+            return archivedItems;
+        }
+
+        if (!toggledItem.getId().equals(JiveItem.ARCHIVE.getId())) {
+            cleanupArchive(toggledItem);
+            toggledItem.setNode(JiveItem.ARCHIVE.getId());
+        }
+        if (!homeMenu.contains(JiveItem.ARCHIVE)) {
+            homeMenu.add(JiveItem.ARCHIVE);
+            mEventBus.postSticky(new HomeMenuEvent(homeMenu));  // triggerHomeMenuEvent();
+        }
+        return getArchivedItems();
     }
 
     public Set<JiveItem> getOriginalParents(String node) {

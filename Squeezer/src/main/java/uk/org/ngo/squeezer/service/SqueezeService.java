@@ -327,16 +327,6 @@ public class SqueezeService extends Service {
         new Preferences(this).setLastPlayer(newActivePlayer);
     }
 
-    public void setArchivedMenuItems(Player player) {
-        List<String> list = mDelegate.getArchivedItems();
-        new Preferences(this).setArchivedMenuItems(list, player);
-        return;
-    }
-
-    public List<String> getArchivedMenuItems(Player player) {
-        return new Preferences(this).getArchivedMenuItems(player);
-    }
-
     private void requestPlayerData() {
         Log.d(TAG, "requestPlayerData:");
         Player activePlayer = mDelegate.getActivePlayer();
@@ -354,9 +344,8 @@ public class SqueezeService extends Service {
                 public void onItemsReceived(int count, int start, Map<String, Object> parameters, List<JiveItem> items, Class<JiveItem> dataType) {
                     homeMenu.addAll(items);
                     if (homeMenu.size() == count) {
-                        List<String> list = getArchivedMenuItems(activePlayer);
-                        mDelegate.prepareHomeMenu(homeMenu, list);
-                        mDelegate.setHomeMenu(homeMenu);
+                        List<String> archivedMenuItems = new Preferences(SqueezeService.this).getArchivedMenuItems(activePlayer);
+                        mDelegate.setHomeMenu(homeMenu, archivedMenuItems);
                     }
                 }
                 @Override
@@ -1384,11 +1373,10 @@ public class SqueezeService extends Service {
             mDelegate.requestItems(-1, callback).params(command.params).cmd(command.cmd()).exec();
         }
 
-        public List<JiveItem> toggleArchiveItem(JiveItem item) {
-            List<JiveItem> menu = mDelegate.toggleArchiveItem(item);
-            setArchivedMenuItems(getActivePlayer());
-            return menu;
-
+        public boolean toggleArchiveItem(JiveItem item) {
+            List<String> menu = mDelegate.toggleArchiveItem(item);
+            new Preferences(SqueezeService.this).setArchivedMenuItems(menu, getActivePlayer());
+            return menu.isEmpty();
         }
 
         @Override

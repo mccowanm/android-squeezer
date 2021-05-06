@@ -23,7 +23,6 @@ import androidx.annotation.NonNull;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -54,16 +53,8 @@ public class ConnectionState {
 
     public final static String MEDIA_DIRS = "mediadirs";
 
-    public List<String> getArchivedItems() {
-        return mHomeMenuHandling.getArchivedItems();
-    }
-
     public void triggerHomeMenuEvent() {
         mEventBus.postSticky(new HomeMenuEvent(mHomeMenuHandling.homeMenu));
-    }
-
-    public void prepareHomeMenu(List<JiveItem> homeMenu, List<String> list) {
-        mHomeMenuHandling.prepareHomeMenu(homeMenu, list);
     }
 
     // Connection state machine
@@ -160,8 +151,8 @@ public class ConnectionState {
     }
 
 //  TODO: Move to HomeMenuHandling
-    void setHomeMenu(List<JiveItem> items) {
-        mEventBus.postSticky(new HomeMenuEvent(mHomeMenuHandling.setHomeMenu(items)));
+    void setHomeMenu(List<JiveItem> items, List<String> archivedItems) {
+        mEventBus.postSticky(new HomeMenuEvent(mHomeMenuHandling.setHomeMenu(items, archivedItems)));
     }
 
 //    For menu updates sent from LMS
@@ -179,36 +170,25 @@ public class ConnectionState {
         return mHomeMenuHandling.checkIfItemIsAlreadyInArchive(toggledItem);
     }
 
-    List<JiveItem> toggleArchiveItem(JiveItem toggledItem) {
+    List<String> toggleArchiveItem(JiveItem toggledItem) {
         if (toggledItem.getNode().equals(JiveItem.ARCHIVE.getId())) {
             toggledItem.setNode(toggledItem.getOriginalNode());
-            List<JiveItem> archivedItems = new ArrayList<>();
-            for (JiveItem item : mHomeMenuHandling.homeMenu) {
-                if (item.getNode().equals(JiveItem.ARCHIVE.getId())) {
-                    archivedItems.add(item);
-                }
-            }
+            List<String> archivedItems = mHomeMenuHandling.getArchivedItems();
             if (archivedItems.isEmpty()) {
                 mHomeMenuHandling.homeMenu.remove(JiveItem.ARCHIVE);
             }
             return archivedItems;
-        } else {
-            if (!toggledItem.getId().equals(JiveItem.ARCHIVE.getId())) {
-                mHomeMenuHandling.cleanupArchive(toggledItem);
-                toggledItem.setNode(JiveItem.ARCHIVE.getId());
-            }
+        }
+
+        if (!toggledItem.getId().equals(JiveItem.ARCHIVE.getId())) {
+            mHomeMenuHandling.cleanupArchive(toggledItem);
+            toggledItem.setNode(JiveItem.ARCHIVE.getId());
         }
         if (!mHomeMenuHandling.homeMenu.contains(JiveItem.ARCHIVE)) {
             mHomeMenuHandling.homeMenu.add(JiveItem.ARCHIVE);
             mEventBus.postSticky(new HomeMenuEvent(mHomeMenuHandling.homeMenu));
         }
-        List<JiveItem> archivedItems = new ArrayList<>();
-        for (JiveItem item : mHomeMenuHandling.homeMenu) {
-            if (item.getNode().equals(JiveItem.ARCHIVE.getId())) {
-                archivedItems.add(item);
-            }
-        }
-        return archivedItems;
+        return mHomeMenuHandling.getArchivedItems();
     }
 
     String getServerVersion() {

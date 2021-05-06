@@ -135,7 +135,7 @@ public class HomeMenuActivity extends JiveItemListActivity {
                                     }
                                 });
 
-                                if ((getService().toggleArchiveItem(item)).isEmpty()) {
+                                if ((getService().toggleArchiveItem(item))) {
                                     HomeActivity.show(Squeezer.getContext());
                                 };
                             }

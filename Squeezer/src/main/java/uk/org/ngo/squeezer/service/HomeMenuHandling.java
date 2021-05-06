@@ -11,12 +11,10 @@ import uk.org.ngo.squeezer.model.MenuStatusMessage;
 
 public class HomeMenuHandling {
 
-    private static final String TAG = "HomeMenuHandling";
-
     /** Home menu tree as received from slimserver */
     public final List<JiveItem> homeMenu = new Vector<>();
 
-    public List<JiveItem> setHomeMenu(List<JiveItem> items) {
+    private List<JiveItem> resetHomeMenu(List<JiveItem> items) {
         homeMenu.clear();
         homeMenu.addAll(items);
         return homeMenu; // return it to ConnectionState
@@ -100,18 +98,19 @@ public class HomeMenuHandling {
         return archivedItems;
     }
 
-    public void prepareHomeMenu(List<JiveItem> homeMenu, List<String> list) {
+    public List<JiveItem> setHomeMenu(List<JiveItem> homeMenu, List<String> archivedItems) {
         jiveMainNodes(homeMenu);
-        if (!(list.isEmpty()) && (!homeMenu.contains(JiveItem.ARCHIVE))) {
+        if (!(archivedItems.isEmpty()) && (!homeMenu.contains(JiveItem.ARCHIVE))) {
             homeMenu.add(JiveItem.ARCHIVE);
         }
-        for (String s : list) {
+        for (String s : archivedItems) {
             for (JiveItem item : homeMenu) {
                 if  (item.getId().equals(s)) {
                     item.setNode(JiveItem.ARCHIVE.getId());
                 }
             }
         }
+        return resetHomeMenu(homeMenu);
     }
 
     private void jiveMainNodes(List<JiveItem> homeMenu) {

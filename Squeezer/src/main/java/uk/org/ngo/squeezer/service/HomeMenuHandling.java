@@ -160,7 +160,9 @@ public class HomeMenuHandling {
     }
 
     private void addNode(JiveItem jiveItem, List<JiveItem> homeMenu) {
-        if (!homeMenu.contains(jiveItem))
+        if (!homeMenu.contains(jiveItem)) {
+            jiveItem.setNode(jiveItem.getOriginalNode());
             homeMenu.add(jiveItem);
+        }
     }
 }

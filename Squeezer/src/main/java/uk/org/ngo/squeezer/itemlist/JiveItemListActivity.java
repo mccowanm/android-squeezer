@@ -56,6 +56,7 @@ import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.Util;
 import uk.org.ngo.squeezer.dialog.NetworkErrorDialogFragment;
 import uk.org.ngo.squeezer.framework.ItemAdapter;
+import uk.org.ngo.squeezer.framework.ItemListActivity;
 import uk.org.ngo.squeezer.framework.ViewParamItemView;
 import uk.org.ngo.squeezer.model.Action;
 import uk.org.ngo.squeezer.framework.BaseListActivity;
@@ -106,13 +107,18 @@ public class JiveItemListActivity extends BaseListActivity<JiveItemView, JiveIte
 
             @Override
             public JiveItemView createViewHolder(View view) {
-                return new JiveItemView(JiveItemListActivity.this, view);
+                return new JiveItemView(getActivity(), view);
             }
 
             @Override
             protected int getItemViewType(JiveItem item) {
                 return item != null && item.hasSlider() ?
                         R.layout.slider_item : (getListLayout() == ArtworkListLayout.grid) ? R.layout.grid_item : R.layout.list_item;
+            }
+
+            @Override
+            protected JiveItemListActivity getActivity() {
+                return (JiveItemListActivity) super.getActivity();
             }
         };
     }

@@ -77,8 +77,7 @@ public class SettingsFragment  extends PreferenceFragmentCompat implements
         SwitchPreferenceCompat autoConnectPref = findPreference(Preferences.KEY_AUTO_CONNECT);
         autoConnectPref.setChecked(sharedPreferences.getBoolean(Preferences.KEY_AUTO_CONNECT, true));
 
-        SwitchPreferenceCompat pausePref = findPreference(Preferences.KEY_PAUSE_ON_INCOMING_CALL);
-        pausePref.setChecked(sharedPreferences.getBoolean(Preferences.KEY_PAUSE_ON_INCOMING_CALL, true));
+        fillIncomingCallPreferences(preferences);
 
         fillScrobblePreferences(sharedPreferences);
 
@@ -144,6 +143,11 @@ public class SettingsFragment  extends PreferenceFragmentCompat implements
         useServerPathPreference.setEnabled(enabled);
         pathStructurePreference.setEnabled(enabled && !useServerPath);
         filenameStructurePreference.setEnabled(enabled && !useServerPath);
+    }
+
+    private void fillIncomingCallPreferences(Preferences preferences) {
+        ListPreference incomingCallPref = findPreference(Preferences.KEY_ACTION_ON_INCOMING_CALL);
+        fillEnumPreference(incomingCallPref, Preferences.IncomingCallAction.class, preferences.getActionOnIncomingCall());
     }
 
     private void fillDisplayPreferences(Preferences preferences) {

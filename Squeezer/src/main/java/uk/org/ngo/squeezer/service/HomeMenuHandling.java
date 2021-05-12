@@ -1,5 +1,7 @@
 package uk.org.ngo.squeezer.service;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
@@ -11,15 +13,19 @@ import java.util.Set;
 import java.util.Vector;
 
 import de.greenrobot.event.EventBus;
+import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.Squeezer;
 import uk.org.ngo.squeezer.model.DisplayMessage;
 import uk.org.ngo.squeezer.model.JiveItem;
 import uk.org.ngo.squeezer.model.MenuStatusMessage;
+import uk.org.ngo.squeezer.model.Player;
 import uk.org.ngo.squeezer.service.event.DisplayEvent;
 import uk.org.ngo.squeezer.service.event.HomeMenuEvent;
 
 public class HomeMenuHandling {
+
+    private static final String TAG = "HomeMenuHandling";
 
     /** Home menu tree as received from slimserver */
     public final List<JiveItem> homeMenu = new Vector<>();
@@ -68,22 +74,25 @@ public class HomeMenuHandling {
         }
     }
 
-    public void handleMenuStatusEvent(MenuStatusMessage event) {
-        for (JiveItem menuItem : event.menuItems) {
+    public void handleMenuStatusEvent(MenuStatusMessage event, Player activePlayer) {
+        for (JiveItem serverItem : event.menuItems) {
             JiveItem item = null;
-            for (JiveItem menu : homeMenu) {
-                if (menuItem.getId().equals(menu.getId())) {
-                    item = menu;
+            for (JiveItem clientItem : homeMenu) {
+                if (serverItem.getId().equals(clientItem.getId())) {
+                    item = clientItem;
                     break;
                 }
             }
             if (item != null) {
                 homeMenu.remove(item);
+                serverItem.setNode(item.getNode());  // for Archive
             }
             if (MenuStatusMessage.ADD.equals(event.menuDirective)) {
-                homeMenu.add(menuItem);
+                homeMenu.add(serverItem);
             }
         }
+        Log.d(TAG, "handleMenuStatusEvent: save archived items to preferences after server event");
+        new Preferences(Squeezer.getContext()).setArchivedMenuItems(getArchivedItems(), activePlayer);
         mEventBus.postSticky(new HomeMenuEvent(homeMenu));
     }
 

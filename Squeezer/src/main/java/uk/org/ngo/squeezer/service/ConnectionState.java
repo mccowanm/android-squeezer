@@ -146,11 +146,10 @@ public class ConnectionState {
         return mHomeMenuHandling;
     }
 
-//    For menu updates sent from LMS
-//    TODO: Handle node that is in Archive and gets an update from LMS here
+//    For menu updates sent from LMS, handling of archived nodes needs testing!
     void menuStatusEvent(MenuStatusMessage event) {
         if (event.playerId.equals(getActivePlayer().getId())) {
-            mHomeMenuHandling.handleMenuStatusEvent(event);
+            mHomeMenuHandling.handleMenuStatusEvent(event, getActivePlayer());
         }
     }
 

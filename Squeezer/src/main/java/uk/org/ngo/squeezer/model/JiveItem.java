@@ -51,7 +51,8 @@ public class JiveItem extends Item {
     public static final JiveItem EXTRAS = new JiveItem("extras", "home", R.string.EXTRAS, 50, Window.WindowStyle.HOME_MENU);
     public static final JiveItem SETTINGS = new JiveItem("settings", "home", R.string.SETTINGS, 1005, Window.WindowStyle.HOME_MENU);
     public static final JiveItem ADVANCED_SETTINGS = new JiveItem("advancedSettings", "settings", R.string.ADVANCED_SETTINGS, 105, Window.WindowStyle.TEXT_ONLY);
-    public static final JiveItem ARCHIVE = new JiveItem("archiveNode", "home", R.string.ARCHIVE_NODE, 1010, Window.WindowStyle.HOME_MENU);
+    public static final JiveItem ARCHIVE = new JiveItem("archiveNode", "home", R.string.ARCHIVE_NODE, 1, Window.WindowStyle.HOME_MENU);
+    public static final JiveItem CUSTOM = new JiveItem("customNode", "home", R.string.CUSTOM_NODE, 1010, Window.WindowStyle.HOME_MENU);
 
     /**
      * Information that will be requested about songs.

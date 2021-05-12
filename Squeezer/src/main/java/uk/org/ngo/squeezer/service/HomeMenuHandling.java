@@ -33,7 +33,7 @@ public class HomeMenuHandling {
     private List<JiveItem> resetHomeMenu(List<JiveItem> items) {
         homeMenu.clear();
         homeMenu.addAll(items);
-        return homeMenu; // return it to ConnectionState
+        return homeMenu;
     }
 
     void showDisplayMessage(String text) {
@@ -42,7 +42,7 @@ public class HomeMenuHandling {
         objects[0] = text;
         display.put("text", objects);
         display.put("type", (Object) "text");
-        display.put("style", (Object) "style");
+        display.put("style", (Object) "style");  // TODO: What is the proper object for style?
         DisplayMessage displayMessage = new DisplayMessage(display);
         mEventBus.post(new DisplayEvent(displayMessage));
     }
@@ -172,6 +172,7 @@ public class HomeMenuHandling {
         addNode(JiveItem.EXTRAS, homeMenu);
         addNode(JiveItem.SETTINGS, homeMenu);
         addNode(JiveItem.ADVANCED_SETTINGS, homeMenu);
+        addNode(JiveItem.CUSTOM,homeMenu);
     }
 
     private void addNode(JiveItem jiveItem, List<JiveItem> homeMenu) {

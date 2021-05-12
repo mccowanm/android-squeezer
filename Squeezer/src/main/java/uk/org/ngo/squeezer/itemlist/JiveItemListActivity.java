@@ -318,7 +318,6 @@ public class JiveItemListActivity extends BaseListActivity<JiveItemView, JiveIte
 
     @Override
     protected void orderPage(@NonNull ISqueezeService service, int start) {
-        Log.d(TAG, "orderPage: BEN BEN");
         if (parent != null) {
             if (action == null || (parent.hasInput() && !parent.isInputReady())) {
                 showContent();

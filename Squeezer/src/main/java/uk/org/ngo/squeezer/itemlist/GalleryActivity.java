@@ -32,6 +32,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.framework.BaseActivity;
@@ -43,8 +44,6 @@ import uk.org.ngo.squeezer.service.event.HandshakeComplete;
 import uk.org.ngo.squeezer.util.ImageFetcher;
 import uk.org.ngo.squeezer.widget.GridAutofitLayoutManager;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 public class GalleryActivity extends BaseActivity implements IServiceItemListCallback<JiveItem> {
 
     private ImageAdapter imageAdapter;
@@ -54,7 +53,7 @@ public class GalleryActivity extends BaseActivity implements IServiceItemListCal
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Bundle extras = checkNotNull(getIntent().getExtras(), "intent did not contain extras");
+        Bundle extras = Objects.requireNonNull(getIntent().getExtras(), "intent did not contain extras");
         action = extras.getParcelable(Action.class.getName());
 
         imageAdapter = new ImageAdapter();
@@ -103,12 +102,7 @@ public class GalleryActivity extends BaseActivity implements IServiceItemListCal
         public void bindData(final Image image) {
             ImageFetcher.getInstance(artwork.getContext()).loadImage(image.artworkId, artwork);
             caption.setText(image.caption);
-            artwork.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    SlideShow.show(GalleryActivity.this, getBindingAdapterPosition(), ((ImageAdapter)getBindingAdapter()).images);
-                }
-            });
+            artwork.setOnClickListener(view -> SlideShow.show(GalleryActivity.this, getBindingAdapterPosition(), ((ImageAdapter)getBindingAdapter()).images));
         }
     }
 

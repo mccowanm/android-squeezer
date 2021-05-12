@@ -60,9 +60,6 @@
     <string name="settings_autoconnect_summary">WLAN aktivieren und verbinden, sobald WLAN verfügbar
         ist
     </string>
-    <string name="settings_pause_on_incoming_call_title">Bei Anruf pausieren</string>
-    <string name="settings_pause_on_incoming_call_summary">Die Wiedergabe wird pausiert, sobald ein
-        Anruf angenommen oder getätigt wird.</string>
     <string name="settings_scrobble_title">Scrobbeln nach Last.fm</string>
     <string name="settings_scrobble_on">Lied-Informationen werden an Last.fm gesendet</string>
     <string name="settings_scrobble_off">Lied-Informationen werden nicht an Last.fm gesendet

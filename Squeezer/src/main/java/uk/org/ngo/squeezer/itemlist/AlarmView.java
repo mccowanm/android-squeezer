@@ -45,7 +45,6 @@ import com.google.android.material.timepicker.TimeFormat;
 import java.text.DateFormatSymbols;
 import java.util.List;
 
-import javax.annotation.Nonnull;
 
 import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
@@ -269,9 +268,8 @@ public class AlarmView extends ItemViewHolder<Alarm> {
             return (alarmPlaylists.get(position).getId() != null);
         }
 
-        @NonNull
         @Override
-        public @Nonnull View getView(int position, View convertView, @NonNull ViewGroup parent) {
+        public @NonNull View getView(int position, View convertView, @NonNull ViewGroup parent) {
            return Util.getSpinnerItemView(getActivity(), convertView, parent, getItem(position).getName());
         }
 

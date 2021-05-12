@@ -28,7 +28,6 @@ import android.util.Log;
 
 import androidx.annotation.MainThread;
 import androidx.appcompat.app.ActionBar;
-import androidx.preference.PreferenceManager;
 
 import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
@@ -87,15 +86,7 @@ public class HomeActivity extends HomeMenuActivity {
         }
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-
-    private static final String TAG = "HomeActivity";
-    
     public static void show(Context context) {
-        Log.d(TAG, "show: BEN show home menu");
         Intent intent = new Intent(context, HomeActivity.class)
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);

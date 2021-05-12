@@ -50,6 +50,7 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import uk.org.ngo.squeezer.NowPlayingActivity;
 import uk.org.ngo.squeezer.Preferences;
@@ -69,8 +70,6 @@ import uk.org.ngo.squeezer.util.ImageFetcher;
 import uk.org.ngo.squeezer.util.ThemeManager;
 import uk.org.ngo.squeezer.widget.DividerItemDecoration;
 import uk.org.ngo.squeezer.widget.GridAutofitLayoutManager;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /*
  * The activity's content view scrolls in from the right, and disappear to the left, to provide a
@@ -104,19 +103,7 @@ public class JiveItemListActivity extends BaseListActivity<JiveItemView, JiveIte
 
     @Override
     protected ItemAdapter<JiveItemView, JiveItem> createItemListAdapter() {
-        return new ItemAdapter<JiveItemView, JiveItem>(this) {
-
-            @Override
-            public JiveItemView createViewHolder(View view) {
-                return new JiveItemView(JiveItemListActivity.this, view);
-            }
-
-            @Override
-            protected int getItemViewType(JiveItem item) {
-                return item != null && item.hasSlider() ?
-                        R.layout.slider_item : (getListLayout() == ArtworkListLayout.grid) ? R.layout.grid_item : R.layout.list_item;
-            }
-        };
+        return new JiveItemAdapter(this);
     }
 
     @Override
@@ -124,7 +111,7 @@ public class JiveItemListActivity extends BaseListActivity<JiveItemView, JiveIte
         dividerItemDecoration = new DividerItemDecoration(this, LinearLayoutManager.VERTICAL);
         super.onCreate(savedInstanceState);
 
-        Bundle extras = checkNotNull(getIntent().getExtras(), "intent did not contain extras");
+        Bundle extras = Objects.requireNonNull(getIntent().getExtras(), "intent did not contain extras");
         register = extras.getBoolean("register");
         parent = extras.getParcelable(JiveItem.class.getName());
         action = extras.getParcelable(Action.class.getName());
@@ -134,7 +121,7 @@ public class JiveItemListActivity extends BaseListActivity<JiveItemView, JiveIte
 
         // If initial setup is performed, use it
         if (savedInstanceState != null && savedInstanceState.containsKey("window")) {
-            applyWindow((Window) savedInstanceState.getParcelable("window"));
+            applyWindow(savedInstanceState.getParcelable("window"));
         } else {
             if (parent != null && parent.window != null) {
                 applyWindow(parent.window);
@@ -700,4 +687,26 @@ public class JiveItemListActivity extends BaseListActivity<JiveItemView, JiveIte
         return intent;
     }
 
+    private static class JiveItemAdapter extends ItemAdapter<JiveItemView, JiveItem> {
+
+        public JiveItemAdapter(JiveItemListActivity activity) {
+            super(activity);
+        }
+
+        @Override
+        public JiveItemView createViewHolder(View view) {
+            return new JiveItemView(getActivity(), view);
+        }
+
+        @Override
+        protected int getItemViewType(JiveItem item) {
+            return item != null && item.hasSlider() ?
+                    R.layout.slider_item : (getActivity().getListLayout() == ArtworkListLayout.grid) ? R.layout.grid_item : R.layout.list_item;
+        }
+
+        @Override
+        protected JiveItemListActivity getActivity() {
+            return (JiveItemListActivity) super.getActivity();
+        }
+    }
 }

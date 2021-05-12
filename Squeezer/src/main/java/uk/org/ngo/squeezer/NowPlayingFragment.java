@@ -59,8 +59,6 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.slider.Slider;
-import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -608,11 +606,6 @@ public class NowPlayingFragment extends Fragment {
     }
 
     /**
-     * Joins elements together with ' - ', skipping nulls.
-     */
-    protected static final Joiner mJoiner = Joiner.on(" - ").skipNulls();
-
-    /**
      * Update the UI when the song changes, either because the track has changed, or the
      * active player has changed.
      *
@@ -658,9 +651,7 @@ public class NowPlayingFragment extends Fragment {
                     }
                 });
             } else {
-                artistAlbumText.setText(mJoiner.join(
-                        Strings.emptyToNull(song.getArtist()),
-                        Strings.emptyToNull(song.getAlbum())));
+                artistAlbumText.setText(Util.joinSkipEmpty(" - ", song.getArtist(), song.getAlbum()));
             }
         } else {
             trackText.setText("");

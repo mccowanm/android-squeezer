@@ -25,10 +25,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringDef;
 
-import com.google.common.collect.ImmutableList;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -145,7 +144,7 @@ public class PlayerState implements Parcelable {
     private String mSyncMaster;
 
     /** The players synced to this player. */
-    private ImmutableList<String> mSyncSlaves = new ImmutableList.Builder<String>().build();
+    private List<String> mSyncSlaves = Collections.emptyList();
 
     /** How the server is subscribed to the player's status changes. */
     @NonNull
@@ -379,11 +378,11 @@ public class PlayerState implements Parcelable {
         if (syncSlaves.equals(mSyncSlaves))
             return false;
 
-        mSyncSlaves = ImmutableList.copyOf(syncSlaves);
+        mSyncSlaves = Collections.unmodifiableList(syncSlaves);
         return true;
     }
 
-    public ImmutableList<String> getSyncSlaves() {
+    public List<String> getSyncSlaves() {
         return mSyncSlaves;
     }
 

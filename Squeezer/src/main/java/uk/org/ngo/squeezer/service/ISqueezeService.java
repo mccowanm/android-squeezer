@@ -118,6 +118,7 @@ public interface ISqueezeService {
      * Sets the volume to the absolute volume in newVolume, which will be clamped to the
      * interval [0, 100].
      */
+    void mute();
     void toggleMute();
     void adjustVolumeTo(Player player, int newVolume);
     void toggleMute(Player player);

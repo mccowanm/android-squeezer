@@ -3,14 +3,20 @@ package uk.org.ngo.squeezer.service;
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
 import de.greenrobot.event.EventBus;
+import uk.org.ngo.squeezer.R;
+import uk.org.ngo.squeezer.Squeezer;
+import uk.org.ngo.squeezer.model.DisplayMessage;
 import uk.org.ngo.squeezer.model.JiveItem;
 import uk.org.ngo.squeezer.model.MenuStatusMessage;
+import uk.org.ngo.squeezer.service.event.DisplayEvent;
 import uk.org.ngo.squeezer.service.event.HomeMenuEvent;
 
 public class HomeMenuHandling {
@@ -30,9 +36,20 @@ public class HomeMenuHandling {
         return homeMenu; // return it to ConnectionState
     }
 
+    void showDisplayMessage(String text) {
+        Map<String, Object> display = new HashMap<>();
+        Object[] objects = new Object[1];
+        objects[0] = text;
+        display.put("text", objects);
+        display.put("type", (Object) "text");
+        display.put("style", (Object) "style");
+        DisplayMessage displayMessage = new DisplayMessage(display);
+        mEventBus.post(new DisplayEvent(displayMessage));
+    }
+
     boolean checkIfItemIsAlreadyInArchive(JiveItem toggledItem) {
         if (getParents(toggledItem.getNode()).contains(JiveItem.ARCHIVE)) {
-//            TODO: Message to the user
+            showDisplayMessage(Squeezer.getContext().getResources().getString(R.string.MENU_IS_SUBMENU_IN_ARCHIVE));
             return Boolean.TRUE;
         }
         else {
@@ -84,13 +101,11 @@ public class HomeMenuHandling {
             return archivedItems;
         }
 
-        if (!toggledItem.getId().equals(JiveItem.ARCHIVE.getId())) {
-            cleanupArchive(toggledItem);
-            toggledItem.setNode(JiveItem.ARCHIVE.getId());
-        }
+        cleanupArchive(toggledItem);
+        toggledItem.setNode(JiveItem.ARCHIVE.getId());
         if (!homeMenu.contains(JiveItem.ARCHIVE)) {
             homeMenu.add(JiveItem.ARCHIVE);
-            mEventBus.postSticky(new HomeMenuEvent(homeMenu));  // triggerHomeMenuEvent();
+            mEventBus.postSticky(new HomeMenuEvent(homeMenu));
         }
         return getArchivedItems();
     }

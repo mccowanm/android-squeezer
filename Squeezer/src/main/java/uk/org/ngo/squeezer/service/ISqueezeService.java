@@ -218,4 +218,10 @@ public interface ISqueezeService {
      * Trigger the event from another class
      */
     void triggerHomeMenuEvent();
+
+    /**
+     * Trigger the DisplayMessage from another class
+     * @param text
+     */
+    void triggerDisplayMessage(String text);
 }

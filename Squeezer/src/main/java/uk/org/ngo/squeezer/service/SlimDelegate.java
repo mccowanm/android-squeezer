@@ -154,6 +154,10 @@ class SlimDelegate {
         mClient.getConnectionState().getHomeMenuHandling().triggerHomeMenuEvent();
     }
 
+    public void triggerDisplayMessage(String text) {
+        mClient.getConnectionState().getHomeMenuHandling().showDisplayMessage(text);
+    }
+
     static class Command extends SlimCommand {
         final SlimClient slimClient;
         final protected Player player;

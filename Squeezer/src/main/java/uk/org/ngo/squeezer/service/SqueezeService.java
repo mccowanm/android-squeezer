@@ -49,8 +49,6 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.RemoteViews;
 
-import com.google.common.io.Files;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -1404,6 +1402,11 @@ public class SqueezeService extends Service {
 
         public void triggerHomeMenuEvent() {
             mDelegate.triggerHomeMenuEvent();
+        }
+
+        @Override
+        public void triggerDisplayMessage(String text) {
+            mDelegate.triggerDisplayMessage(text);
         }
     }
 

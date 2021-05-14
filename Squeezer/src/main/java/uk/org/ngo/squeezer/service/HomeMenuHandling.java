@@ -74,7 +74,7 @@ public class HomeMenuHandling {
         }
     }
 
-    public void handleMenuStatusEvent(MenuStatusMessage event, Player activePlayer) {
+    public void handleMenuStatusEvent(MenuStatusMessage event) {
         for (JiveItem serverItem : event.menuItems) {
             JiveItem item = null;
             for (JiveItem clientItem : homeMenu) {
@@ -91,8 +91,6 @@ public class HomeMenuHandling {
                 homeMenu.add(serverItem);
             }
         }
-        Log.d(TAG, "handleMenuStatusEvent: save archived items to preferences after server event");
-        new Preferences(Squeezer.getContext()).setArchivedMenuItems(getArchivedItems(), activePlayer);
         mEventBus.postSticky(new HomeMenuEvent(homeMenu));
     }
 

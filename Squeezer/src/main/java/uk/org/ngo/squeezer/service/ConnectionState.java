@@ -149,7 +149,7 @@ public class ConnectionState {
 //    For menu updates sent from LMS, handling of archived nodes needs testing!
     void menuStatusEvent(MenuStatusMessage event) {
         if (event.playerId.equals(getActivePlayer().getId())) {
-            mHomeMenuHandling.handleMenuStatusEvent(event, getActivePlayer());
+            mHomeMenuHandling.handleMenuStatusEvent(event);
         }
     }
 

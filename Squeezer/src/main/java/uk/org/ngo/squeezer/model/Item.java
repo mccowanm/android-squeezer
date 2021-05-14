@@ -18,6 +18,7 @@ package uk.org.ngo.squeezer.model;
 
 import android.net.Uri;
 import android.os.Parcelable;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -91,7 +92,9 @@ public abstract class Item implements Parcelable {
         return Util.getInt(record, fieldName, defaultValue);
     }
 
+    private static final String TAG = "Item";
     protected static String getString(Map<String, Object> record, String fieldName) {
+//        Log.d(TAG, "getString: BEN fieldName from record: " + fieldName);
         return Util.getString(record, fieldName);
     }
 

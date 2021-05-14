@@ -18,6 +18,7 @@ package uk.org.ngo.squeezer.service;
 
 import android.os.SystemClock;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -68,8 +69,10 @@ abstract class BaseClient implements SlimClient {
         return mConnectionState;
     }
 
+    private static final String TAG = "BaseClient";
     @Override
     public <T> void requestItems(Player player, String[] cmd, Map<String, Object> params, int start, int pageSize, IServiceItemListCallback<T> callback) {
+        Log.d(TAG, "requestItems: BEN ");
         final BaseClient.BrowseRequest<T> browseRequest = new BaseClient.BrowseRequest<>(player, cmd, params, start, pageSize, callback);
         internalRequestItems(browseRequest);
     }

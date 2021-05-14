@@ -31,6 +31,9 @@ import uk.org.ngo.squeezer.Util;
  * http://wiki.slimdevices.com/index.php/SqueezeCenterSqueezePlayInterface#.3Cactions_fields.3E
  */
 public class Action implements Parcelable {
+
+    private static final String TAG = "Action";
+
     private static final String INPUT_PLACEHOLDER = "__INPUT__";
     private static final String TAGGEDINPUT_PLACEHOLDER = "__TAGGEDINPUT__";
 

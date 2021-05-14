@@ -16,6 +16,8 @@
 
 package uk.org.ngo.squeezer.service;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import java.util.List;
@@ -29,6 +31,9 @@ import uk.org.ngo.squeezer.model.PlayerState;
 import uk.org.ngo.squeezer.model.SlimCommand;
 
 class SlimDelegate {
+
+    private static final String TAG = "SlimDelegate";
+
     @NonNull private final SlimClient mClient;
 
     SlimDelegate(@NonNull EventBus eventBus) {
@@ -222,6 +227,7 @@ class SlimDelegate {
             this.callback = callback;
             this.start = start;
             this.pageSize = pageSize;
+            Log.d(TAG, "Request: BEN - constructor Request");
         }
 
         private Request(SlimClient slimClient, Player player, int start, IServiceItemListCallback<T> callback) {

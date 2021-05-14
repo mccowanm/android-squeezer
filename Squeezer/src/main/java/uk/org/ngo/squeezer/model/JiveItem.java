@@ -22,6 +22,7 @@ import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.Parcel;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
@@ -588,7 +589,7 @@ public class JiveItem extends Item {
         } else {
             actionHolder.action = extractJsonAction(baseRecord, actionRecord, itemParams);
         }
-
+//        Log.d(TAG, "extractAction: BEN actionHolder: " + actionHolder.toString());
         return actionHolder;
     }
 

@@ -30,14 +30,12 @@ import java.util.List;
 
 import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
-import uk.org.ngo.squeezer.Squeezer;
 import uk.org.ngo.squeezer.framework.ItemAdapter;
 import uk.org.ngo.squeezer.itemlist.dialog.ArtworkListLayout;
 import uk.org.ngo.squeezer.model.JiveItem;
 import uk.org.ngo.squeezer.model.Window;
 import uk.org.ngo.squeezer.service.ISqueezeService;
 import uk.org.ngo.squeezer.service.event.HomeMenuEvent;
-import uk.org.ngo.squeezer.widget.UndoBarController;
 
 public class HomeMenuActivity extends JiveItemListActivity {
 
@@ -100,8 +98,6 @@ public class HomeMenuActivity extends JiveItemListActivity {
         activity.startActivity(intent);
     }
 
-    Activity mActivity = this;
-
     @Override
     protected ItemAdapter<JiveItemView, JiveItem> createItemListAdapter() {
 
@@ -109,44 +105,7 @@ public class HomeMenuActivity extends JiveItemListActivity {
 
             @Override
             public JiveItemView createViewHolder(View view) {
-                return new JiveItemView(HomeMenuActivity.this, view) {
-                    @Override
-                    public void bindView(JiveItem item) {
-                        super.bindView(item);
-                        itemView.setOnLongClickListener(view -> {
-                            if (!item.getId().equals(JiveItem.ARCHIVE.getId())) {
-                                if (!item.getNode().equals(JiveItem.ARCHIVE.getId())) {
-                                    if (getService().checkIfItemIsAlreadyInArchive(item)) {
-                                        return true;
-                                    }
-                                }
-                                removeItem(getAdapterPosition());
-                                UndoBarController.show(mActivity, R.string.MENU_ITEM_MOVED, new UndoBarController.UndoListener() {
-                                    @Override
-                                    public void onUndo() {
-                                        getService().toggleArchiveItem(item);
-                                        getService().triggerHomeMenuEvent();
-                                    }
-                                    @Override
-                                    public void onDone() {
-                                    }
-                                });
-
-                                if ((getService().toggleArchiveItem(item))) {
-//                                    TODO: Do not instantly show the next screen or put UndoBar onto next screen
-                                    HomeActivity.show(Squeezer.getContext());
-                                    getService().triggerDisplayMessage(Squeezer.getContext().getResources()
-                                            .getString(R.string.ARCHIVE_NODE_REMOVED));
-                                };
-                            }
-                            else {
-                                getService().triggerDisplayMessage(Squeezer.getContext().getResources()
-                                        .getString(R.string.ARCHIVE_CANNOT_BE_ARCHIVED));
-                            }
-                            return true;
-                        });
-                    }
-                };
+                return new HomeMenuJiveItemView(HomeMenuActivity.this, view, this);
             }
 
             @Override

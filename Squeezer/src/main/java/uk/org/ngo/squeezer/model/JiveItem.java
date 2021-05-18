@@ -215,8 +215,6 @@ public class JiveItem extends Item {
         result.put("appletCustomizeHome", R.drawable.icon_settings_home);
         result.put("settingsPlayerNameChange", R.drawable.icon_settings_name);
         result.put("advancedSettings", R.drawable.icon_settings_adv);
-//        result.put("archive", R.drawable.icon_settings);
-//        TODO: Icon for Archive
 
         return result;
     }
@@ -230,6 +228,7 @@ public class JiveItem extends Item {
     private static Map<String, Integer> initializeItemIcons() {
         Map<String, Integer> result = new HashMap<>();
 
+        result.put("archiveNode", R.drawable.ic_archive);
         result.put("radio", R.drawable.internet_radio);
         result.put("radios", R.drawable.internet_radio);
         result.put("favorites", R.drawable.favorites);

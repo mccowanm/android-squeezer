@@ -51,8 +51,11 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
     /** Height of the icon, if VIEW_PARAM_ICON is used. */
     private int mIconHeight;
 
+    JiveItemListActivity mActivity;
+
     JiveItemView(@NonNull JiveItemListActivity activity, @NonNull View view) {
         super(activity, view);
+        mActivity = activity;
         setWindowStyle(activity.window.windowStyle);
         this.logicDelegate = new JiveItemViewLogic(activity);
         setLoadingViewParams(viewParamIcon() | VIEW_PARAM_TWO_LINE );
@@ -122,12 +125,12 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
             onIcon();
         }
 
-        text1.setEnabled(isSelectable(item));
-        text2.setEnabled(isSelectable(item));
+        text1.setAlpha(getAlpha(item));
+        text2.setAlpha(getAlpha(item));
         itemView.setOnClickListener(view -> onItemSelected(item));
         itemView.setOnLongClickListener(view -> {
-//            TODO: Get the service and send a message to the user that this item cannot be archived yet
-            Log.d(TAG, "bindView: BEN *************** long clicked ");
+            mActivity.getService().triggerDisplayMessage(Squeezer.getContext().getResources()
+                    .getString(R.string.ITEM_CANNOT_BE_ARCHIVED));
             return true;
         });
         itemView.setClickable(isSelectable(item));
@@ -142,6 +145,10 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
                 contextMenuRadio.setChecked(item.radio);
             }
         }
+    }
+
+    private float getAlpha(JiveItem item) {
+        return isSelectable(item) ? 1.0f : (item.checkbox != null || item.radio != null) ? 0.25f : 0.75f;
     }
 
 

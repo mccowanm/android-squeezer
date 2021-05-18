@@ -232,6 +232,7 @@ public class JiveItem extends Item {
     private static Map<String, Integer> initializeItemIcons() {
         Map<String, Integer> result = new HashMap<>();
 
+        result.put("archiveNode", R.drawable.ic_archive);
         result.put("radio", R.drawable.internet_radio);
         result.put("radios", R.drawable.internet_radio);
         result.put("favorites", R.drawable.favorites);
@@ -589,7 +590,7 @@ public class JiveItem extends Item {
         } else {
             actionHolder.action = extractJsonAction(baseRecord, actionRecord, itemParams);
         }
-//        Log.d(TAG, "extractAction: BEN actionHolder: " + actionHolder.toString());
+
         return actionHolder;
     }
 

@@ -1,7 +1,5 @@
 package uk.org.ngo.squeezer.service;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
@@ -13,19 +11,15 @@ import java.util.Set;
 import java.util.Vector;
 
 import de.greenrobot.event.EventBus;
-import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.Squeezer;
 import uk.org.ngo.squeezer.model.DisplayMessage;
 import uk.org.ngo.squeezer.model.JiveItem;
 import uk.org.ngo.squeezer.model.MenuStatusMessage;
-import uk.org.ngo.squeezer.model.Player;
 import uk.org.ngo.squeezer.service.event.DisplayEvent;
 import uk.org.ngo.squeezer.service.event.HomeMenuEvent;
 
 public class HomeMenuHandling {
-
-    private static final String TAG = "HomeMenuHandling";
 
     /** Home menu tree as received from slimserver */
     public final List<JiveItem> homeMenu = new Vector<>();
@@ -44,11 +38,9 @@ public class HomeMenuHandling {
 
     void showDisplayMessage(String text) {
         Map<String, Object> display = new HashMap<>();
-        Object[] objects = new Object[1];
-        objects[0] = text;
-        display.put("text", objects);
-        display.put("type", (Object) "text");
-        display.put("style", (Object) "style");  // TODO: What is the proper object for style?
+        display.put("text", new String[]{ text });
+        display.put("type", "text");
+        display.put("style", "style");  // TODO: What is the proper object for style?
         DisplayMessage displayMessage = new DisplayMessage(display);
         mEventBus.post(new DisplayEvent(displayMessage));
     }
@@ -179,7 +171,6 @@ public class HomeMenuHandling {
         addNode(JiveItem.EXTRAS, homeMenu);
         addNode(JiveItem.SETTINGS, homeMenu);
         addNode(JiveItem.ADVANCED_SETTINGS, homeMenu);
-        addNode(JiveItem.CUSTOM,homeMenu);
     }
 
     private void addNode(JiveItem jiveItem, List<JiveItem> homeMenu) {

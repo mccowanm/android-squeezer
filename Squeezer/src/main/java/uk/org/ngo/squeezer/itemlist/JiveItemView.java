@@ -17,6 +17,7 @@
 package uk.org.ngo.squeezer.itemlist;
 
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -26,6 +27,7 @@ import java.util.EnumSet;
 
 import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
+import uk.org.ngo.squeezer.Squeezer;
 import uk.org.ngo.squeezer.framework.ItemAdapter;
 import uk.org.ngo.squeezer.framework.ViewParamItemView;
 import uk.org.ngo.squeezer.framework.ItemListActivity;
@@ -37,6 +39,9 @@ import uk.org.ngo.squeezer.itemlist.dialog.ArtworkListLayout;
 import uk.org.ngo.squeezer.util.ImageFetcher;
 
 public class JiveItemView extends ViewParamItemView<JiveItem> {
+
+    private static final String TAG = "JiveItemView";
+
     private JiveItemViewLogic logicDelegate;
     private Window.WindowStyle windowStyle;
 
@@ -120,6 +125,11 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
         text1.setEnabled(isSelectable(item));
         text2.setEnabled(isSelectable(item));
         itemView.setOnClickListener(view -> onItemSelected(item));
+        itemView.setOnLongClickListener(view -> {
+//            TODO: Get the service and send a message to the user that this item cannot be archived yet
+            Log.d(TAG, "bindView: BEN *************** long clicked ");
+            return true;
+        });
         itemView.setClickable(isSelectable(item));
 
         if (item.hasContextMenu()) {

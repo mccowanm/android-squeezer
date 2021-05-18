@@ -8,6 +8,11 @@ import uk.org.ngo.squeezer.framework.ItemAdapter;
 import uk.org.ngo.squeezer.model.JiveItem;
 import uk.org.ngo.squeezer.widget.UndoBarController;
 
+
+/*
+ Class for the long click listener that puts menu items into the Archive node and provides an UndoBar.
+ */
+
 public class HomeMenuJiveItemView extends JiveItemView {
 
     HomeMenuActivity mHomeMenuActivity;

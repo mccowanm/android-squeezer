@@ -27,6 +27,7 @@ import java.util.EnumSet;
 
 import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
+import uk.org.ngo.squeezer.Squeezer;
 import uk.org.ngo.squeezer.framework.ItemAdapter;
 import uk.org.ngo.squeezer.framework.ViewParamItemView;
 import uk.org.ngo.squeezer.framework.ItemListActivity;
@@ -50,8 +51,11 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
     /** Height of the icon, if VIEW_PARAM_ICON is used. */
     private int mIconHeight;
 
+    JiveItemListActivity mActivity;
+
     JiveItemView(@NonNull JiveItemListActivity activity, @NonNull View view) {
         super(activity, view);
+        mActivity = activity;
         setWindowStyle(activity.window.windowStyle);
         this.logicDelegate = new JiveItemViewLogic(activity);
         setLoadingViewParams(viewParamIcon() | VIEW_PARAM_TWO_LINE );
@@ -125,8 +129,8 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
         text2.setAlpha(getAlpha(item));
         itemView.setOnClickListener(view -> onItemSelected(item));
         itemView.setOnLongClickListener(view -> {
-//            TODO: get Service and send message to the user
-            Log.d(TAG, "bindView: BEN ******** item cannot be archived yet");
+            mActivity.getService().triggerDisplayMessage(Squeezer.getContext().getResources()
+                    .getString(R.string.ITEM_CANNOT_BE_ARCHIVED));
             return true;
         });
         itemView.setClickable(isSelectable(item));

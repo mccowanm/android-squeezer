@@ -1396,17 +1396,12 @@ public class SqueezeService extends Service {
         }
 
         @Override
-        public boolean checkIfItemIsAlreadyInArchive(JiveItem item) {
-           return mDelegate.checkIfItemIsAlreadyInArchive(item);
+        public boolean isInArchive(JiveItem item) {
+           return mDelegate.isInArchive(item);
         }
 
         public void triggerHomeMenuEvent() {
             mDelegate.triggerHomeMenuEvent();
-        }
-
-        @Override
-        public void triggerDisplayMessage(String text) {
-            mDelegate.triggerDisplayMessage(text);
         }
     }
 

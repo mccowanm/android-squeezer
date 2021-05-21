@@ -16,9 +16,9 @@ import uk.org.ngo.squeezer.widget.UndoBarController;
 public class HomeMenuJiveItemView extends JiveItemView {
 
     HomeMenuActivity mHomeMenuActivity;
-    ItemAdapter mItemAdapter;
+    ItemAdapter<JiveItemView, JiveItem> mItemAdapter;
 
-    public HomeMenuJiveItemView(HomeMenuActivity homeMenuActivity, View view, ItemAdapter adapter) {
+    public HomeMenuJiveItemView(HomeMenuActivity homeMenuActivity, View view, ItemAdapter<JiveItemView, JiveItem> adapter) {
         super(homeMenuActivity, view);
         mHomeMenuActivity = homeMenuActivity;
         mItemAdapter = adapter;
@@ -30,7 +30,8 @@ public class HomeMenuJiveItemView extends JiveItemView {
         itemView.setOnLongClickListener(view -> {
             if (!item.getId().equals(JiveItem.ARCHIVE.getId())) {
                 if (!item.getNode().equals(JiveItem.ARCHIVE.getId())) {
-                    if (mHomeMenuActivity.getService().checkIfItemIsAlreadyInArchive(item)) {
+                    if (mHomeMenuActivity.getService().isInArchive(item)) {
+                        mHomeMenuActivity.showDisplayMessage(R.string.MENU_IS_SUBMENU_IN_ARCHIVE);
                         return true;
                     }
                 }
@@ -47,15 +48,13 @@ public class HomeMenuJiveItemView extends JiveItemView {
                 });
 
                 if ((mHomeMenuActivity.getService().toggleArchiveItem(item))) {
-//                                    TODO: Do not instantly show the next screen or put UndoBar onto next screen
+                    // TODO: Do not instantly show the next screen or put UndoBar onto next screen
                     HomeActivity.show(Squeezer.getContext());
-                    mHomeMenuActivity.getService().triggerDisplayMessage(Squeezer.getContext().getResources()
-                            .getString(R.string.ARCHIVE_NODE_REMOVED));
-                };
+                    mHomeMenuActivity.showDisplayMessage(R.string.ARCHIVE_NODE_REMOVED);
+                }
             }
             else {
-                mHomeMenuActivity.getService().triggerDisplayMessage(Squeezer.getContext().getResources()
-                        .getString(R.string.ARCHIVE_CANNOT_BE_ARCHIVED));
+                mHomeMenuActivity.showDisplayMessage(R.string.ARCHIVE_CANNOT_BE_ARCHIVED);
             }
             return true;
         });

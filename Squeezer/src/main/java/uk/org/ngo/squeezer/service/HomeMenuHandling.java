@@ -3,20 +3,14 @@ package uk.org.ngo.squeezer.service;
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
 import de.greenrobot.event.EventBus;
-import uk.org.ngo.squeezer.R;
-import uk.org.ngo.squeezer.Squeezer;
-import uk.org.ngo.squeezer.model.DisplayMessage;
 import uk.org.ngo.squeezer.model.JiveItem;
 import uk.org.ngo.squeezer.model.MenuStatusMessage;
-import uk.org.ngo.squeezer.service.event.DisplayEvent;
 import uk.org.ngo.squeezer.service.event.HomeMenuEvent;
 
 public class HomeMenuHandling {
@@ -36,23 +30,8 @@ public class HomeMenuHandling {
         return homeMenu;
     }
 
-    void showDisplayMessage(String text) {
-        Map<String, Object> display = new HashMap<>();
-        display.put("text", new String[]{ text });
-        display.put("type", "text");
-        display.put("style", "style");  // TODO: What is the proper object for style?
-        DisplayMessage displayMessage = new DisplayMessage(display);
-        mEventBus.post(new DisplayEvent(displayMessage));
-    }
-
-    boolean checkIfItemIsAlreadyInArchive(JiveItem toggledItem) {
-        if (getParents(toggledItem.getNode()).contains(JiveItem.ARCHIVE)) {
-            showDisplayMessage(Squeezer.getContext().getResources().getString(R.string.MENU_IS_SUBMENU_IN_ARCHIVE));
-            return Boolean.TRUE;
-        }
-        else {
-            return Boolean.FALSE;
-        }
+    boolean isInArchive(JiveItem toggledItem) {
+        return getParents(toggledItem.getNode()).contains(JiveItem.ARCHIVE) ? Boolean.TRUE : Boolean.FALSE;
     }
 
     void cleanupArchive(JiveItem toggledItem) {
@@ -122,7 +101,7 @@ public class HomeMenuHandling {
     }
 
     private void getParents(String node, Set<JiveItem> parents, HomeMenuHandling.GetParent getParent) {
-        if (node.equals(JiveItem.HOME.getId())) {          // if we are done
+        if (node == null || node.equals(JiveItem.HOME.getId())) {          // if we are done
             return;
         }
         for (JiveItem menuItem : homeMenu) {

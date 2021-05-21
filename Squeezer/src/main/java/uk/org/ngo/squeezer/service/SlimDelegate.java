@@ -146,16 +146,12 @@ class SlimDelegate {
         return mClient.getConnectionState().getHomeMenuHandling().toggleArchiveItem(item);
     }
 
-    public boolean checkIfItemIsAlreadyInArchive(JiveItem item) {
-        return mClient.getConnectionState().getHomeMenuHandling().checkIfItemIsAlreadyInArchive(item);
+    public boolean isInArchive(JiveItem item) {
+        return mClient.getConnectionState().getHomeMenuHandling().isInArchive(item);
     }
 
     public void triggerHomeMenuEvent() {
         mClient.getConnectionState().getHomeMenuHandling().triggerHomeMenuEvent();
-    }
-
-    public void triggerDisplayMessage(String text) {
-        mClient.getConnectionState().getHomeMenuHandling().showDisplayMessage(text);
     }
 
     static class Command extends SlimCommand {

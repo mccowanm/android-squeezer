@@ -26,7 +26,6 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import androidx.annotation.MainThread;
-import androidx.appcompat.app.ActionBar;
 import androidx.preference.PreferenceManager;
 
 import uk.org.ngo.squeezer.Preferences;
@@ -42,12 +41,6 @@ public class HomeActivity extends HomeMenuActivity {
     public void onCreate(Bundle savedInstanceState) {
         getIntent().putExtra(JiveItem.class.getName(), JiveItem.HOME);
         super.onCreate(savedInstanceState);
-
-        // Turn off the home icon.
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(false);
-        }
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 

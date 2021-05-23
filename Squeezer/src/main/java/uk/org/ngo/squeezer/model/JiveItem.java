@@ -94,6 +94,48 @@ public class JiveItem extends Item {
         record.put("node", node);
         record.put("name", Squeezer.getContext().getString(text));
         record.put("weight", weight);
+        if (id.equals("customNode")) {
+
+//          add actions to customNode
+
+            Object[] customCmd = {"start"};
+
+            Map<String, Object> customIsContextWindow = new HashMap<>();
+            Map<String, Object> customParams = new HashMap<>();
+            Map<String, Object> CustomActionInItemAction = new HashMap<>();
+            Map<String, Object> customGoItemAction = new HashMap<>();
+            Map<String, Object> customActionInBaseAction = new HashMap<>();
+            Map<String, Object> customMore = new HashMap<>();
+            Map<String, Object> customBaseAction = new HashMap<>();
+
+            customIsContextWindow.put("isContextMenu", "1");
+
+            customParams.put("context", "playlist");
+            customParams.put("menu", "track");
+
+            CustomActionInItemAction.put("cmd", customCmd);
+            CustomActionInItemAction.put("player", "0");
+//            customGoAction.put("params", customParams);
+
+            customGoItemAction.put("go", CustomActionInItemAction);
+
+            customActionInBaseAction.put("itemsParams", "params");
+            customActionInBaseAction.put("window", customIsContextWindow);
+            customActionInBaseAction.put("cmd", customCmd);
+            customActionInBaseAction.put("params", customParams);
+            customActionInBaseAction.put("player", "0");
+
+
+            customMore.put("more", customActionInBaseAction);
+
+            customBaseAction.put("actions", customMore);
+
+            record.put("urlPrefix", "ADD_PREFIX");
+            record.put("actions", customGoItemAction);
+            record.put("base", customBaseAction);
+
+            Log.d(TAG, "record: Custom node 'record': " + record.toString());
+        }
         return record;
     }
 
@@ -557,6 +599,11 @@ public class JiveItem extends Item {
     }
 
     private Action extractAction(String actionName, Map<String, Object> baseActions, Map<String, Object> itemActions, Map<String, Object> record, Map<String, Object> baseRecord) {
+      if ( id != null && id.equals("customNode")) {
+            Log.d(TAG, "extractAction: BEN ****************** actionName for record with id 'customNode':" + actionName + " and itemActions: " + itemActions);
+        }
+        Log.d(TAG, "extractAction: BEN ****************** actionName for record with id '" + id + " and actionName: " + actionName + " and itemActions: " + itemActions);
+
         Map<String, Object> actionRecord = null;
         Map<String, Object> itemParams = null;
 

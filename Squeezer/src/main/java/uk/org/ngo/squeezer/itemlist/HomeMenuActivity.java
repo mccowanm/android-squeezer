@@ -70,9 +70,8 @@ public class HomeMenuActivity extends JiveItemListActivity {
                     // Turn off the home icon.
                     actionBar.setDisplayHomeAsUpEnabled(false);
                 } else {
-                    if (JiveItem.ARCHIVE.equals(parent) || getService().isInArchive(parent)) {
-                        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_archive);
-                    }
+                    boolean inArchive = JiveItem.ARCHIVE.equals(parent) || getService().isInArchive(parent);
+                    actionBar.setHomeAsUpIndicator(inArchive ? R.drawable.ic_action_archive : R.drawable.ic_action_home);
                 }
             }
         });

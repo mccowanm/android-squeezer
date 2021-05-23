@@ -59,6 +59,12 @@
         <SwitchPreferenceCompat
             android:key="squeezer.clear.current_playlist.confirmation"
             android:title="@string/settings_clear_current_playlist_confirmation"/>
+
+        <ListPreference
+            android:key="squeezer.customize_home_menu.mode"
+            android:title="@string/settings_customize_home_menu_mode"
+            android:dialogTitle="@string/settings_customize_home_menu_info"
+            android:summary="%s"/>
     </PreferenceCategory>
 
     <PreferenceCategory

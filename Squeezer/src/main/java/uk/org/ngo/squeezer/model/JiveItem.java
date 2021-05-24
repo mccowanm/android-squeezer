@@ -98,41 +98,42 @@ public class JiveItem extends Item {
 
 //          add actions to customNode
 
-            Object[] customCmd = {"start"};
+            Object[] thirdCmdInItemAction = {"browselibrary", "items"};
+            Object[] fourthCmdInBaseAction = {"browselibrary", "items"};
 
-            Map<String, Object> customIsContextWindow = new HashMap<>();
-            Map<String, Object> customParams = new HashMap<>();
-            Map<String, Object> CustomActionInItemAction = new HashMap<>();
-            Map<String, Object> customGoItemAction = new HashMap<>();
-            Map<String, Object> customActionInBaseAction = new HashMap<>();
-            Map<String, Object> customMore = new HashMap<>();
-            Map<String, Object> customBaseAction = new HashMap<>();
+            Map<String, Object> thirdParamsInItemAction = new HashMap<>();
+            Map<String, Object> secondItemAction = new HashMap<>();
+            Map<String, Object> firstGoForItemActions = new HashMap<>();
+            Map<String, Object> secondMoreForBaseActions = new HashMap<>();
 
-            customIsContextWindow.put("isContextMenu", "1");
+            Map<String, Object> fourthIsContextWindowInBaseAction = new HashMap<>();
+            Map<String, Object> fourthParamsInBaseAction = new HashMap<>();
+            Map<String, Object> thirdActionInBaseAction = new HashMap<>();
+            Map<String, Object> firstBaseActions = new HashMap<>();
 
-            customParams.put("context", "playlist");
-            customParams.put("menu", "track");
+            fourthIsContextWindowInBaseAction.put("isContextMenu", "1");
+            fourthParamsInBaseAction.put("mode", "bmf");
+            fourthParamsInBaseAction.put("menu", "1");
+            fourthParamsInBaseAction.put("useContextMenu", "1");
+            thirdActionInBaseAction.put("itemsParams", "params");
+            thirdActionInBaseAction.put("window", fourthIsContextWindowInBaseAction);
+            thirdActionInBaseAction.put("cmd", fourthCmdInBaseAction);
+            thirdActionInBaseAction.put("params", fourthParamsInBaseAction);
+            thirdActionInBaseAction.put("player", "0");
+            secondMoreForBaseActions.put("more", thirdActionInBaseAction);
+            firstBaseActions.put("actions", secondMoreForBaseActions);
 
-            CustomActionInItemAction.put("cmd", customCmd);
-            CustomActionInItemAction.put("player", "0");
-//            customGoAction.put("params", customParams);
-
-            customGoItemAction.put("go", CustomActionInItemAction);
-
-            customActionInBaseAction.put("itemsParams", "params");
-            customActionInBaseAction.put("window", customIsContextWindow);
-            customActionInBaseAction.put("cmd", customCmd);
-            customActionInBaseAction.put("params", customParams);
-            customActionInBaseAction.put("player", "0");
-
-
-            customMore.put("more", customActionInBaseAction);
-
-            customBaseAction.put("actions", customMore);
+            thirdParamsInItemAction.put("mode", "bmf");
+            thirdParamsInItemAction.put("menu", "1");
+            thirdParamsInItemAction.put("useContextMenu", "1");
+            secondItemAction.put("cmd", thirdCmdInItemAction);
+            secondItemAction.put("player", "0");
+            secondItemAction.put("params", thirdParamsInItemAction);
+            firstGoForItemActions.put("go", secondItemAction);
 
             record.put("urlPrefix", "ADD_PREFIX");
-            record.put("actions", customGoItemAction);
-            record.put("base", customBaseAction);
+            record.put("actions", firstGoForItemActions);
+            record.put("base", firstBaseActions);
 
             Log.d(TAG, "record: Custom node 'record': " + record.toString());
         }
@@ -599,11 +600,6 @@ public class JiveItem extends Item {
     }
 
     private Action extractAction(String actionName, Map<String, Object> baseActions, Map<String, Object> itemActions, Map<String, Object> record, Map<String, Object> baseRecord) {
-      if ( id != null && id.equals("customNode")) {
-            Log.d(TAG, "extractAction: BEN ****************** actionName for record with id 'customNode':" + actionName + " and itemActions: " + itemActions);
-        }
-        Log.d(TAG, "extractAction: BEN ****************** actionName for record with id '" + id + " and actionName: " + actionName + " and itemActions: " + itemActions);
-
         Map<String, Object> actionRecord = null;
         Map<String, Object> itemParams = null;
 

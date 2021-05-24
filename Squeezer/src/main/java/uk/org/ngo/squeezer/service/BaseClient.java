@@ -69,10 +69,8 @@ abstract class BaseClient implements SlimClient {
         return mConnectionState;
     }
 
-    private static final String TAG = "BaseClient";
     @Override
     public <T> void requestItems(Player player, String[] cmd, Map<String, Object> params, int start, int pageSize, IServiceItemListCallback<T> callback) {
-        Log.d(TAG, "requestItems: BEN ");
         final BaseClient.BrowseRequest<T> browseRequest = new BaseClient.BrowseRequest<>(player, cmd, params, start, pageSize, callback);
         internalRequestItems(browseRequest);
     }

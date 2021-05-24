@@ -227,7 +227,6 @@ class SlimDelegate {
             this.callback = callback;
             this.start = start;
             this.pageSize = pageSize;
-            Log.d(TAG, "Request: BEN - constructor Request");
         }
 
         private Request(SlimClient slimClient, Player player, int start, IServiceItemListCallback<T> callback) {

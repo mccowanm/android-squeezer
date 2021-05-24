@@ -123,10 +123,17 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
         text1.setAlpha(getAlpha(item));
         text2.setAlpha(getAlpha(item));
         itemView.setOnClickListener(view -> onItemSelected(item));
-        itemView.setOnLongClickListener(view -> {
-            mActivity.showDisplayMessage(R.string.ITEM_CANNOT_BE_ARCHIVED);
-            return true;
-        });
+
+//      if Archive node is activated in settings
+        if (new Preferences(itemView.getContext()).getCustomizeHomeMenuMode() == Preferences.CustomizeHomeMenuMode.ARCHIVE) {
+            itemView.setOnLongClickListener(view -> {
+                mActivity.showDisplayMessage(R.string.ITEM_CANNOT_BE_ARCHIVED);
+                return true;
+            });
+        } else {
+            itemView.setOnLongClickListener(null);
+        }
+
         itemView.setClickable(isSelectable(item));
 
         if (item.hasContextMenu()) {

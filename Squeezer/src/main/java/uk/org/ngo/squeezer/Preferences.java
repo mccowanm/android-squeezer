@@ -165,6 +165,9 @@ public final class Preferences {
     // Preferred time input method.
     private static final String KEY_TIME_INPUT_MODE = "squeezer.time_input_mode";
 
+    // Show total time or remaining time.
+    private static final String KEY_SHOW_REMAINING_TIME = "squeezer.show_remaining_Time";
+
     private final Context context;
     private final SharedPreferences sharedPreferences;
     private final int defaultCliPort;
@@ -578,6 +581,14 @@ public final class Preferences {
 
     public void setTimeInputMode(int mode) {
         sharedPreferences.edit().putInt(Preferences.KEY_TIME_INPUT_MODE, mode).apply();
+    }
+
+    public boolean isShowRemainingTime() {
+        return sharedPreferences.getBoolean(KEY_SHOW_REMAINING_TIME, false);
+    }
+
+    public void setShowRemainingTime(boolean showRemainingTime) {
+        sharedPreferences.edit().putBoolean(Preferences.KEY_SHOW_REMAINING_TIME, showRemainingTime).apply();
     }
 
     public enum IncomingCallAction implements EnumWithText {

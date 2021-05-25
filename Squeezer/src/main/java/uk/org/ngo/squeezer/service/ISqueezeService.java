@@ -22,8 +22,8 @@ import androidx.annotation.Nullable;
 import java.util.Collection;
 
 import de.greenrobot.event.EventBus;
-import uk.org.ngo.squeezer.model.Action;
 import uk.org.ngo.squeezer.itemlist.IServiceItemListCallback;
+import uk.org.ngo.squeezer.model.Action;
 import uk.org.ngo.squeezer.model.Alarm;
 import uk.org.ngo.squeezer.model.AlarmPlaylist;
 import uk.org.ngo.squeezer.model.JiveItem;
@@ -204,4 +204,18 @@ public interface ISqueezeService {
      */
     void downloadItem(JiveItem item) throws SqueezeService.HandshakeNotCompleteException;
 
+    /**
+     * Put menu item into the Archive node
+     */
+    boolean toggleArchiveItem(JiveItem item);
+
+    /**
+     * Check if this is a sub item in the archive
+     */
+    boolean isInArchive(JiveItem item);
+
+    /**
+     * Trigger the event from another class
+     */
+    void triggerHomeMenuEvent();
 }

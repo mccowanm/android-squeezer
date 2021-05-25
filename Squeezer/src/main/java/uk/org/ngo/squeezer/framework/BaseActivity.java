@@ -27,14 +27,6 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import androidx.annotation.CallSuper;
-import androidx.annotation.DrawableRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.NavUtils;
-import androidx.core.app.TaskStackBuilder;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
@@ -45,12 +37,25 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.CallSuper;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NavUtils;
+import androidx.core.app.TaskStackBuilder;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import uk.org.ngo.squeezer.Preferences;
+import uk.org.ngo.squeezer.R;
+import uk.org.ngo.squeezer.VolumePanel;
 import uk.org.ngo.squeezer.dialog.AlertEventDialog;
 import uk.org.ngo.squeezer.dialog.DownloadDialog;
 import uk.org.ngo.squeezer.itemlist.HomeActivity;
-import uk.org.ngo.squeezer.R;
-import uk.org.ngo.squeezer.VolumePanel;
 import uk.org.ngo.squeezer.model.Action;
 import uk.org.ngo.squeezer.model.DisplayMessage;
 import uk.org.ngo.squeezer.model.JiveItem;
@@ -386,9 +391,25 @@ public abstract class BaseActivity extends AppCompatActivity implements Download
         mIgnoreVolumeChange = ignoreVolumeChange;
     }
 
+    public void showDisplayMessage(@StringRes int resId) {
+        showDisplayMessage(getString(resId));
+    }
+
+    public void showDisplayMessage(String text) {
+        Map<String, Object> display = new HashMap<>();
+        display.put("text", new String[]{ text });
+        display.put("type", "text");
+        display.put("style", "style");  // TODO: What is the proper object for style?
+        DisplayMessage displayMessage = new DisplayMessage(display);
+        showDisplayMessage(displayMessage);
+    }
+
     public void onEventMainThread(DisplayEvent displayEvent) {
+        showDisplayMessage(displayEvent.message);
+    }
+
+    public void showDisplayMessage(DisplayMessage display) {
         boolean showMe = true;
-        DisplayMessage display = displayEvent.message;
         View layout = getLayoutInflater().inflate(R.layout.display_message, findViewById(R.id.display_message_container));
         ImageView artwork = layout.findViewById(R.id.artwork);
         artwork.setVisibility(View.GONE);

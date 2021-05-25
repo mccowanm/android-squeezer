@@ -43,11 +43,15 @@ import uk.org.ngo.squeezer.Util;
 
 
 public class JiveItem extends Item {
+
+    private static final String TAG = "JiveItem";
+
     public static final JiveItem HOME = new JiveItem("home", null, R.string.HOME, 1, Window.WindowStyle.HOME_MENU);
     public static final JiveItem CURRENT_PLAYLIST = new JiveItem("status", null, R.string.menu_item_playlist, 1, Window.WindowStyle.PLAY_LIST);
     public static final JiveItem EXTRAS = new JiveItem("extras", "home", R.string.EXTRAS, 50, Window.WindowStyle.HOME_MENU);
     public static final JiveItem SETTINGS = new JiveItem("settings", "home", R.string.SETTINGS, 1005, Window.WindowStyle.HOME_MENU);
     public static final JiveItem ADVANCED_SETTINGS = new JiveItem("advancedSettings", "settings", R.string.ADVANCED_SETTINGS, 105, Window.WindowStyle.TEXT_ONLY);
+    public static final JiveItem ARCHIVE = new JiveItem("archiveNode", "home", R.string.ARCHIVE_NODE, 2000, Window.WindowStyle.HOME_MENU);
 
     /**
      * Information that will be requested about songs.
@@ -88,7 +92,6 @@ public class JiveItem extends Item {
         record.put("node", node);
         record.put("name", Squeezer.getContext().getString(text));
         record.put("weight", weight);
-
         return record;
     }
 
@@ -100,6 +103,7 @@ public class JiveItem extends Item {
     @NonNull private final Uri icon;
 
     private String node;
+    private String originalNode;
     private int weight;
     private String type;
 
@@ -224,6 +228,7 @@ public class JiveItem extends Item {
     private static Map<String, Integer> initializeItemIcons() {
         Map<String, Integer> result = new HashMap<>();
 
+        result.put("archiveNode", R.drawable.ic_archive);
         result.put("radio", R.drawable.internet_radio);
         result.put("radios", R.drawable.internet_radio);
         result.put("favorites", R.drawable.favorites);
@@ -279,7 +284,7 @@ public class JiveItem extends Item {
         setId(getString(record, record.containsKey("cmd") ? "cmd" : "id"));
         splitItemText(getStringOrEmpty(record, record.containsKey("name") ? "name" : "text"));
         icon = getImageUrl(record, record.containsKey("icon-id") ? "icon-id" : "icon");
-        node = getString(record, "node");
+        node = originalNode = getString(record, "node");
         weight = getInt(record, "weight");
         type = getString(record, "type");
         Map<String, Object> baseRecord = getRecord(record, "base");
@@ -458,7 +463,8 @@ public class JiveItem extends Item {
                 + ", add: " + addAction
                 + ", insert: " + insertAction
                 + ", more: " + moreAction
-                + ", window: " + window;
+                + ", window: " + window
+                + ", originalNode: " + originalNode;
 
     }
 
@@ -677,4 +683,11 @@ public class JiveItem extends Item {
     }
     private static final Set<String> title_parameters = new HashSet<>(Arrays.asList("track_id", "album_id", "artist_id", "genre_id", "year"));
 
+    public void setNode(String node) {
+        this.node = node;
+    }
+
+    public String getOriginalNode() {
+        return this.originalNode;
+    }
 }

@@ -22,14 +22,13 @@ import java.util.List;
 import java.util.Map;
 
 import de.greenrobot.event.EventBus;
-import uk.org.ngo.squeezer.model.JiveItem;
-import uk.org.ngo.squeezer.model.SlimCommand;
 import uk.org.ngo.squeezer.itemlist.IServiceItemListCallback;
+import uk.org.ngo.squeezer.model.JiveItem;
 import uk.org.ngo.squeezer.model.Player;
 import uk.org.ngo.squeezer.model.PlayerState;
+import uk.org.ngo.squeezer.model.SlimCommand;
 
 class SlimDelegate {
-
     @NonNull private final SlimClient mClient;
 
     SlimDelegate(@NonNull EventBus eventBus) {
@@ -123,8 +122,12 @@ class SlimDelegate {
         return mClient.getConnectionState().getPlayers();
     }
 
-    void setHomeMenu(List<JiveItem> items) {
-        mClient.getConnectionState().setHomeMenu(items);
+    void setHomeMenu(List<String> archivedItems) {
+        mClient.getConnectionState().getHomeMenuHandling().setHomeMenu(archivedItems);
+    }
+
+    void setHomeMenu(List<JiveItem> items, List<String> archivedItems) {
+        mClient.getConnectionState().getHomeMenuHandling().setHomeMenu(items, archivedItems);
     }
 
     public String getUsername() {
@@ -141,6 +144,18 @@ class SlimDelegate {
 
     String[] getMediaDirs() {
         return mClient.getConnectionState().getMediaDirs();
+    }
+
+    List<String> toggleArchiveItem(JiveItem item) {
+        return mClient.getConnectionState().getHomeMenuHandling().toggleArchiveItem(item);
+    }
+
+    public boolean isInArchive(JiveItem item) {
+        return mClient.getConnectionState().getHomeMenuHandling().isInArchive(item);
+    }
+
+    public void triggerHomeMenuEvent() {
+        mClient.getConnectionState().getHomeMenuHandling().triggerHomeMenuEvent();
     }
 
     static class Command extends SlimCommand {

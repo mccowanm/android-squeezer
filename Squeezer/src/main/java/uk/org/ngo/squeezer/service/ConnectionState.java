@@ -16,27 +16,24 @@
 
 package uk.org.ngo.squeezer.service;
 
+import android.util.Log;
+
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
-import android.util.Log;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 import de.greenrobot.event.EventBus;
 import uk.org.ngo.squeezer.Util;
+import uk.org.ngo.squeezer.model.MenuStatusMessage;
 import uk.org.ngo.squeezer.model.Player;
-import uk.org.ngo.squeezer.model.JiveItem;
 import uk.org.ngo.squeezer.service.event.ActivePlayerChanged;
 import uk.org.ngo.squeezer.service.event.ConnectionChanged;
 import uk.org.ngo.squeezer.service.event.HandshakeComplete;
-import uk.org.ngo.squeezer.service.event.HomeMenuEvent;
-import uk.org.ngo.squeezer.model.MenuStatusMessage;
 import uk.org.ngo.squeezer.service.event.PlayersChanged;
 
 public class ConnectionState {
@@ -45,9 +42,11 @@ public class ConnectionState {
 
     ConnectionState(@NonNull EventBus eventBus) {
         mEventBus = eventBus;
+        mHomeMenuHandling = new HomeMenuHandling(eventBus);
     }
 
     private final EventBus mEventBus;
+    private final HomeMenuHandling mHomeMenuHandling;
 
     public final static String MEDIA_DIRS = "mediadirs";
 
@@ -72,9 +71,6 @@ public class ConnectionState {
 
     /** The active player (the player to which commands are sent by default). */
     private final AtomicReference<Player> mActivePlayer = new AtomicReference<>();
-
-    /** Home menu tree as received from slimserver */
-    private final List<JiveItem> homeMenu = new Vector<>();
 
     private final AtomicReference<String> serverVersion = new AtomicReference<>();
 
@@ -146,30 +142,14 @@ public class ConnectionState {
         this.mediaDirs.set(mediaDirs);
     }
 
-    void setHomeMenu(List<JiveItem> items) {
-        homeMenu.clear();
-        homeMenu.addAll(items);
-        mEventBus.postSticky(new HomeMenuEvent(homeMenu));
+    public HomeMenuHandling getHomeMenuHandling() {
+        return mHomeMenuHandling;
     }
 
+//    For menu updates sent from LMS, handling of archived nodes needs testing!
     void menuStatusEvent(MenuStatusMessage event) {
         if (event.playerId.equals(getActivePlayer().getId())) {
-            for (JiveItem menuItem : event.menuItems) {
-                JiveItem item = null;
-                for (JiveItem menu : homeMenu) {
-                    if (menuItem.getId().equals(menu.getId())) {
-                        item = menu;
-                        break;
-                    }
-                }
-                if (item != null) {
-                    homeMenu.remove(item);
-                }
-                if (MenuStatusMessage.ADD.equals(event.menuDirective)) {
-                    homeMenu.add(menuItem);
-                }
-            }
-            mEventBus.postSticky(new HomeMenuEvent(homeMenu));
+            mHomeMenuHandling.handleMenuStatusEvent(event);
         }
     }
 

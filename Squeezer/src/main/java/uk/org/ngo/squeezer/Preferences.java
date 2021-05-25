@@ -21,12 +21,16 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 
 import com.google.android.material.timepicker.MaterialTimePicker;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -151,6 +155,12 @@ public final class Preferences {
 
     // Store a unique id for this app instance.
     private static final String KEY_UUID = "squeezer.uuid";
+
+    // Archive mode
+    public static final String KEY_CUSTOMIZE_HOME_MENU_MODE = "squeezer.customize_home_menu.mode";
+
+    // Map JiveItems to archive
+    private static final String KEY_PLAYER_ARCHIVED_ITEMS_FORMAT = "squeezer.archived_menu_items.%s";
 
     // Preferred time input method.
     private static final String KEY_TIME_INPUT_MODE = "squeezer.time_input_mode";
@@ -510,6 +520,28 @@ public final class Preferences {
         return uuid;
     }
 
+    public CustomizeHomeMenuMode getCustomizeHomeMenuMode() {
+        String string = sharedPreferences.getString(KEY_CUSTOMIZE_HOME_MENU_MODE, null);
+        return string == null ? CustomizeHomeMenuMode.ARCHIVE : CustomizeHomeMenuMode.valueOf(string);
+    }
+
+    public List<String> getArchivedMenuItems(Player player) {
+        List<String> list = new ArrayList<>();
+        String string = sharedPreferences.getString(String.format(KEY_PLAYER_ARCHIVED_ITEMS_FORMAT, player.getId()), null);
+        if ( TextUtils.isEmpty(string)) {
+            return list;
+        }
+        Collections.addAll(list, string.split(";"));
+        return list;
+    }
+
+    public void setArchivedMenuItems(List<String> list, Player player) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(String.format(KEY_PLAYER_ARCHIVED_ITEMS_FORMAT, player.getId()), TextUtils.join(";", list));
+        editor.apply();
+        return;
+    }
+
     public boolean isDownloadEnabled() {
         return sharedPreferences.getBoolean(KEY_DOWNLOAD_ENABLED, true);
     }
@@ -556,6 +588,23 @@ public final class Preferences {
         private final int labelId;
 
         IncomingCallAction(int labelId) {
+            this.labelId = labelId;
+        }
+
+        @Override
+        public String getText(Context context) {
+            return context.getString(labelId);
+        }
+    }
+
+    public enum CustomizeHomeMenuMode implements EnumWithText {
+        ARCHIVE(R.string.settings_customize_home_menu_archive),
+        DISABLED(R.string.settings_customize_home_menu_disabled),
+        LOCKED(R.string.settings_customize_home_menu_locked);
+
+        private final int labelId;
+
+        CustomizeHomeMenuMode(int labelId) {
             this.labelId = labelId;
         }
 

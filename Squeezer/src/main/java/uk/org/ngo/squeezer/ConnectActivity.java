@@ -21,9 +21,9 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.IntDef;
-
 import android.view.View;
+
+import androidx.annotation.IntDef;
 
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -42,6 +42,7 @@ import uk.org.ngo.squeezer.service.event.HandshakeComplete;
  * connects.
  */
 public class ConnectActivity extends BaseActivity {
+    private static final String TAG = "ConnectActivity";
 
     @IntDef({MANUAL_DISCONNECT, CONNECTION_FAILED, LOGIN_FAILED, INVALID_URL})
     @Retention(RetentionPolicy.SOURCE)

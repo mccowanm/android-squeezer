@@ -37,7 +37,7 @@ import uk.org.ngo.squeezer.itemlist.dialog.ArtworkListLayout;
 import uk.org.ngo.squeezer.util.ImageFetcher;
 
 public class JiveItemView extends ViewParamItemView<JiveItem> {
-    private JiveItemViewLogic logicDelegate;
+    private final JiveItemViewLogic logicDelegate;
     private Window.WindowStyle windowStyle;
 
     /** Width of the icon, if VIEW_PARAM_ICON is used. */
@@ -46,8 +46,11 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
     /** Height of the icon, if VIEW_PARAM_ICON is used. */
     private int mIconHeight;
 
+    JiveItemListActivity mActivity;
+
     JiveItemView(@NonNull JiveItemListActivity activity, @NonNull View view) {
         super(activity, view);
+        mActivity = activity;
         setWindowStyle(activity.window.windowStyle);
         this.logicDelegate = new JiveItemViewLogic(activity);
         setLoadingViewParams(viewParamIcon() | VIEW_PARAM_TWO_LINE );
@@ -120,6 +123,17 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
         text1.setAlpha(getAlpha(item));
         text2.setAlpha(getAlpha(item));
         itemView.setOnClickListener(view -> onItemSelected(item));
+
+//      if Archive node is activated in settings
+        if (new Preferences(itemView.getContext()).getCustomizeHomeMenuMode() == Preferences.CustomizeHomeMenuMode.ARCHIVE) {
+            itemView.setOnLongClickListener(view -> {
+                mActivity.showDisplayMessage(R.string.ITEM_CANNOT_BE_ARCHIVED);
+                return true;
+            });
+        } else {
+            itemView.setOnLongClickListener(null);
+        }
+
         itemView.setClickable(isSelectable(item));
 
         if (item.hasContextMenu()) {

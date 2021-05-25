@@ -70,6 +70,11 @@
     <string name="settings_squeezeplayer_summary">Check this option to make sure SqueezePlayer is running, when using Squeezer</string>
 
     <string name="settings_category_ui">Squeezer interface</string>
+    <string name="settings_customize_home_menu_mode">Archive</string>
+    <string name="settings_customize_home_menu_info">The home screen as well as several submenus can be customized</string>
+    <string name="settings_customize_home_menu_archive">Long press an item archives/unarchives that item</string>
+    <string name="settings_customize_home_menu_disabled">Disable archive</string>
+    <string name="settings_customize_home_menu_locked">Disable long press, but leave archived items in the archive</string>
 
     <string name="menu_item_disconnect">Disconnect</string>
     <string name="menu_item_connect">Connect</string>
@@ -396,4 +401,11 @@ of your accepting any such warranty or additional liability.&lt;/p&gt;</string>
     <string name="remote_preset4Description">Preset 4</string>
     <string name="remote_preset5Description">Preset 5</string>
     <string name="remote_preset6Description">Preset 6</string>
+    <string name="ARCHIVE_NODE">Archive</string>
+    <string name="MENU_ITEM_MOVED">Menu item moved</string>
+    <string name="MENU_IS_SUBMENU_IN_ARCHIVE">You are alread in Archive!</string>
+    <string name="ARCHIVE_CANNOT_BE_ARCHIVED">Archive cannot be archived!</string>
+    <string name="ARCHIVE_NODE_REMOVED">Removed empty Archive</string>
+    <string name="CUSTOM_NODE">Custom</string>
+    <string name="ITEM_CANNOT_BE_ARCHIVED">This item can not be archived!</string>
 </resources>

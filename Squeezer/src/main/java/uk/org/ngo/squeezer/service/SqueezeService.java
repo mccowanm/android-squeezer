@@ -51,6 +51,7 @@ import android.widget.RemoteViews;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -344,22 +345,12 @@ public class SqueezeService extends Service {
                 public void onItemsReceived(int count, int start, Map<String, Object> parameters, List<JiveItem> items, Class<JiveItem> dataType) {
                     homeMenu.addAll(items);
                     if (homeMenu.size() == count) {
-                        jiveMainNodes();
-                        mDelegate.setHomeMenu(homeMenu);
+                        Preferences preferences = new Preferences(SqueezeService.this);
+                        boolean useArchive = preferences.getCustomizeHomeMenuMode() != Preferences.CustomizeHomeMenuMode.DISABLED;
+                        List<String> archivedMenuItems = useArchive ? preferences.getArchivedMenuItems(activePlayer) : Collections.emptyList();
+                        mDelegate.setHomeMenu(homeMenu, archivedMenuItems);
                     }
                 }
-
-                private void jiveMainNodes() {
-                    addNode(JiveItem.EXTRAS);
-                    addNode(JiveItem.SETTINGS);
-                    addNode(JiveItem.ADVANCED_SETTINGS);
-                }
-
-                private void addNode(JiveItem jiveItem) {
-                    if (!homeMenu.contains(jiveItem))
-                        homeMenu.add(jiveItem);
-                }
-
                 @Override
                 public Object getClient() {
                     return SqueezeService.this;
@@ -1269,7 +1260,14 @@ public class SqueezeService extends Service {
         @Override
         public void preferenceChanged(String key) {
             Log.i(TAG, "Preference changed: " + key);
-            cachePreferences();
+            if (Preferences.KEY_CUSTOMIZE_HOME_MENU_MODE.equals(key)) {
+                Preferences preferences = new Preferences(SqueezeService.this);
+                boolean useArchive = preferences.getCustomizeHomeMenuMode() != Preferences.CustomizeHomeMenuMode.DISABLED;
+                List<String> archivedMenuItems = useArchive ? preferences.getArchivedMenuItems(getActivePlayer()) : Collections.emptyList();
+                mDelegate.setHomeMenu(archivedMenuItems);
+            } else {
+                cachePreferences();
+            }
         }
 
 
@@ -1399,6 +1397,21 @@ public class SqueezeService extends Service {
             SlimCommand command = item.downloadCommand();
             IServiceItemListCallback<?> callback = ("musicfolder".equals(command.cmd.get(0))) ? musicFolderDownloadCallback : songDownloadCallback;
             mDelegate.requestItems(-1, callback).params(command.params).cmd(command.cmd()).exec();
+        }
+
+        public boolean toggleArchiveItem(JiveItem item) {
+            List<String> menu = mDelegate.toggleArchiveItem(item);
+            new Preferences(SqueezeService.this).setArchivedMenuItems(menu, getActivePlayer());
+            return menu.isEmpty();
+        }
+
+        @Override
+        public boolean isInArchive(JiveItem item) {
+           return mDelegate.isInArchive(item);
+        }
+
+        public void triggerHomeMenuEvent() {
+            mDelegate.triggerHomeMenuEvent();
         }
     }
 

@@ -30,6 +30,8 @@ import uk.org.ngo.squeezer.framework.BaseActivity;
 import uk.org.ngo.squeezer.widget.OnSwipeListener;
 
 public class NowPlayingActivity extends BaseActivity {
+    private static final String TAG = "NowPlayingActivity";
+
     private GestureDetectorCompat mDetector;
 
     /**

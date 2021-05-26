@@ -626,7 +626,6 @@ class CometClient extends BaseClient {
 
     private String exec(Request request) {
         String responseChannel = String.format(CHANNEL_SLIM_REQUEST_RESPONSE_FORMAT, mBayeuxClient.getId(), mCorrelationId++);
-        Log.d(TAG, "exec: BEN store request and responseChannel in mPendingRequest: " + mPendingRequests.entrySet());
         if (request.callback != null) mPendingRequests.put(responseChannel, request);
         publishMessage(request, CHANNEL_SLIM_REQUEST, responseChannel, null);
         return responseChannel;

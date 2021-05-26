@@ -327,6 +327,26 @@ public class SqueezeService extends Service {
         new Preferences(this).setLastPlayer(newActivePlayer);
     }
 
+    class JiveItemServiceItemListCallback implements IServiceItemListCallback<JiveItem> {
+
+        private final List<JiveItem> homeMenu = new ArrayList<>();
+
+        @Override
+        public void onItemsReceived(int count, int start, Map<String, Object> parameters, List<JiveItem> items, Class<JiveItem> dataType) {
+            homeMenu.addAll(items);
+            if (homeMenu.size() == count) {
+                List<String> archivedMenuItems = new Preferences(SqueezeService.this).getArchivedMenuItems(mDelegate.getActivePlayer());
+                mDelegate.setHomeMenu(homeMenu, archivedMenuItems);
+            }
+        }
+
+        @Override
+        public Object getClient() {
+            return SqueezeService.this;
+        }
+    }
+
+
     private void requestPlayerData() {
         Player activePlayer = mDelegate.getActivePlayer();
 
@@ -334,25 +354,10 @@ public class SqueezeService extends Service {
             mDelegate.subscribeDisplayStatus(activePlayer, true);
             mDelegate.subscribeMenuStatus(activePlayer, true);
             mDelegate.requestPlayerStatus(activePlayer);
-
             // Start an asynchronous fetch of the squeezeservers "home menu" items
             // See http://wiki.slimdevices.com/index.php/SqueezePlayAndSqueezeCenterPlugins
-            mDelegate.requestItems(activePlayer, 0, new IServiceItemListCallback<JiveItem>() {
-                private final List<JiveItem> homeMenu = new ArrayList<>();
-
-                @Override
-                public void onItemsReceived(int count, int start, Map<String, Object> parameters, List<JiveItem> items, Class<JiveItem> dataType) {
-                    homeMenu.addAll(items);
-                    if (homeMenu.size() == count) {
-                        List<String> archivedMenuItems = new Preferences(SqueezeService.this).getArchivedMenuItems(activePlayer);
-                        mDelegate.setHomeMenu(homeMenu, archivedMenuItems);
-                    }
-                }
-                @Override
-                public Object getClient() {
-                    return SqueezeService.this;
-                }
-            }).cmd("menu").param("direct", "1").exec();
+            mDelegate.requestItems(activePlayer, 0, new JiveItemServiceItemListCallback())
+                    .cmd("menu").param("direct", "1").exec();
         }
     }
 

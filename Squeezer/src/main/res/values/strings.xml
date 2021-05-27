@@ -70,6 +70,11 @@
     <string name="settings_squeezeplayer_summary">Check this option to make sure SqueezePlayer is running, when using Squeezer</string>
 
     <string name="settings_category_ui">Squeezer interface</string>
+    <string name="settings_customize_home_menu_mode">Archive</string>
+    <string name="settings_customize_home_menu_info">The home screen as well as several submenus can be customized</string>
+    <string name="settings_customize_home_menu_archive">Long press an item archives/unarchives that item</string>
+    <string name="settings_customize_home_menu_disabled">Disable archive</string>
+    <string name="settings_customize_home_menu_locked">Disable long press, but leave archived items in the archive</string>
 
     <string name="menu_item_disconnect">Disconnect</string>
     <string name="menu_item_connect">Connect</string>

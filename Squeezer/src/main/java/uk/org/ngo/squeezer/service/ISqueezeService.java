@@ -212,16 +212,10 @@ public interface ISqueezeService {
     /**
      * Check if this is a sub item in the archive
      */
-    boolean checkIfItemIsAlreadyInArchive(JiveItem item);
+    boolean isInArchive(JiveItem item);
 
     /**
      * Trigger the event from another class
      */
     void triggerHomeMenuEvent();
-
-    /**
-     * Trigger the DisplayMessage from another class
-     * @param text
-     */
-    void triggerDisplayMessage(String text);
 }

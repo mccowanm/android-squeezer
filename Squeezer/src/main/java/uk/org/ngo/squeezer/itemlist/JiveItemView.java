@@ -17,7 +17,6 @@
 package uk.org.ngo.squeezer.itemlist;
 
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -27,7 +26,6 @@ import java.util.EnumSet;
 
 import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
-import uk.org.ngo.squeezer.Squeezer;
 import uk.org.ngo.squeezer.framework.ItemAdapter;
 import uk.org.ngo.squeezer.framework.ViewParamItemView;
 import uk.org.ngo.squeezer.framework.ItemListActivity;
@@ -39,10 +37,7 @@ import uk.org.ngo.squeezer.itemlist.dialog.ArtworkListLayout;
 import uk.org.ngo.squeezer.util.ImageFetcher;
 
 public class JiveItemView extends ViewParamItemView<JiveItem> {
-
-    private static final String TAG = "JiveItemView";
-
-    private JiveItemViewLogic logicDelegate;
+    private final JiveItemViewLogic logicDelegate;
     private Window.WindowStyle windowStyle;
 
     /** Width of the icon, if VIEW_PARAM_ICON is used. */
@@ -128,11 +123,17 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
         text1.setAlpha(getAlpha(item));
         text2.setAlpha(getAlpha(item));
         itemView.setOnClickListener(view -> onItemSelected(item));
-        itemView.setOnLongClickListener(view -> {
-            mActivity.getService().triggerDisplayMessage(Squeezer.getContext().getResources()
-                    .getString(R.string.ITEM_CANNOT_BE_ARCHIVED));
-            return true;
-        });
+
+//      if Archive node is activated in settings
+        if (new Preferences(itemView.getContext()).getCustomizeHomeMenuMode() == Preferences.CustomizeHomeMenuMode.ARCHIVE) {
+            itemView.setOnLongClickListener(view -> {
+                mActivity.showDisplayMessage(R.string.ITEM_CANNOT_BE_ARCHIVED);
+                return true;
+            });
+        } else {
+            itemView.setOnLongClickListener(null);
+        }
+
         itemView.setClickable(isSelectable(item));
 
         if (item.hasContextMenu()) {

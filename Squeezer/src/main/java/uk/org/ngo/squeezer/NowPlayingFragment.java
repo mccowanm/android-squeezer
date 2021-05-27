@@ -129,6 +129,7 @@ public class NowPlayingFragment extends Fragment {
     private TextView currentTime;
 
     private TextView totalTime;
+    private boolean showRemainingTime;
 
     private MenuItem menuItemDisconnect;
 
@@ -269,6 +270,7 @@ public class NowPlayingFragment extends Fragment {
             repeatButton = v.findViewById(R.id.repeat);
             currentTime = v.findViewById(R.id.currenttime);
             totalTime = v.findViewById(R.id.totaltime);
+            showRemainingTime = new Preferences(mActivity).isShowRemainingTime();
             slider = v.findViewById(R.id.seekbar);
             playlistButton = v.findViewById(R.id.playlist);
 
@@ -336,6 +338,15 @@ public class NowPlayingFragment extends Fragment {
             slider.addOnChangeListener((s, value, fromUser) -> {
                 if (fromUser) {
                     currentTime.setText(Util.formatElapsedTime((int)value));
+                }
+            });
+
+            totalTime.setOnClickListener(view -> {
+                showRemainingTime = !showRemainingTime;
+                new Preferences(mActivity).setShowRemainingTime(showRemainingTime);
+                PlayerState playerState = getPlayerState();
+                if (playerState != null) {
+                    updateTimeDisplayTo((int)playerState.getCurrentTimeSecond(), playerState.getCurrentSongDuration());
                 }
             });
 
@@ -575,10 +586,10 @@ public class NowPlayingFragment extends Fragment {
             if (updateSeekBar) {
                 if (slider.getValueTo() != secondsTotal) {
                     slider.setValueTo(secondsTotal > 0 ? secondsTotal : 1);
-                    totalTime.setText(Util.formatElapsedTime(secondsTotal));
                 }
                 slider.setEnabled(secondsTotal > 0);
                 slider.setValue(secondsTotal > 0 ? secondsIn : 0);
+                totalTime.setText(Util.formatElapsedTime(showRemainingTime ? secondsTotal - secondsIn : secondsTotal));
                 currentTime.setText(Util.formatElapsedTime(secondsIn));
             }
         } else {
@@ -636,7 +647,6 @@ public class NowPlayingFragment extends Fragment {
                 btnContextMenu.setVisibility(View.VISIBLE);
                 artistText.setText(song.getArtist());
                 albumText.setText(song.getAlbum());
-                totalTime.setText(Util.formatElapsedTime(playerState.getCurrentSongDuration()));
 
                 mService.pluginItems(song.moreAction, new IServiceItemListCallback<JiveItem>() {
                     @Override

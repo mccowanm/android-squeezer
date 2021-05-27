@@ -3,20 +3,15 @@ package uk.org.ngo.squeezer.service;
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.function.Function;
 
 import de.greenrobot.event.EventBus;
-import uk.org.ngo.squeezer.R;
-import uk.org.ngo.squeezer.Squeezer;
-import uk.org.ngo.squeezer.model.DisplayMessage;
 import uk.org.ngo.squeezer.model.JiveItem;
 import uk.org.ngo.squeezer.model.MenuStatusMessage;
-import uk.org.ngo.squeezer.service.event.DisplayEvent;
 import uk.org.ngo.squeezer.service.event.HomeMenuEvent;
 
 public class HomeMenuHandling {
@@ -30,29 +25,8 @@ public class HomeMenuHandling {
 
     private final EventBus mEventBus;
 
-    private List<JiveItem> resetHomeMenu(List<JiveItem> items) {
-        homeMenu.clear();
-        homeMenu.addAll(items);
-        return homeMenu;
-    }
-
-    void showDisplayMessage(String text) {
-        Map<String, Object> display = new HashMap<>();
-        display.put("text", new String[]{ text });
-        display.put("type", "text");
-        display.put("style", "style");  // TODO: What is the proper object for style?
-        DisplayMessage displayMessage = new DisplayMessage(display);
-        mEventBus.post(new DisplayEvent(displayMessage));
-    }
-
-    boolean checkIfItemIsAlreadyInArchive(JiveItem toggledItem) {
-        if (getParents(toggledItem.getNode()).contains(JiveItem.ARCHIVE)) {
-            showDisplayMessage(Squeezer.getContext().getResources().getString(R.string.MENU_IS_SUBMENU_IN_ARCHIVE));
-            return Boolean.TRUE;
-        }
-        else {
-            return Boolean.FALSE;
-        }
+    boolean isInArchive(JiveItem toggledItem) {
+        return getParents(toggledItem.getNode()).contains(JiveItem.ARCHIVE) ? Boolean.TRUE : Boolean.FALSE;
     }
 
     void cleanupArchive(JiveItem toggledItem) {
@@ -121,21 +95,17 @@ public class HomeMenuHandling {
         return parents;
     }
 
-    private void getParents(String node, Set<JiveItem> parents, HomeMenuHandling.GetParent getParent) {
-        if (node.equals(JiveItem.HOME.getId())) {          // if we are done
+    private void getParents(String node, Set<JiveItem> parents, Function<JiveItem, String> getParent) {
+        if (node == null || node.equals(JiveItem.HOME.getId())) {          // if we are done
             return;
         }
         for (JiveItem menuItem : homeMenu) {
             if (menuItem.getId().equals(node)) {
-                String parent = getParent.getNode(menuItem);
+                String parent = getParent.apply(menuItem);
                 parents.add(menuItem);
                 getParents(parent, parents, getParent);
             }
         }
-    }
-
-    private interface GetParent {
-        String getNode(JiveItem item);
     }
 
     public List<String> getArchivedItems() {
@@ -148,12 +118,7 @@ public class HomeMenuHandling {
         return archivedItems;
     }
 
-    public void setHomeMenuWithEvent(List<JiveItem> homeMenu, List<String> archivedItems) {
-        mEventBus.postSticky(new HomeMenuEvent(setHomeMenu(homeMenu, archivedItems)));
-    }
-
-    public List<JiveItem> setHomeMenu(List<JiveItem> homeMenu, List<String> archivedItems) {
-        jiveMainNodes(homeMenu);
+    private void addArchivedItems(List<String> archivedItems) {
         if (!(archivedItems.isEmpty()) && (!homeMenu.contains(JiveItem.ARCHIVE))) {
             homeMenu.add(JiveItem.ARCHIVE);
         }
@@ -164,7 +129,21 @@ public class HomeMenuHandling {
                 }
             }
         }
-        return resetHomeMenu(homeMenu);
+    }
+
+    public void setHomeMenu(List<String> archivedItems) {
+        homeMenu.remove(JiveItem.ARCHIVE);
+        homeMenu.stream().forEach(item -> item.setNode(item.getOriginalNode()));
+        addArchivedItems(archivedItems);
+        mEventBus.postSticky(new HomeMenuEvent(homeMenu));
+    }
+
+    public void setHomeMenu(List<JiveItem> items, List<String> archivedItems) {
+        jiveMainNodes(items);
+        homeMenu.clear();
+        homeMenu.addAll(items);
+        addArchivedItems(archivedItems);
+        mEventBus.postSticky(new HomeMenuEvent(homeMenu));
     }
 
     private void jiveMainNodes(List<JiveItem> homeMenu) {

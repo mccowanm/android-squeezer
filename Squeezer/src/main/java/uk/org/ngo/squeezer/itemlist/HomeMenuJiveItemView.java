@@ -2,6 +2,7 @@ package uk.org.ngo.squeezer.itemlist;
 
 import android.view.View;
 
+import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.Squeezer;
 import uk.org.ngo.squeezer.framework.ItemAdapter;
@@ -16,9 +17,9 @@ import uk.org.ngo.squeezer.widget.UndoBarController;
 public class HomeMenuJiveItemView extends JiveItemView {
 
     HomeMenuActivity mHomeMenuActivity;
-    ItemAdapter mItemAdapter;
+    ItemAdapter<JiveItemView, JiveItem> mItemAdapter;
 
-    public HomeMenuJiveItemView(HomeMenuActivity homeMenuActivity, View view, ItemAdapter adapter) {
+    public HomeMenuJiveItemView(HomeMenuActivity homeMenuActivity, View view, ItemAdapter<JiveItemView, JiveItem> adapter) {
         super(homeMenuActivity, view);
         mHomeMenuActivity = homeMenuActivity;
         mItemAdapter = adapter;
@@ -27,38 +28,41 @@ public class HomeMenuJiveItemView extends JiveItemView {
     @Override
     public void bindView(JiveItem item) {
         super.bindView(item);
-        itemView.setOnLongClickListener(view -> {
-            if (!item.getId().equals(JiveItem.ARCHIVE.getId())) {
-                if (!item.getNode().equals(JiveItem.ARCHIVE.getId())) {
-                    if (mHomeMenuActivity.getService().checkIfItemIsAlreadyInArchive(item)) {
-                        return true;
+        if (new Preferences(itemView.getContext()).getCustomizeHomeMenuMode() == Preferences.CustomizeHomeMenuMode.ARCHIVE) {
+            itemView.setOnLongClickListener(view -> {
+                if (!item.getId().equals(JiveItem.ARCHIVE.getId())) {
+                    if (!item.getNode().equals(JiveItem.ARCHIVE.getId())) {
+                        if (mHomeMenuActivity.getService().isInArchive(item)) {
+                            mHomeMenuActivity.showDisplayMessage(R.string.MENU_IS_SUBMENU_IN_ARCHIVE);
+                            return true;
+                        }
                     }
-                }
-                mItemAdapter.removeItem(getAdapterPosition());
-                UndoBarController.show(mHomeMenuActivity, R.string.MENU_ITEM_MOVED, new UndoBarController.UndoListener() {
-                    @Override
-                    public void onUndo() {
-                        mHomeMenuActivity.getService().toggleArchiveItem(item);
-                        mHomeMenuActivity.getService().triggerHomeMenuEvent();
-                    }
-                    @Override
-                    public void onDone() {
-                    }
-                });
+                    mItemAdapter.removeItem(getAdapterPosition());
+                    UndoBarController.show(mHomeMenuActivity, R.string.MENU_ITEM_MOVED, new UndoBarController.UndoListener() {
+                        @Override
+                        public void onUndo() {
+                            mHomeMenuActivity.getService().toggleArchiveItem(item);
+                            mHomeMenuActivity.getService().triggerHomeMenuEvent();
+                        }
 
-                if ((mHomeMenuActivity.getService().toggleArchiveItem(item))) {
-//                                    TODO: Do not instantly show the next screen or put UndoBar onto next screen
-                    HomeActivity.show(Squeezer.getContext());
-                    mHomeMenuActivity.getService().triggerDisplayMessage(Squeezer.getContext().getResources()
-                            .getString(R.string.ARCHIVE_NODE_REMOVED));
-                };
-            }
-            else {
-                mHomeMenuActivity.getService().triggerDisplayMessage(Squeezer.getContext().getResources()
-                        .getString(R.string.ARCHIVE_CANNOT_BE_ARCHIVED));
-            }
-            return true;
-        });
+                        @Override
+                        public void onDone() {
+                        }
+                    });
+
+                    if ((mHomeMenuActivity.getService().toggleArchiveItem(item))) {
+                        // TODO: Do not instantly show the next screen or put UndoBar onto next screen
+                        HomeActivity.show(Squeezer.getContext());
+                        mHomeMenuActivity.showDisplayMessage(R.string.ARCHIVE_NODE_REMOVED);
+                    }
+                } else {
+                    mHomeMenuActivity.showDisplayMessage(R.string.ARCHIVE_CANNOT_BE_ARCHIVED);
+                }
+                return true;
+            });
+        } else {
+            itemView.setOnLongClickListener(null);
+        }
     }
 
 }

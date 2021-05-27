@@ -27,7 +27,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -77,7 +76,6 @@ import uk.org.ngo.squeezer.widget.GridAutofitLayoutManager;
  */
 public class JiveItemListActivity extends BaseListActivity<JiveItemView, JiveItem>
         implements NetworkErrorDialogFragment.NetworkErrorDialogListener {
-    private static final String TAG = "JiveItemListActivity";
     private static final int GO = 1;
     private static final String FINISH = "FINISH";
     private static final String RELOAD = "RELOAD";

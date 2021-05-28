@@ -588,7 +588,7 @@ public class NowPlayingFragment extends Fragment {
                     slider.setValueTo(secondsTotal > 0 ? secondsTotal : 1);
                 }
                 slider.setEnabled(secondsTotal > 0);
-                slider.setValue(secondsTotal > 0 ? secondsIn : 0);
+                slider.setValue(secondsTotal > 0 ? Math.min(secondsIn, secondsTotal) : 0);
                 totalTime.setText(Util.formatElapsedTime(showRemainingTime ? secondsTotal - secondsIn : secondsTotal));
                 currentTime.setText(Util.formatElapsedTime(secondsIn));
             }

@@ -108,7 +108,7 @@ public class ConnectionState {
     public void setPlayers(Map<String, Player> players) {
         mPlayers.clear();
         mPlayers.putAll(players);
-        mEventBus.postSticky(new PlayersChanged(players));
+        mEventBus.postSticky(new PlayersChanged());
     }
 
     Player getPlayer(String playerId) {

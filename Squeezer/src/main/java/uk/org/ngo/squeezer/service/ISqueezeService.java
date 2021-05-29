@@ -19,7 +19,7 @@ package uk.org.ngo.squeezer.service;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.util.Collection;
+import java.util.List;
 
 import de.greenrobot.event.EventBus;
 import uk.org.ngo.squeezer.itemlist.IServiceItemListCallback;
@@ -49,7 +49,11 @@ public interface ISqueezeService {
     // For the SettingsActivity to notify the Service that a setting changed.
     void preferenceChanged(String key);
 
-    // Call this to change the player we are controlling
+    /**
+     * Change the player that is controlled by Squeezer (the "active" player).
+     *
+     * @param player May be null, in which case no players are controlled.
+     */
     void setActivePlayer(@NonNull Player player);
 
     // Returns the player we are currently controlling
@@ -60,7 +64,7 @@ public interface ISqueezeService {
      * @return players that the server knows about (irrespective of power, connection, or
      * other status).
      */
-    Collection<Player> getPlayers();
+    List<Player> getPlayers();
 
     // XXX: Delete, now that PlayerState is tracked in the player?
     PlayerState getActivePlayerState();

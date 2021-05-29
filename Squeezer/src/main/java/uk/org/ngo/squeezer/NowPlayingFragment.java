@@ -463,25 +463,14 @@ public class NowPlayingFragment extends Fragment {
     /**
      * Manages the list of connected players in the action bar.
      *
-     * @param players A list of players to show. May be empty (use {@code
-     * Collections.&lt;Player>emptyList()}) but not null.
+     * @param connectedPlayers A list of players to show. May be empty but not null.
      * @param activePlayer The currently active player. May be null.
      */
     @UiThread
-    private void updatePlayerDropDown(@NonNull Collection<Player> players,
-            @Nullable Player activePlayer) {
+    private void updatePlayerDropDown(@NonNull List<Player> connectedPlayers, @Nullable Player activePlayer) {
         if (!isAdded()) {
             return;
         }
-
-        // Only include players that are connected to the server.
-        List<Player> connectedPlayers = new ArrayList<>();
-        for (Player player : players) {
-            if (player.getConnected()) {
-                connectedPlayers.add(player);
-            }
-        }
-        Collections.sort(connectedPlayers); // sort players alphabetically by player name
 
         ActionBar actionBar = mActivity.getSupportActionBar();
 
@@ -1002,7 +991,7 @@ public class NowPlayingFragment extends Fragment {
 
     @MainThread
     public void onEventMainThread(PlayersChanged event) {
-        updatePlayerDropDown(event.players.values(), mService.getActivePlayer());
+        updatePlayerDropDown(mService.getPlayers(), mService.getActivePlayer());
     }
 
     @MainThread

@@ -118,8 +118,7 @@ public class SqueezerRemoteControlPlayerSelectActivity extends BaseActivity {
     }
 
     protected void updatePlayerList() {
-        adapter.players = new ArrayList<>(getService().getPlayers());
-        Collections.sort(adapter.players);
+        adapter.players = getService().getPlayers();
         adapter.notifyDataSetChanged();
     }
 

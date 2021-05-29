@@ -54,6 +54,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import uk.org.ngo.squeezer.NowPlayingActivity;
 import uk.org.ngo.squeezer.Preferences;
@@ -700,9 +701,9 @@ public class SqueezeService extends Service {
         Player activePlayer = mDelegate.getActivePlayer();
         if (activePlayer == null) {
             // Figure out the new active player, let everyone know.
-            changeActivePlayer(getPreferredPlayer(event.players.values()));
+            changeActivePlayer(getPreferredPlayer(mDelegate.getPlayers().values()));
         } else {
-            activePlayer = event.players.get(activePlayer.getId());
+            activePlayer = mDelegate.getPlayer(activePlayer.getId());
             mDelegate.setActivePlayer(activePlayer);
             updateAllPlayerSubscriptionStates();
             requestPlayerData();
@@ -1192,11 +1193,6 @@ public class SqueezeService extends Service {
             return playerState != null && playerState.isPlaying();
         }
 
-        /**
-         * Change the player that is controlled by Squeezer (the "active" player).
-         *
-         * @param newActivePlayer May be null, in which case no players are controlled.
-         */
         @Override
         public void setActivePlayer(@Nullable final Player newActivePlayer) {
             changeActivePlayer(newActivePlayer);
@@ -1209,18 +1205,17 @@ public class SqueezeService extends Service {
         }
 
         @Override
-        public Collection<Player> getPlayers() {
-            return mDelegate.getPlayers().values();
+        public List<Player> getPlayers() {
+            return mDelegate.getPlayers().values().stream().filter(Player::getConnected).sorted().collect(Collectors.toList());
         }
 
         @Override
         public Player getPlayer(String playerId) throws PlayerNotFoundException {
-            for (Player player : getPlayers()) {
-                if (player.getId().equals(playerId)) {
-                    return player;
-                }
+            Player player = mDelegate.getPlayer(playerId);
+            if (player == null) {
+                throw new PlayerNotFoundException(SqueezeService.this);
             }
-            throw new PlayerNotFoundException(SqueezeService.this);
+            return player;
         }
 
         @Override

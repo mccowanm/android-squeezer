@@ -338,7 +338,7 @@ public class SqueezeService extends Service {
             if (homeMenu.size() == count) {
                 Preferences preferences = new Preferences(SqueezeService.this);
                 boolean useArchive = preferences.getCustomizeHomeMenuMode() != Preferences.CustomizeHomeMenuMode.DISABLED;
-                List<String> archivedMenuItems = useArchive ? preferences.getArchivedMenuItems(activePlayer) : Collections.emptyList();
+                List<String> archivedMenuItems = useArchive ? preferences.getArchivedMenuItems(mDelegate.getActivePlayer()) : Collections.emptyList();
                 mDelegate.setHomeMenu(homeMenu, archivedMenuItems);
             }
         }
@@ -1425,10 +1425,10 @@ public class SqueezeService extends Service {
             return menu.isEmpty();
         }
 
-//        @Override
-//        public boolean isInArchive(JiveItem item) {
-//           return mDelegate.isInArchive(item);
-//        }
+        @Override
+        public boolean isInArchive(JiveItem item) {
+           return mDelegate.isInArchive(item);
+        }
 
         public void triggerHomeMenuEvent() {
             mDelegate.triggerHomeMenuEvent();

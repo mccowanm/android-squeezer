@@ -24,7 +24,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -244,44 +243,36 @@ public class PlayerListActivity extends ItemListActivity implements
      *
      * @param players List of players.
      */
-    public void updateSyncGroups(Collection<Player> players) {
-        Map<String, Player> connectedPlayers = new HashMap<>();
-
-        // Make a copy of the players we know about, ignoring unconnected ones.
-        for (Player player : players) {
-            if (!player.getConnected())
-                continue;
-
-            connectedPlayers.put(player.getId(), player);
-        }
-
+    public void updateSyncGroups(List<Player> players) {
         mPlayerSyncGroups.clear();
 
         // Iterate over all the connected players to build the list of master players.
-        for (Player player : connectedPlayers.values()) {
+        for (Player player : players) {
             String playerId = player.getId();
             String name = player.getName();
             PlayerState playerState = player.getPlayerState();
             String syncMaster = playerState.getSyncMaster();
 
             Log.d(TAG, "player discovered: id=" + playerId + ", syncMaster=" + syncMaster + ", name=" + name);
-            // If a player doesn't have a sync master then it's in a group of its own.
-            if (syncMaster == null) {
-                mPlayerSyncGroups.put(playerId, new HashSet<>(Collections.singletonList(player)));
-                continue;
+            if (syncMaster == null || playerId.equals(syncMaster)) {
+                // If a player doesn't have a sync master or the master is this player then add it as a
+                // slave with itself as master.
+                addSyncSlave(playerId, player);
+            } else {
+                // Must be a slave. Add it under the master. This might have already
+                // happened (in the block above), but might not. For example, it's possible
+                // to have a player that's a syncslave of an player that is not connected.
+                addSyncSlave(syncMaster, player);
             }
-
-            // If the master is this player then add itself and all the slaves.
-            if (playerId.equals(syncMaster)) {
-                mPlayerSyncGroups.get(playerId).add(player);
-                continue;
-            }
-
-            // Must be a slave. Add it under the master. This might have already
-            // happened (in the block above), but might not. For example, it's possible
-            // to have a player that's a syncslave of an player that is not connected.
-            mPlayerSyncGroups.get(syncMaster).add(player);
         }
+    }
+
+    private void addSyncSlave(String masterId, Player player) {
+        Collection<Player> slaves = mPlayerSyncGroups.get(masterId);
+        if (slaves == null) {
+            mPlayerSyncGroups.put(masterId, slaves = new HashSet<>());
+        }
+        slaves.add(player);
     }
 
     @NonNull

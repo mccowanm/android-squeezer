@@ -151,6 +151,7 @@ public class HomeMenuHandling {
         addNode(JiveItem.SETTINGS, homeMenu);
         addNode(JiveItem.ADVANCED_SETTINGS, homeMenu);
         addNode(JiveItem.CUSTOM, homeMenu);
+        addNode(JiveItem.CUSTOM_SHORTCUT,homeMenu);
     }
 
     private void addNode(JiveItem jiveItem, List<JiveItem> homeMenu) {

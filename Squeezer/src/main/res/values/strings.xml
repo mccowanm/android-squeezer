@@ -408,4 +408,5 @@ of your accepting any such warranty or additional liability.&lt;/p&gt;</string>
     <string name="ARCHIVE_NODE_REMOVED">Removed empty Archive</string>
     <string name="CUSTOM_NODE">Custom</string>
     <string name="ITEM_CANNOT_BE_ARCHIVED">This item can not be archived!</string>
+    <string name="CUSTOM_SHORTCUT_NODE">customShortcut</string>
 </resources>

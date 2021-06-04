@@ -54,6 +54,7 @@ public class JiveItem extends Item {
     public static final JiveItem ADVANCED_SETTINGS = new JiveItem("advancedSettings", "settings", R.string.ADVANCED_SETTINGS, 105, Window.WindowStyle.TEXT_ONLY);
     public static final JiveItem ARCHIVE = new JiveItem("archiveNode", "home", R.string.ARCHIVE_NODE, 2000, Window.WindowStyle.HOME_MENU);
     public static final JiveItem CUSTOM = new JiveItem("customNode", "home", R.string.CUSTOM_NODE, 1010, Window.WindowStyle.HOME_MENU);
+    public static final JiveItem CUSTOM_SHORTCUT = new JiveItem("customShortcutNode", "home", R.string.CUSTOM_SHORTCUT_NODE, 1010, Window.WindowStyle.HOME_MENU);
 
     /**
      * Information that will be requested about songs.
@@ -82,7 +83,7 @@ public class JiveItem extends Item {
         }
     };
 
-    private JiveItem(String id, String node, @StringRes int text, int weight, Window.WindowStyle windowStyle) {
+    JiveItem(String id, String node, @StringRes int text, int weight, Window.WindowStyle windowStyle) {
         this(record(id, node, text, weight));
         window = new Window();
         window.windowStyle = windowStyle;
@@ -95,55 +96,12 @@ public class JiveItem extends Item {
         record.put("name", Squeezer.getContext().getString(text));
         record.put("weight", weight);
         if (id.equals("customNode")) {
-            record = setupCustomNodeRecord(record,"customNode");
+            record = CustomJiveItem.setupCustomNodeRecord(record,"customNode");
         }
         return record;
     }
 
-    private static Map<String, Object> setupCustomNodeRecord(Map<String, Object> record, String name) {
-        Object[] thirdCmdInItemAction = {"browselibrary", "items"};
-        Object[] fourthCmdInBaseAction = {"browselibrary", "items"};
 
-        Map<String, Object> thirdParamsInItemAction = new HashMap<>();
-        Map<String, Object> secondItemAction = new HashMap<>();
-        Map<String, Object> firstGoForItemActions = new HashMap<>();
-        Map<String, Object> secondMoreForBaseActions = new HashMap<>();
-
-        Map<String, Object> fourthIsContextWindowInBaseAction = new HashMap<>();
-        Map<String, Object> fourthParamsInBaseAction = new HashMap<>();
-        Map<String, Object> thirdActionInBaseAction = new HashMap<>();
-        Map<String, Object> firstBaseActions = new HashMap<>();
-
-//      baseAction
-        fourthIsContextWindowInBaseAction.put("isContextMenu", "1");
-        fourthParamsInBaseAction.put("mode", "bmf");
-        fourthParamsInBaseAction.put("menu", "1");
-        fourthParamsInBaseAction.put("useContextMenu", "1");
-        thirdActionInBaseAction.put("itemsParams", "params");
-        thirdActionInBaseAction.put("window", fourthIsContextWindowInBaseAction);
-        thirdActionInBaseAction.put("cmd", fourthCmdInBaseAction);
-        thirdActionInBaseAction.put("params", fourthParamsInBaseAction);
-        thirdActionInBaseAction.put("player", "0");
-        secondMoreForBaseActions.put("more", thirdActionInBaseAction);
-        firstBaseActions.put("actions", secondMoreForBaseActions);
-
-//      itemAction
-        thirdParamsInItemAction.put("mode", "bmf");
-        thirdParamsInItemAction.put("menu", "browselibrary"); // "1" for home menu
-        thirdParamsInItemAction.put("useContextMenu", "1");
-        thirdParamsInItemAction.put("item_id", "0.2"); // Kinder
-        secondItemAction.put("cmd", thirdCmdInItemAction);
-        secondItemAction.put("player", "0");
-        secondItemAction.put("params", thirdParamsInItemAction);
-        firstGoForItemActions.put("go", secondItemAction);
-
-        record.put("urlPrefix", "ADD_PREFIX");
-        record.put("actions", firstGoForItemActions);
-        record.put("base", firstBaseActions);
-
-        Log.d(TAG, "record: Custom node 'record': " + record.toString());
-        return record;
-    }
 
 
     private String id;

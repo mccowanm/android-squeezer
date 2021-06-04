@@ -17,6 +17,7 @@
 package uk.org.ngo.squeezer.itemlist;
 
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -30,6 +31,7 @@ import uk.org.ngo.squeezer.framework.ItemAdapter;
 import uk.org.ngo.squeezer.framework.ViewParamItemView;
 import uk.org.ngo.squeezer.framework.ItemListActivity;
 import uk.org.ngo.squeezer.model.Action;
+import uk.org.ngo.squeezer.model.CustomJiveItem;
 import uk.org.ngo.squeezer.model.JiveItem;
 import uk.org.ngo.squeezer.model.Slider;
 import uk.org.ngo.squeezer.model.Window;
@@ -37,6 +39,9 @@ import uk.org.ngo.squeezer.itemlist.dialog.ArtworkListLayout;
 import uk.org.ngo.squeezer.util.ImageFetcher;
 
 public class JiveItemView extends ViewParamItemView<JiveItem> {
+
+    private static final String TAG = "JiveItemView";
+
     private final JiveItemViewLogic logicDelegate;
     private Window.WindowStyle windowStyle;
 
@@ -127,6 +132,9 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
 //      if Archive node is activated in settings
         if (new Preferences(itemView.getContext()).getCustomizeHomeMenuMode() == Preferences.CustomizeHomeMenuMode.ARCHIVE) {
             itemView.setOnLongClickListener(view -> {
+//              TODO:  CustomJiveItem.addCustomShortcut(item);
+                JiveItem.CUSTOM_SHORTCUT.goAction = item.goAction;
+                JiveItem.CUSTOM_SHORTCUT.setName(item.getName());
                 mActivity.showDisplayMessage(R.string.ITEM_CANNOT_BE_ARCHIVED);
                 return true;
             });

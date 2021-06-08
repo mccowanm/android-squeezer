@@ -47,7 +47,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NavUtils;
 import androidx.core.app.TaskStackBuilder;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import uk.org.ngo.squeezer.Preferences;
@@ -101,9 +103,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Download
     /** Volume control panel. */
     @Nullable
     private VolumePanel mVolumePanel;
-
-    /** Set this to true to stop displaying icon-based showBrieflies */
-    protected boolean ignoreIconMessages = false;
 
     /**
      * @return The squeezeservice, or null if not bound
@@ -420,8 +419,8 @@ public abstract class BaseActivity extends AppCompatActivity implements Download
         text.setText(display.text);
 
         if (display.isIcon() || display.isMixed() || display.isPopupAlbum()) {
-            if (display.isIcon() && ignoreIconMessages) {
-                //icon based messages afre ignored for the now playing screen
+            if (display.isIcon() && new HashSet<String>(Arrays.asList("play", "pause")).contains(display.style)) {
+                // Play status is updated in the NowPlayingFragment (either full-screen or mini)
                 showMe = false;
             } else {
                 @DrawableRes int iconResource = display.getIconResource();

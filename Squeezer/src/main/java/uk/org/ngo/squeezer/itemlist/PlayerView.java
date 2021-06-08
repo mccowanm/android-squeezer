@@ -59,10 +59,9 @@ public class PlayerView extends PlayerBaseView {
 
         PlayerState playerState = player.getPlayerState();
 
-        if (playerState.isMuted()) {
-            mute.setIconResource(R.drawable.ic_volume_off);
-            volumeBar.setEnabled(false);
-        }
+        mute.setIconResource(playerState.isMuted() ? R.drawable.ic_volume_off : R.drawable.ic_volume_down);
+        volumeBar.setEnabled(!playerState.isMuted());
+
         mute.setOnClickListener(view -> {
             ISqueezeService service = activity.getService();
             if (service == null) {

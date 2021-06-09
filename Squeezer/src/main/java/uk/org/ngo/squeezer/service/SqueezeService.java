@@ -27,6 +27,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioManager;
 import android.media.MediaMetadata;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
@@ -41,9 +42,11 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.media.VolumeProviderCompat;
 
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -77,6 +80,7 @@ import uk.org.ngo.squeezer.service.event.HandshakeComplete;
 import uk.org.ngo.squeezer.service.event.MusicChanged;
 import uk.org.ngo.squeezer.service.event.PlayStatusChanged;
 import uk.org.ngo.squeezer.service.event.PlayerStateChanged;
+import uk.org.ngo.squeezer.service.event.PlayerVolume;
 import uk.org.ngo.squeezer.service.event.PlayersChanged;
 import uk.org.ngo.squeezer.util.ImageFetcher;
 import uk.org.ngo.squeezer.util.NotificationUtil;
@@ -156,6 +160,18 @@ public class SqueezeService extends Service {
                     disconnect();
                 }
             }
+        }
+    };
+
+    private final VolumeProviderCompat mVolumeProvider = new VolumeProviderCompat(VolumeProviderCompat.VOLUME_CONTROL_ABSOLUTE, 20, 10) {
+        @Override
+        public void onAdjustVolume(int direction) {
+            if (direction != 0) squeezeService.adjustVolumeBy(direction < 0 ? -5 : 5);
+        }
+
+        @Override
+        public void onSetVolumeTo(int volume) {
+            squeezeService.adjustVolumeTo(volume * 5);
         }
     };
 
@@ -641,6 +657,13 @@ public class SqueezeService extends Service {
                 metaBuilder.putString(MediaMetadata.METADATA_KEY_ALBUM, notificationState.albumName);
                 metaBuilder.putString(MediaMetadata.METADATA_KEY_TITLE, notificationState.songName);
                 mMediaSession.setMetadata(metaBuilder.build());
+
+
+                mMediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
+                mMediaSession.setPlaybackState(new PlaybackStateCompat.Builder().setState(PlaybackStateCompat.STATE_PLAYING, 0, 0).build());
+
+                mMediaSession.setPlaybackToRemote(mVolumeProvider);
+                mMediaSession.setActive(true);
             } else {
                 notification.bigContentView = notificationData.expandedView;
             }
@@ -683,8 +706,17 @@ public class SqueezeService extends Service {
         Log.i(TAG, "stopForeground");
         foreGround = false;
         ongoingNotification = null;
+
+        mMediaSession.setPlaybackToLocal(AudioManager.STREAM_MUSIC);
+        mMediaSession.setPlaybackState(new PlaybackStateCompat.Builder().setState(PlaybackStateCompat.STATE_STOPPED, 0, 0).build());
+        mMediaSession.setActive(false);
+
         stopForeground(true);
         stopSelf();
+    }
+
+    public void onEvent(PlayerVolume event) {
+        mVolumeProvider.setCurrentVolume(event.volume / 5);
     }
 
     public void onEvent(HandshakeComplete event) {

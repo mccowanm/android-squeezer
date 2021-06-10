@@ -76,8 +76,6 @@ public class CurrentPlaylistActivity extends JiveItemListActivity implements Pla
             detector.onTouchEvent(event);
             return true;
         });
-
-        ignoreIconMessages = true;
     }
 
     @Override

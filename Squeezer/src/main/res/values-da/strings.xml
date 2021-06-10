@@ -51,6 +51,8 @@
         <p>Dette kræver, at computeren, der kører Squeezebox Server, skal konfigureres til at bruge Wake-on-LAN.</p>]]>
     </string>
     <string name="settings_server_scan_progress">Scanner efter servere…</string>
+    <string name="settings_volume_increment_title">Lydstyrke op/ned trin</string>
+    <string name="settings_volume_increment_summary">Indstil trinene til telefonens lydstyrkeknapper</string>
     <string name="settings_fadeinsecs_title">Indtoningsperiode</string>
     <string name="settings_fadeinsecs_summary">Angiv hvor mange sekunder der indtones. Angiv 0 for
         at deaktivere indtoning.
@@ -66,7 +68,7 @@
     <string name="settings_customize_home_menu_mode">Arkiv</string>
     <string name="settings_customize_home_menu_info">Startmenuen i din Squeezebox og flere undermenuer kan tilpasses</string>
     <string name="settings_customize_home_menu_archive">Langt tryk på et emne flytter det til arkiv/fjerner det fra arkiv</string>
-    <string name="settings_customize_home_menu_disabled">Deaktiver archive</string>
+    <string name="settings_customize_home_menu_disabled">Deaktiver arkiv</string>
     <string name="settings_customize_home_menu_locked">Deaktiver langt tryk, men behold arkiverede emner</string>
 
     <string name="settings_scrobble_title">Scrobble til Last.fm</string>

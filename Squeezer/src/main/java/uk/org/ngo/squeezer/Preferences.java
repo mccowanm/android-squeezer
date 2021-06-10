@@ -98,18 +98,21 @@ public final class Preferences {
     // Do we scrobble track information?
     // Deprecated, retained for compatibility when upgrading. Was an int, of
     // either 0 == No scrobbling, 1 == use ScrobbleDroid API, 2 == use SLS API
-    public static final String KEY_SCROBBLE = "squeezer.scrobble";
+    static final String KEY_SCROBBLE = "squeezer.scrobble";
 
     // Do we scrobble track information (if a scrobble service is available)?
     //
     // Type of underlying preference is bool / CheckBox
-    public static final String KEY_SCROBBLE_ENABLED = "squeezer.scrobble.enabled";
+    static final String KEY_SCROBBLE_ENABLED = "squeezer.scrobble.enabled";
 
     // Do we send anonymous usage statistics?
     public static final String KEY_ANALYTICS_ENABLED = "squeezer.analytics.enabled";
 
+    // Volume up/down increments
+    private static final String KEY_VOLUME_INCREMENTS = "squeezer.volumeIncrements";
+
     // Fade-in period? (0 = disable fade-in)
-    public static final String KEY_FADE_IN_SECS = "squeezer.fadeInSecs";
+    static final String KEY_FADE_IN_SECS = "squeezer.fadeInSecs";
 
     // What do to when an album is selected in the list view
     private static final String KEY_ON_SELECT_ALBUM_ACTION = "squeezer.action.onselect.album";
@@ -404,6 +407,14 @@ public final class Preferences {
         editor.apply();
     }
 
+    public int getVolumeIncrements() {
+        return sharedPreferences.getInt(KEY_VOLUME_INCREMENTS, 5);
+    }
+
+    public int getFadeInSecs() {
+        return sharedPreferences.getInt(KEY_FADE_IN_SECS, 0);
+    }
+
     public String getTheme() {
         return getStringPreference(KEY_ON_THEME_SELECT_ACTION);
     }
@@ -412,6 +423,10 @@ public final class Preferences {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(Preferences.KEY_ON_THEME_SELECT_ACTION, theme.name());
         editor.apply();
+    }
+
+    public boolean isScrobbleEnabled() {
+        return sharedPreferences.getBoolean(KEY_SCROBBLE_ENABLED, false);
     }
 
     public boolean isClearPlaylistConfirmation() {

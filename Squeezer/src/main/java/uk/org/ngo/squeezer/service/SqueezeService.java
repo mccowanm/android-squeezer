@@ -24,9 +24,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioManager;
 import android.media.MediaMetadata;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
@@ -41,9 +41,11 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.media.VolumeProviderCompat;
 
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -77,6 +79,7 @@ import uk.org.ngo.squeezer.service.event.HandshakeComplete;
 import uk.org.ngo.squeezer.service.event.MusicChanged;
 import uk.org.ngo.squeezer.service.event.PlayStatusChanged;
 import uk.org.ngo.squeezer.service.event.PlayerStateChanged;
+import uk.org.ngo.squeezer.service.event.PlayerVolume;
 import uk.org.ngo.squeezer.service.event.PlayersChanged;
 import uk.org.ngo.squeezer.util.ImageFetcher;
 import uk.org.ngo.squeezer.util.NotificationUtil;
@@ -159,6 +162,7 @@ public class SqueezeService extends Service {
         }
     };
 
+    private MyVolumeProvider mVolumeProvider;
 
     /**
      * Thrown when the service is asked to send a command to the server before the server
@@ -235,9 +239,13 @@ public class SqueezeService extends Service {
      * Cache the value of various preferences.
      */
     private void cachePreferences() {
-        final SharedPreferences preferences = getSharedPreferences(Preferences.NAME, MODE_PRIVATE);
-        scrobblingEnabled = preferences.getBoolean(Preferences.KEY_SCROBBLE_ENABLED, false);
-        mFadeInSecs = preferences.getInt(Preferences.KEY_FADE_IN_SECS, 0);
+        final Preferences preferences = new Preferences(this);
+        scrobblingEnabled = preferences.isScrobbleEnabled();
+        mFadeInSecs = preferences.getFadeInSecs();
+        mVolumeProvider = new MyVolumeProvider(preferences.getVolumeIncrements());
+        if (squeezeService.isConnected()) {
+            mMediaSession.setPlaybackToRemote(mVolumeProvider);
+        }
     }
 
     @Override
@@ -661,6 +669,13 @@ public class SqueezeService extends Service {
                 metaBuilder.putString(MediaMetadata.METADATA_KEY_ALBUM, notificationState.albumName);
                 metaBuilder.putString(MediaMetadata.METADATA_KEY_TITLE, notificationState.songName);
                 mMediaSession.setMetadata(metaBuilder.build());
+
+
+                mMediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
+                mMediaSession.setPlaybackState(new PlaybackStateCompat.Builder().setState(PlaybackStateCompat.STATE_PLAYING, 0, 0).build());
+
+                mMediaSession.setPlaybackToRemote(mVolumeProvider);
+                mMediaSession.setActive(true);
             } else {
                 notification.bigContentView = notificationData.expandedView;
             }
@@ -703,8 +718,17 @@ public class SqueezeService extends Service {
         Log.i(TAG, "stopForeground");
         foreGround = false;
         ongoingNotification = null;
+
+        mMediaSession.setPlaybackToLocal(AudioManager.STREAM_MUSIC);
+        mMediaSession.setPlaybackState(new PlaybackStateCompat.Builder().setState(PlaybackStateCompat.STATE_STOPPED, 0, 0).build());
+        mMediaSession.setActive(false);
+
         stopForeground(true);
         stopSelf();
+    }
+
+    public void onEvent(PlayerVolume event) {
+        mVolumeProvider.setCurrentVolume(event.volume / mVolumeProvider.step);
     }
 
     public void onEvent(HandshakeComplete event) {
@@ -909,21 +933,19 @@ public class SqueezeService extends Service {
         }
 
         @Override
-        public void adjustVolumeTo(Player player, int newVolume) {
+        public void setVolumeTo(Player player, int newVolume) {
             mDelegate.command(player).cmd("mixer", "volume", String.valueOf(Math.min(100, Math.max(0, newVolume)))).exec();
         }
 
         @Override
-        public void adjustVolumeTo(int newVolume) {
+        public void setVolumeTo(int newVolume) {
             mDelegate.activePlayerCommand().cmd("mixer", "volume", String.valueOf(Math.min(100, Math.max(0, newVolume)))).exec();
         }
 
         @Override
-        public void adjustVolumeBy(int delta) {
-            if (delta > 0) {
-                mDelegate.activePlayerCommand().cmd("mixer", "volume", "+" + delta).exec();
-            } else if (delta < 0) {
-                mDelegate.activePlayerCommand().cmd("mixer", "volume", String.valueOf(delta)).exec();
+        public void adjustVolume(int direction) {
+            if (direction != 0) {
+                mDelegate.activePlayerCommand().cmd("mixer", "volume", (direction > 0 ? "+" : "") + direction * mVolumeProvider.step).exec();
             }
         }
 
@@ -1401,6 +1423,7 @@ public class SqueezeService extends Service {
             if (!isConnected()) {
                 return;
             }
+            maybePauseBeforeAction(action.action);
             mDelegate.command(getActivePlayer()).cmd(action.action.cmd).params(action.action.params(item.inputValue)).exec();
         }
 
@@ -1409,7 +1432,18 @@ public class SqueezeService extends Service {
             if (!isConnected()) {
                 return;
             }
+            maybePauseBeforeAction(action);
             mDelegate.command(getActivePlayer()).cmd(action.cmd).params(action.params).exec();
+        }
+
+        private void maybePauseBeforeAction(Action.JsonAction action) {
+            if (isaPotentiallyDangerousAction(action)) {
+                pause();
+            }
+        }
+
+        private boolean isaPotentiallyDangerousAction(Action.JsonAction action) {
+            return Util.arraysStartsWith(action.cmd(), new String[]{"playerpref", "digitalVolumeControl"});
         }
 
         @Override
@@ -1495,6 +1529,25 @@ public class SqueezeService extends Service {
         public synchronized void unregister(Object subscriber) {
             super.unregister(subscriber);
             updateAllPlayerSubscriptionStates();
+        }
+    }
+
+    private class MyVolumeProvider extends VolumeProviderCompat {
+        private final int step;
+
+        public MyVolumeProvider(int step) {
+            super(VolumeProviderCompat.VOLUME_CONTROL_ABSOLUTE, 100 / step, 1);
+            this.step = step;
+        }
+
+        @Override
+        public void onAdjustVolume(int direction) {
+            squeezeService.adjustVolume(direction);
+        }
+
+        @Override
+        public void onSetVolumeTo(int volume) {
+            squeezeService.setVolumeTo(volume * step);
         }
     }
 }

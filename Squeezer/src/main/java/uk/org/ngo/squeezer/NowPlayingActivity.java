@@ -54,8 +54,6 @@ public class NowPlayingActivity extends BaseActivity {
                 return true;
             }
         });
-
-        ignoreIconMessages = true;
     }
 
     public static void show(Context context) {

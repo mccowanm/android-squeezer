@@ -22,6 +22,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 
 import java.util.EnumSet;
 
@@ -41,10 +42,11 @@ import uk.org.ngo.squeezer.util.ImageFetcher;
 
 public class JiveItemView extends ViewParamItemView<JiveItem> {
 
-    private static final String TAG = "JiveItemView";
-
     private final JiveItemViewLogic logicDelegate;
     private Window.WindowStyle windowStyle;
+
+    final boolean isShortcutActive = new Preferences(itemView.getContext()).getCustomizeShortcutsMode() == Preferences.CustomizeShortcutsMode.ENABLED;
+    final boolean isArchiveActive = new Preferences(itemView.getContext()).getCustomizeHomeMenuMode() == Preferences.CustomizeHomeMenuMode.ARCHIVE;
 
     /**
      * Width of the icon, if VIEW_PARAM_ICON is used.
@@ -142,51 +144,8 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
         text2.setAlpha(getAlpha(item));
         itemView.setOnClickListener(view -> onItemSelected(item));
 
-//      if Archive node is activated in settings AND Shortcut mode is activated
-//        TODO: check settings for shortcuts
-        if (new Preferences(itemView.getContext()).getCustomizeShortcutsMode() == Preferences.CustomizeShortcutsMode.ENABLED &&
-                new Preferences(itemView.getContext()).getCustomizeHomeMenuMode() == Preferences.CustomizeHomeMenuMode.ARCHIVE) {
-            itemView.setOnLongClickListener(view -> {
-                if (!mCustomJiveItemHandling.isShortcutable(item)) {
-                    mActivity.showDisplayMessage(R.string.ITEM_CAN_NOT_BE_SHORTCUT_OR_ARCHIVED);
-                } else {
-                    if (mCustomJiveItemHandling.triggerCustomShortcut(item)) {
-                        mActivity.showDisplayMessage(R.string.ITEM_PUT_AS_SHORTCUT_ON_HOME_MENU);
-                    } else {
-                        mActivity.showDisplayMessage(R.string.ITEM_IS_ALREADY_A_SHORTCUT);
-                    }
-                }
-                return true;
-            });
-        }
-        else if (new Preferences(itemView.getContext()).getCustomizeShortcutsMode() == Preferences.CustomizeShortcutsMode.ENABLED) {
-            itemView.setOnLongClickListener(view -> {
-                if (!mCustomJiveItemHandling.isShortcutable(item)) {
-                    mActivity.showDisplayMessage("Can not be shortcut");
-                } else {
-                    if (mCustomJiveItemHandling.triggerCustomShortcut(item)) {
-                        mActivity.showDisplayMessage(R.string.ITEM_PUT_AS_SHORTCUT_ON_HOME_MENU);
-                    } else {
-                        mActivity.showDisplayMessage(R.string.ITEM_IS_ALREADY_A_SHORTCUT);
-                    }
-                }
-                return true;
-            });
-        }
-        else if (new Preferences(itemView.getContext()).getCustomizeHomeMenuMode() == Preferences.CustomizeHomeMenuMode.ARCHIVE) {
-            itemView.setOnLongClickListener(view -> {
-                if (!mCustomJiveItemHandling.isShortcutable(item)) {
-                    mActivity.showDisplayMessage("Can not me archived!");
-                } else {
-                    if (mCustomJiveItemHandling.triggerCustomShortcut(item)) {
-                        mActivity.showDisplayMessage(R.string.ITEM_PUT_AS_SHORTCUT_ON_HOME_MENU);
-                    } else {
-                        mActivity.showDisplayMessage(R.string.ITEM_IS_ALREADY_A_SHORTCUT);
-                    }
-                }
-                return true;
-            });
-
+        if ( isShortcutActive || isArchiveActive ) {
+            itemView.setOnLongClickListener(view -> putItemAsShortcut(item));
         } else {
             itemView.setOnLongClickListener(null);
         }
@@ -203,6 +162,27 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
                 contextMenuRadio.setChecked(item.radio);
             }
         }
+    }
+
+    /**
+     * This view handles just shortcuts, but has to display the correct message anyway.
+     * @param item
+     * @return
+     */
+    private boolean putItemAsShortcut(JiveItem item) {
+        @StringRes int message = !isArchiveActive ? R.string.ITEM_CANNOT_BE_SHORTCUT :
+                isShortcutActive ? R.string.ITEM_CAN_NOT_BE_SHORTCUT_OR_ARCHIVED : R.string.ITEM_CANNOT_BE_ARCHIVED;
+
+        if (!mCustomJiveItemHandling.isShortcutable(item)) {
+            mActivity.showDisplayMessage(message);
+        } else {
+            if (mCustomJiveItemHandling.triggerCustomShortcut(item)) {
+                mActivity.showDisplayMessage(R.string.ITEM_PUT_AS_SHORTCUT_ON_HOME_MENU);
+            } else {
+                mActivity.showDisplayMessage(R.string.ITEM_IS_ALREADY_A_SHORTCUT);
+            }
+        }
+        return true;
     }
 
     private float getAlpha(JiveItem item) {

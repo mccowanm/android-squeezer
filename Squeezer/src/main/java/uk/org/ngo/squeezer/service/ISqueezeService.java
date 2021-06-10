@@ -124,10 +124,10 @@ public interface ISqueezeService {
      */
     void mute();
     void toggleMute();
-    void adjustVolumeTo(Player player, int newVolume);
+    void setVolumeTo(Player player, int newVolume);
     void toggleMute(Player player);
-    void adjustVolumeTo(int newVolume);
-    void adjustVolumeBy(int delta);
+    void setVolumeTo(int newVolume);
+    void adjustVolume(int direction);
 
     /** Cancel any pending callbacks for client */
     void cancelItemListRequests(Object client);

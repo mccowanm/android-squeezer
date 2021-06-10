@@ -24,7 +24,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
@@ -163,18 +162,7 @@ public class SqueezeService extends Service {
         }
     };
 
-    private final VolumeProviderCompat mVolumeProvider = new VolumeProviderCompat(VolumeProviderCompat.VOLUME_CONTROL_ABSOLUTE, 20, 10) {
-        @Override
-        public void onAdjustVolume(int direction) {
-            if (direction != 0) squeezeService.adjustVolumeBy(direction < 0 ? -5 : 5);
-        }
-
-        @Override
-        public void onSetVolumeTo(int volume) {
-            squeezeService.adjustVolumeTo(volume * 5);
-        }
-    };
-
+    private MyVolumeProvider mVolumeProvider;
 
     /**
      * Thrown when the service is asked to send a command to the server before the server
@@ -251,9 +239,13 @@ public class SqueezeService extends Service {
      * Cache the value of various preferences.
      */
     private void cachePreferences() {
-        final SharedPreferences preferences = getSharedPreferences(Preferences.NAME, MODE_PRIVATE);
-        scrobblingEnabled = preferences.getBoolean(Preferences.KEY_SCROBBLE_ENABLED, false);
-        mFadeInSecs = preferences.getInt(Preferences.KEY_FADE_IN_SECS, 0);
+        final Preferences preferences = new Preferences(this);
+        scrobblingEnabled = preferences.isScrobbleEnabled();
+        mFadeInSecs = preferences.getFadeInSecs();
+        mVolumeProvider = new MyVolumeProvider(preferences.getVolumeIncrements());
+        if (squeezeService.isConnected()) {
+            mMediaSession.setPlaybackToRemote(mVolumeProvider);
+        }
     }
 
     @Override
@@ -716,7 +708,7 @@ public class SqueezeService extends Service {
     }
 
     public void onEvent(PlayerVolume event) {
-        mVolumeProvider.setCurrentVolume(event.volume / 5);
+        mVolumeProvider.setCurrentVolume(event.volume / mVolumeProvider.step);
     }
 
     public void onEvent(HandshakeComplete event) {
@@ -921,21 +913,19 @@ public class SqueezeService extends Service {
         }
 
         @Override
-        public void adjustVolumeTo(Player player, int newVolume) {
+        public void setVolumeTo(Player player, int newVolume) {
             mDelegate.command(player).cmd("mixer", "volume", String.valueOf(Math.min(100, Math.max(0, newVolume)))).exec();
         }
 
         @Override
-        public void adjustVolumeTo(int newVolume) {
+        public void setVolumeTo(int newVolume) {
             mDelegate.activePlayerCommand().cmd("mixer", "volume", String.valueOf(Math.min(100, Math.max(0, newVolume)))).exec();
         }
 
         @Override
-        public void adjustVolumeBy(int delta) {
-            if (delta > 0) {
-                mDelegate.activePlayerCommand().cmd("mixer", "volume", "+" + delta).exec();
-            } else if (delta < 0) {
-                mDelegate.activePlayerCommand().cmd("mixer", "volume", String.valueOf(delta)).exec();
+        public void adjustVolume(int direction) {
+            if (direction != 0) {
+                mDelegate.activePlayerCommand().cmd("mixer", "volume", (direction > 0 ? "+" : "") + direction * mVolumeProvider.step).exec();
             }
         }
 
@@ -1503,6 +1493,25 @@ public class SqueezeService extends Service {
         public synchronized void unregister(Object subscriber) {
             super.unregister(subscriber);
             updateAllPlayerSubscriptionStates();
+        }
+    }
+
+    private class MyVolumeProvider extends VolumeProviderCompat {
+        private final int step;
+
+        public MyVolumeProvider(int step) {
+            super(VolumeProviderCompat.VOLUME_CONTROL_ABSOLUTE, 100 / step, 1);
+            this.step = step;
+        }
+
+        @Override
+        public void onAdjustVolume(int direction) {
+            squeezeService.adjustVolume(direction);
+        }
+
+        @Override
+        public void onSetVolumeTo(int volume) {
+            squeezeService.setVolumeTo(volume * step);
         }
     }
 }

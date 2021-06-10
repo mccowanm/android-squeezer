@@ -19,7 +19,6 @@ package uk.org.ngo.squeezer.itemlist;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
@@ -89,7 +88,7 @@ public class PlayerView extends PlayerBaseView {
                 if (service == null) {
                     return;
                 }
-                service.adjustVolumeTo(player, (int)value);
+                service.setVolumeTo(player, (int)value);
             }
         });
         volumeBar.setValue(playerState.getCurrentVolume());

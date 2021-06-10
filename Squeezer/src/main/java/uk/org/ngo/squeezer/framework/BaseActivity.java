@@ -333,9 +333,9 @@ public abstract class BaseActivity extends AppCompatActivity implements Download
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
-                return changeVolumeBy(+5);
+                return adjustVolume(1);
             case KeyEvent.KEYCODE_VOLUME_DOWN:
-                return changeVolumeBy(-5);
+                return adjustVolume(-1);
         }
 
         return super.onKeyDown(keyCode, event);
@@ -353,13 +353,12 @@ public abstract class BaseActivity extends AppCompatActivity implements Download
         return super.onKeyUp(keyCode, event);
     }
 
-    private boolean changeVolumeBy(int delta) {
+    private boolean adjustVolume(int direction) {
         ISqueezeService service = getService();
         if (service == null) {
             return false;
         }
-        Log.v(TAG, "Adjust volume by: " + delta);
-        service.adjustVolumeBy(delta);
+        service.adjustVolume(direction);
         return true;
     }
 

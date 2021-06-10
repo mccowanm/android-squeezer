@@ -16,7 +16,17 @@
 -->
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:key="first_preferencescreen">
+
+    <SeekBarPreference
+        android:key="squeezer.volumeIncrements"
+        android:title="@string/settings_volume_increment_title"
+        android:summary="@string/settings_volume_increment_summary"
+        app:min="1"
+        android:max="10"
+        android:defaultValue="5"
+        app:showSeekBarValue="true"/>
 
     <uk.org.ngo.squeezer.IntEditTextPreference
         android:key="squeezer.fadeInSecs"

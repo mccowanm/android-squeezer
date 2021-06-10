@@ -49,6 +49,8 @@
         <p>This requires the computer running the Squeezebox Server to be configured to use Wake-on-LAN.</p>]]>
     </string>
     <string name="settings_server_scan_progress">Scanning for servers…</string>
+    <string name="settings_volume_increment_title">Volume up/down increments</string>
+    <string name="settings_volume_increment_summary">Set the increments for the phone volume buttons</string>
     <string name="settings_fadeinsecs_title">Fade in duration</string>
     <string name="settings_fadeinsecs_summary">Enter the amount of time to take to fade in when
         unpausing, in seconds. Enter 0 to disable fade in.

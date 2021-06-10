@@ -72,7 +72,7 @@ public class SettingsFragment  extends PreferenceFragmentCompat implements
 
         fadeInPref = findPreference(Preferences.KEY_FADE_IN_SECS);
         fadeInPref.setOnPreferenceChangeListener(this);
-        updateFadeInSecondsSummary(sharedPreferences.getInt(Preferences.KEY_FADE_IN_SECS, 0));
+        updateFadeInSecondsSummary(preferences.getFadeInSecs());
 
         SwitchPreferenceCompat autoConnectPref = findPreference(Preferences.KEY_AUTO_CONNECT);
         autoConnectPref.setChecked(sharedPreferences.getBoolean(Preferences.KEY_AUTO_CONNECT, true));

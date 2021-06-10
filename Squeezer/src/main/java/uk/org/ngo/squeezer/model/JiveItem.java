@@ -22,7 +22,6 @@ import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.Parcel;
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
@@ -53,8 +52,13 @@ public class JiveItem extends Item {
     public static final JiveItem SETTINGS = new JiveItem("settings", "home", R.string.SETTINGS, 1005, Window.WindowStyle.HOME_MENU);
     public static final JiveItem ADVANCED_SETTINGS = new JiveItem("advancedSettings", "settings", R.string.ADVANCED_SETTINGS, 105, Window.WindowStyle.TEXT_ONLY);
     public static final JiveItem ARCHIVE = new JiveItem("archiveNode", "home", R.string.ARCHIVE_NODE, 2000, Window.WindowStyle.HOME_MENU);
-    public static final JiveItem CUSTOM = new JiveItem("customNode", "home", R.string.CUSTOM_NODE, 1010, Window.WindowStyle.HOME_MENU);
-    public static final JiveItem CUSTOM_SHORTCUT = new JiveItem("customShortcutNode", "home", R.string.CUSTOM_SHORTCUT_NODE, 1010, Window.WindowStyle.HOME_MENU);
+
+    public static JiveItem CUSTOM_SHORTCUT_1 = new JiveItem("customShortcutNode_1", "none", R.string.CUSTOM_SHORTCUT_NODE, 1010, Window.WindowStyle.HOME_MENU);
+    public static JiveItem CUSTOM_SHORTCUT_2 = new JiveItem("customShortcutNode_2", "none", R.string.CUSTOM_SHORTCUT_NODE, 1010, Window.WindowStyle.HOME_MENU);
+    public static JiveItem CUSTOM_SHORTCUT_3 = new JiveItem("customShortcutNode_3", "none", R.string.CUSTOM_SHORTCUT_NODE, 1010, Window.WindowStyle.HOME_MENU);
+    public static JiveItem CUSTOM_SHORTCUT_4 = new JiveItem("customShortcutNode_4", "none", R.string.CUSTOM_SHORTCUT_NODE, 1010, Window.WindowStyle.HOME_MENU);
+    public static JiveItem CUSTOM_SHORTCUT_5 = new JiveItem("customShortcutNode_5", "none", R.string.CUSTOM_SHORTCUT_NODE, 1010, Window.WindowStyle.HOME_MENU);
+
 
     /**
      * Information that will be requested about songs.
@@ -83,7 +87,7 @@ public class JiveItem extends Item {
         }
     };
 
-    JiveItem(String id, String node, @StringRes int text, int weight, Window.WindowStyle windowStyle) {
+    public JiveItem(String id, String node, @StringRes int text, int weight, Window.WindowStyle windowStyle) {
         this(record(id, node, text, weight));
         window = new Window();
         window.windowStyle = windowStyle;
@@ -95,9 +99,6 @@ public class JiveItem extends Item {
         record.put("node", node);
         record.put("name", Squeezer.getContext().getString(text));
         record.put("weight", weight);
-        if (id.equals("customNode")) {
-            record = CustomJiveItem.setupCustomNodeRecord(record,"customNode");
-        }
         return record;
     }
 
@@ -261,6 +262,12 @@ public class JiveItem extends Item {
         result.put("settingsReplayGain", R.drawable.settings_audio);
         result.put("settingsSleep", R.drawable.settings_sleep);
         result.put("settingsSync", R.drawable.settings_sync);
+        result.put("customShortcutNode_1", R.drawable.ml_folder);
+        result.put("customShortcutNode_2", R.drawable.ml_folder);
+        result.put("customShortcutNode_3", R.drawable.ml_folder);
+        result.put("customShortcutNode_4", R.drawable.ml_folder);
+        result.put("customShortcutNode_5", R.drawable.ml_folder);
+//      TODO: Make unique icon for custom shortcut, or load icon from original slim item or its parents
 
         return result;
     }

@@ -1280,6 +1280,12 @@ public class SqueezeService extends Service {
                 boolean useArchive = preferences.getCustomizeHomeMenuMode() != Preferences.CustomizeHomeMenuMode.DISABLED;
                 List<String> archivedMenuItems = useArchive ? preferences.getArchivedMenuItems(getActivePlayer()) : Collections.emptyList();
                 mDelegate.setHomeMenu(archivedMenuItems);
+            }
+            else if (Preferences.KEY_CUSTOMIZE_SHORTCUT_MODE.equals(key)) {
+                Preferences preferences = new Preferences(SqueezeService.this);
+                if (preferences.getCustomizeShortcutsMode() == Preferences.CustomizeShortcutsMode.DISABLED) {
+                    mDelegate.getHomeMenuHandling().removeAllShortcuts();
+                }
             } else {
                 cachePreferences();
             }
@@ -1427,6 +1433,16 @@ public class SqueezeService extends Service {
 
         public void triggerHomeMenuEvent() {
             mDelegate.triggerHomeMenuEvent();
+        }
+
+        @Override
+        public SlimDelegate getDelegate() {
+            return mDelegate;
+        }
+
+        @Override
+        public void removeCustomShortcut(JiveItem item) {
+            mDelegate.removeCustomShortcut(item);
         }
     }
 

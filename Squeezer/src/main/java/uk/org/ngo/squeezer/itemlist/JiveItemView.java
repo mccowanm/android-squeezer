@@ -31,11 +31,12 @@ import uk.org.ngo.squeezer.framework.ItemAdapter;
 import uk.org.ngo.squeezer.framework.ViewParamItemView;
 import uk.org.ngo.squeezer.framework.ItemListActivity;
 import uk.org.ngo.squeezer.model.Action;
-import uk.org.ngo.squeezer.model.CustomJiveItem;
+import uk.org.ngo.squeezer.model.CustomJiveItemHandling;
 import uk.org.ngo.squeezer.model.JiveItem;
 import uk.org.ngo.squeezer.model.Slider;
 import uk.org.ngo.squeezer.model.Window;
 import uk.org.ngo.squeezer.itemlist.dialog.ArtworkListLayout;
+import uk.org.ngo.squeezer.service.HomeMenuHandling;
 import uk.org.ngo.squeezer.util.ImageFetcher;
 
 public class JiveItemView extends ViewParamItemView<JiveItem> {
@@ -45,20 +46,32 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
     private final JiveItemViewLogic logicDelegate;
     private Window.WindowStyle windowStyle;
 
-    /** Width of the icon, if VIEW_PARAM_ICON is used. */
+    /**
+     * Width of the icon, if VIEW_PARAM_ICON is used.
+     */
     private int mIconWidth;
 
-    /** Height of the icon, if VIEW_PARAM_ICON is used. */
+    /**
+     * Height of the icon, if VIEW_PARAM_ICON is used.
+     */
     private int mIconHeight;
 
     JiveItemListActivity mActivity;
 
+    /**
+     * Will also be used (and set) in HomeMenuJiveItemView.
+     */
+    CustomJiveItemHandling mCustomJiveItemHandling = null;
+
     JiveItemView(@NonNull JiveItemListActivity activity, @NonNull View view) {
         super(activity, view);
         mActivity = activity;
+        if (mCustomJiveItemHandling == null) {
+            mCustomJiveItemHandling = new CustomJiveItemHandling(mActivity);
+        }
         setWindowStyle(activity.window.windowStyle);
         this.logicDelegate = new JiveItemViewLogic(activity);
-        setLoadingViewParams(viewParamIcon() | VIEW_PARAM_TWO_LINE );
+        setLoadingViewParams(viewParamIcon() | VIEW_PARAM_TWO_LINE);
 
         // Certain LMS actions (e.g. slider) doesn't have text in their views
         if (text1 != null) {
@@ -129,15 +142,51 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
         text2.setAlpha(getAlpha(item));
         itemView.setOnClickListener(view -> onItemSelected(item));
 
-//      if Archive node is activated in settings
-        if (new Preferences(itemView.getContext()).getCustomizeHomeMenuMode() == Preferences.CustomizeHomeMenuMode.ARCHIVE) {
+//      if Archive node is activated in settings AND Shortcut mode is activated
+//        TODO: check settings for shortcuts
+        if (new Preferences(itemView.getContext()).getCustomizeShortcutsMode() == Preferences.CustomizeShortcutsMode.ENABLED &&
+                new Preferences(itemView.getContext()).getCustomizeHomeMenuMode() == Preferences.CustomizeHomeMenuMode.ARCHIVE) {
             itemView.setOnLongClickListener(view -> {
-//              TODO:  CustomJiveItem.addCustomShortcut(item);
-                JiveItem.CUSTOM_SHORTCUT.goAction = item.goAction;
-                JiveItem.CUSTOM_SHORTCUT.setName(item.getName());
-                mActivity.showDisplayMessage(R.string.ITEM_CANNOT_BE_ARCHIVED);
+                if (!mCustomJiveItemHandling.isShortcutable(item)) {
+                    mActivity.showDisplayMessage(R.string.ITEM_CAN_NOT_BE_SHORTCUT_OR_ARCHIVED);
+                } else {
+                    if (mCustomJiveItemHandling.triggerCustomShortcut(item)) {
+                        mActivity.showDisplayMessage(R.string.ITEM_PUT_AS_SHORTCUT_ON_HOME_MENU);
+                    } else {
+                        mActivity.showDisplayMessage(R.string.ITEM_IS_ALREADY_A_SHORTCUT);
+                    }
+                }
                 return true;
             });
+        }
+        else if (new Preferences(itemView.getContext()).getCustomizeShortcutsMode() == Preferences.CustomizeShortcutsMode.ENABLED) {
+            itemView.setOnLongClickListener(view -> {
+                if (!mCustomJiveItemHandling.isShortcutable(item)) {
+                    mActivity.showDisplayMessage("Can not be shortcut");
+                } else {
+                    if (mCustomJiveItemHandling.triggerCustomShortcut(item)) {
+                        mActivity.showDisplayMessage(R.string.ITEM_PUT_AS_SHORTCUT_ON_HOME_MENU);
+                    } else {
+                        mActivity.showDisplayMessage(R.string.ITEM_IS_ALREADY_A_SHORTCUT);
+                    }
+                }
+                return true;
+            });
+        }
+        else if (new Preferences(itemView.getContext()).getCustomizeHomeMenuMode() == Preferences.CustomizeHomeMenuMode.ARCHIVE) {
+            itemView.setOnLongClickListener(view -> {
+                if (!mCustomJiveItemHandling.isShortcutable(item)) {
+                    mActivity.showDisplayMessage("Can not me archived!");
+                } else {
+                    if (mCustomJiveItemHandling.triggerCustomShortcut(item)) {
+                        mActivity.showDisplayMessage(R.string.ITEM_PUT_AS_SHORTCUT_ON_HOME_MENU);
+                    } else {
+                        mActivity.showDisplayMessage(R.string.ITEM_IS_ALREADY_A_SHORTCUT);
+                    }
+                }
+                return true;
+            });
+
         } else {
             itemView.setOnLongClickListener(null);
         }
@@ -176,7 +225,7 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
             @Override
             public void onStopTrackingTouch(@NonNull com.google.android.material.slider.Slider seekBar) {
                 if (item.goAction != null) {
-                    item.inputValue = String.valueOf((int)seekBar.getValue());
+                    item.inputValue = String.valueOf((int) seekBar.getValue());
                     getActivity().action(item, item.goAction);
                 }
             }
@@ -250,7 +299,7 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
             getActivity().setSelectedIndex(getAdapterPosition());
             itemAdapter.notifyItemChanged(getAdapterPosition());
         }
-   }
+    }
 
     @Override
     public void showContextMenu(JiveItem item) {

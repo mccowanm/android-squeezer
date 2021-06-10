@@ -28,9 +28,16 @@ import androidx.annotation.Nullable;
 
 import com.google.android.material.timepicker.MaterialTimePicker;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
@@ -159,8 +166,14 @@ public final class Preferences {
     // Archive mode
     public static final String KEY_CUSTOMIZE_HOME_MENU_MODE = "squeezer.customize_home_menu.mode";
 
+    // Custom shortcut mode
+    public static final String KEY_CUSTOMIZE_SHORTCUT_MODE = "squeezer.customize_shortcut.mode";
+
     // Map JiveItems to archive
     private static final String KEY_PLAYER_ARCHIVED_ITEMS_FORMAT = "squeezer.archived_menu_items.%s";
+
+    // Map custom shortcut in home menu
+    private static final String CUSTOM_SHORTCUTS = "squeezer.custom_shortcut_items";
 
     // Preferred time input method.
     private static final String KEY_TIME_INPUT_MODE = "squeezer.time_input_mode";
@@ -528,6 +541,11 @@ public final class Preferences {
         return string == null ? CustomizeHomeMenuMode.ARCHIVE : CustomizeHomeMenuMode.valueOf(string);
     }
 
+    public CustomizeShortcutsMode getCustomizeShortcutsMode() {
+        String string = sharedPreferences.getString(KEY_CUSTOMIZE_SHORTCUT_MODE, null);
+        return string == null ? CustomizeShortcutsMode.ENABLED : CustomizeShortcutsMode.valueOf(string);
+    }
+
     public List<String> getArchivedMenuItems(Player player) {
         List<String> list = new ArrayList<>();
         String string = sharedPreferences.getString(String.format(KEY_PLAYER_ARCHIVED_ITEMS_FORMAT, player.getId()), null);
@@ -543,6 +561,42 @@ public final class Preferences {
         editor.putString(String.format(KEY_PLAYER_ARCHIVED_ITEMS_FORMAT, player.getId()), TextUtils.join(";", list));
         editor.apply();
         return;
+    }
+
+    /**
+     * Save custom shortcuts to preferences as map of name/action.
+     * @param map
+     */
+    public void saveCustomShortcuts(LinkedHashMap<String, String> map) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        JSONObject jsonObject = new JSONObject(map);
+        String jsonString = jsonObject.toString();
+        editor.putString(CUSTOM_SHORTCUTS, jsonString);
+        editor.apply();
+    }
+
+    /**
+     * Restore map of custom shortcut items from preferences with name/action as strings
+     * @return
+     */
+    public LinkedHashMap<String, String> restoreCustomShortcuts() {
+        LinkedHashMap<String, String> map = new LinkedHashMap<>();
+        String jsonString = sharedPreferences.getString(CUSTOM_SHORTCUTS, null);
+        if (TextUtils.isEmpty(jsonString)) {
+            return map;
+        }
+        try {
+            JSONObject jsonObject = new JSONObject(jsonString);
+            Iterator<String> keysItr = jsonObject.keys();
+            while (keysItr.hasNext()) {
+                String key = keysItr.next();
+                String value = (String) jsonObject.get(key);
+                map.put(key, value);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return map;
     }
 
     public boolean isDownloadEnabled() {
@@ -616,6 +670,23 @@ public final class Preferences {
         private final int labelId;
 
         CustomizeHomeMenuMode(int labelId) {
+            this.labelId = labelId;
+        }
+
+        @Override
+        public String getText(Context context) {
+            return context.getString(labelId);
+        }
+    }
+
+    public enum CustomizeShortcutsMode implements EnumWithText {
+        ENABLED(R.string.settings_custom_shortcut_enabled),
+        DISABLED(R.string.settings_custom_shortcut_disabled),
+        LOCKED(R.string.settings_custom_shortcut_locked);
+
+        private final int labelId;
+
+        CustomizeShortcutsMode(int labelId) {
             this.labelId = labelId;
         }
 

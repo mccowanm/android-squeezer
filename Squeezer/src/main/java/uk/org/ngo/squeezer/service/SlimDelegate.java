@@ -30,7 +30,7 @@ import uk.org.ngo.squeezer.model.Player;
 import uk.org.ngo.squeezer.model.PlayerState;
 import uk.org.ngo.squeezer.model.SlimCommand;
 
-class SlimDelegate {
+public class SlimDelegate {
 
     private static final String TAG = "SlimDelegate";
 
@@ -161,6 +161,14 @@ class SlimDelegate {
 
     public void triggerHomeMenuEvent() {
         mClient.getConnectionState().getHomeMenuHandling().triggerHomeMenuEvent();
+    }
+
+    public HomeMenuHandling getHomeMenuHandling() {
+        return mClient.getConnectionState().getHomeMenuHandling();
+    }
+
+    public void removeCustomShortcut(JiveItem item) {
+        mClient.getConnectionState().getHomeMenuHandling().removeCustomShortcut(item);
     }
 
     static class Command extends SlimCommand {

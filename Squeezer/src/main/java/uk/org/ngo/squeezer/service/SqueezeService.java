@@ -1397,7 +1397,6 @@ public class SqueezeService extends Service {
             if (!isConnected()) {
                 return;
             }
-            maybePauseBeforeAction(action.action);
             mDelegate.command(getActivePlayer()).cmd(action.action.cmd).params(action.action.params(item.inputValue)).exec();
         }
 
@@ -1406,18 +1405,7 @@ public class SqueezeService extends Service {
             if (!isConnected()) {
                 return;
             }
-            maybePauseBeforeAction(action);
             mDelegate.command(getActivePlayer()).cmd(action.cmd).params(action.params).exec();
-        }
-
-        private void maybePauseBeforeAction(Action.JsonAction action) {
-            if (isaPotentiallyDangerousAction(action)) {
-                pause();
-            }
-        }
-
-        private boolean isaPotentiallyDangerousAction(Action.JsonAction action) {
-            return Util.arraysStartsWith(action.cmd(), new String[]{"playerpref", "digitalVolumeControl"});
         }
 
         @Override

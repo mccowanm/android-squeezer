@@ -292,7 +292,7 @@ public class Util {
         return TextUtils.join(":", parts);
     }
 
-    public static byte[] parseMac(String s) {
+    public static @NonNull byte[] parseMac(String s) {
         if (!validateMac(s)) {
             return null;
         }
@@ -426,26 +426,5 @@ public class Util {
         drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
         drawable.draw(canvas);
         return bitmap;
-    }
-
-    public static boolean arraysStartsWith(Object[] a, Object[] b) {
-        int n = (Math.min(a.length, b.length));
-        for (int i = 0; i < n; i++) {
-            if (!equals(a[i], b[i])) return false;
-        }
-        return true;
-    }
-
-    /**
-     * Returns {@code true} if the arguments are equal to each other
-     * and {@code false} otherwise.
-     * Consequently, if both arguments are {@code null}, {@code true}
-     * is returned and if exactly one argument is {@code null}, {@code
-     * false} is returned.  Otherwise, equality is determined by using
-     * the {@link Object#equals equals} method of the first
-     * argument.
-     */
-    public static boolean equals(Object a, Object b) {
-        return (a == b) || (a != null && a.equals(b));
     }
 }

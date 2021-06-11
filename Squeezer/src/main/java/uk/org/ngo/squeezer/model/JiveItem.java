@@ -53,13 +53,6 @@ public class JiveItem extends Item {
     public static final JiveItem ADVANCED_SETTINGS = new JiveItem("advancedSettings", "settings", R.string.ADVANCED_SETTINGS, 105, Window.WindowStyle.TEXT_ONLY);
     public static final JiveItem ARCHIVE = new JiveItem("archiveNode", "home", R.string.ARCHIVE_NODE, 2000, Window.WindowStyle.HOME_MENU);
 
-    public static JiveItem CUSTOM_SHORTCUT_1 = new JiveItem("customShortcutNode_1", "none", R.string.CUSTOM_SHORTCUT_NODE, 1010, Window.WindowStyle.HOME_MENU);
-    public static JiveItem CUSTOM_SHORTCUT_2 = new JiveItem("customShortcutNode_2", "none", R.string.CUSTOM_SHORTCUT_NODE, 1010, Window.WindowStyle.HOME_MENU);
-    public static JiveItem CUSTOM_SHORTCUT_3 = new JiveItem("customShortcutNode_3", "none", R.string.CUSTOM_SHORTCUT_NODE, 1010, Window.WindowStyle.HOME_MENU);
-    public static JiveItem CUSTOM_SHORTCUT_4 = new JiveItem("customShortcutNode_4", "none", R.string.CUSTOM_SHORTCUT_NODE, 1010, Window.WindowStyle.HOME_MENU);
-    public static JiveItem CUSTOM_SHORTCUT_5 = new JiveItem("customShortcutNode_5", "none", R.string.CUSTOM_SHORTCUT_NODE, 1010, Window.WindowStyle.HOME_MENU);
-
-
     /**
      * Information that will be requested about songs.
      * <p>
@@ -87,22 +80,26 @@ public class JiveItem extends Item {
         }
     };
 
-    public JiveItem(String id, String node, @StringRes int text, int weight, Window.WindowStyle windowStyle) {
+    private JiveItem(String id, String node, @StringRes int text, int weight, Window.WindowStyle windowStyle) {
+        this(record(id, node, Squeezer.getContext().getString(text), weight));
+        window = new Window();
+        window.windowStyle = windowStyle;
+    }
+
+    public JiveItem(String id, String node, String text, int weight, Window.WindowStyle windowStyle) {
         this(record(id, node, text, weight));
         window = new Window();
         window.windowStyle = windowStyle;
     }
 
-    private static Map<String, Object> record(String id, String node, @StringRes int text, int weight) {
+    private static Map<String, Object> record(String id, String node, String text, int weight) {
         Map<String, Object> record = new HashMap<>();
         record.put("id", id);
         record.put("node", node);
-        record.put("name", Squeezer.getContext().getString(text));
+        record.put("name", text);
         record.put("weight", weight);
         return record;
     }
-
-
 
 
     private String id;

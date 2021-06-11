@@ -20,7 +20,6 @@ import java.util.function.Function;
 
 import de.greenrobot.event.EventBus;
 import uk.org.ngo.squeezer.Preferences;
-import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.Squeezer;
 import uk.org.ngo.squeezer.model.Action;
 import uk.org.ngo.squeezer.model.JiveItem;
@@ -33,16 +32,14 @@ public class HomeMenuHandling {
 
     private static final String TAG = "HomeMenuHandling";
 
-    /** One less than actual max in JiveItem.java */
-    private static final int MAX_CUSTOM_SHORTCUT_NODES = 4;
-
-    /** Home menu tree as received from slimserver */
+    /**
+     * Home menu tree as received from slimserver
+     */
     public final List<JiveItem> homeMenu = new Vector<>();
     public CopyOnWriteArrayList<JiveItem> customShortcuts = new CopyOnWriteArrayList<>();
 
     public HomeMenuHandling(@NonNull EventBus eventBus) {
         mEventBus = eventBus;
-        initializeShortcutTemplates();
     }
 
     private final EventBus mEventBus;
@@ -55,7 +52,7 @@ public class HomeMenuHandling {
         for (JiveItem archiveItem : homeMenu) {
             if (archiveItem.getNode().equals(JiveItem.ARCHIVE.getId())) {
                 Set<JiveItem> parents = getOriginalParents(archiveItem.getOriginalNode());
-                if ( parents.contains(toggledItem)) {
+                if (parents.contains(toggledItem)) {
                     archiveItem.setNode(archiveItem.getOriginalNode());
                 }
             }
@@ -146,7 +143,7 @@ public class HomeMenuHandling {
         }
         for (String s : archivedItems) {
             for (JiveItem item : homeMenu) {
-                if  (item.getId().equals(s)) {
+                if (item.getId().equals(s)) {
                     item.setNode(JiveItem.ARCHIVE.getId());
                 }
             }
@@ -184,79 +181,56 @@ public class HomeMenuHandling {
     }
 
     /**
-     * Add empty JiveItems to memory.
-     */
-    public void initializeShortcutTemplates() {
-        customShortcuts.add(JiveItem.CUSTOM_SHORTCUT_1);
-        customShortcuts.add(JiveItem.CUSTOM_SHORTCUT_2);
-        customShortcuts.add(JiveItem.CUSTOM_SHORTCUT_3);
-        customShortcuts.add(JiveItem.CUSTOM_SHORTCUT_4);
-        customShortcuts.add(JiveItem.CUSTOM_SHORTCUT_5);
-    }
-
-    /**
      * Load complete list of stored items from preferences.
      * Use action the values on the initialized customNodes.
      */
     public void loadShortcutItems() {
         Map<String, String> map = new Preferences(Squeezer.getContext()).restoreCustomShortcuts();
-        int index = -1;
+        customShortcuts.clear();
         for (Map.Entry<String, String> pair : map.entrySet()) {
-            index++;
-            customShortcuts.get(index).setName(pair.getKey());
-            if (!pair.getKey().contains("customShortcut")) {       // assign values to empty item
-                JSONObject loadedObj;
-                JSONObject loadedAction;
-                JSONObject loadedJsonAction;
-                JSONObject loadedParams;
-                Object loadedCmd;
-                Map<String, String> paramsMap = new HashMap<>();
-                Action action = new Action();
-                Action.JsonAction jsonAction = new Action.JsonAction();
-                try {
-                    loadedObj = new JSONObject(pair.getValue());
-                    loadedAction = new JSONObject(loadedObj.getString("Action"));
-                    if (loadedObj.has("nextWindow")) { // normally null
-//                      TODO: Maybe store and reload nextWindow objects
-                    }
-                    loadedJsonAction = new JSONObject(loadedAction.getString("JsonAction"));
-                    loadedCmd = loadedJsonAction.get("cmd");
-                    if (loadedCmd instanceof JSONArray) {
-                        toList((JSONArray) loadedCmd, jsonAction); // add commands to jsonAction
-                    }
-                    loadedParams = new JSONObject(loadedJsonAction.getString("params"));
-                    Iterator<String> keys = loadedParams.keys();
-                    while (keys.hasNext()) {
-                        String key = keys.next();
-                        Object value = loadedParams.get(key);
-                        paramsMap.put(key, value.toString());  // isContextMenu is Integer!
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                jsonAction.nextWindow = null;
-                jsonAction.params.putAll(paramsMap);
-                action.urlCommand = null;       // TODO: Maybe store and reload this
-                action.action = jsonAction;
+            JiveItem template = new JiveItem("customShortcut_" + customShortcuts.size(), "home", "customShortcut", 1010, Window.WindowStyle.HOME_MENU);
 
-                customShortcuts.get(index).goAction = action;
-                customShortcuts.get(index).setNode("home");
-            } else {
-                customShortcuts.get(index).setNode("none");  // empty item invisible on homeMenu
+            template.setName(pair.getKey());
+            JSONObject loadedObj;
+            JSONObject loadedAction;
+            JSONObject loadedJsonAction;
+            JSONObject loadedParams;
+            Object loadedCmd;
+            Map<String, String> paramsMap = new HashMap<>();
+            Action action = new Action();
+            Action.JsonAction jsonAction = new Action.JsonAction();
+            try {
+                loadedObj = new JSONObject(pair.getValue());
+                loadedAction = new JSONObject(loadedObj.getString("Action"));
+                if (loadedObj.has("nextWindow")) { // normally null
+//                      TODO: Maybe store and reload nextWindow objects
+                }
+                loadedJsonAction = new JSONObject(loadedAction.getString("JsonAction"));
+                loadedCmd = loadedJsonAction.get("cmd");
+                if (loadedCmd instanceof JSONArray) {
+                    toList((JSONArray) loadedCmd, jsonAction); // add commands to jsonAction
+                }
+                loadedParams = new JSONObject(loadedJsonAction.getString("params"));
+                Iterator<String> keys = loadedParams.keys();
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    Object value = loadedParams.get(key);
+                    paramsMap.put(key, value.toString());  // isContextMenu is Integer!
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        }
-        for (JiveItem item : customShortcuts) {
-            homeMenu.remove((item));
+            jsonAction.nextWindow = null;
+            jsonAction.params.putAll(paramsMap);
+            action.urlCommand = null;       // TODO: Maybe store and reload this
+            action.action = jsonAction;
+
+            template.goAction = action;
+            customShortcuts.add(template);
         }
         homeMenu.addAll(customShortcuts);
     }
 
-    /**
-     * Extract commands from array and add them to the shortcut item
-     * @param obj
-     * @param jsonAction
-     * @throws JSONException
-     */
     private void toList(JSONArray obj, Action.JsonAction jsonAction) throws JSONException {
         for (int i = 0; i < obj.length(); i++) {
             String value = (String) obj.get(i);
@@ -264,67 +238,24 @@ public class HomeMenuHandling {
         }
     }
 
-    /**
-     * Add prepared jive item to home menu
-     * @param jiveItem
-     */
-    public void addShortcutToHomeMenu(JiveItem jiveItem) {
-        homeMenu.remove(jiveItem);
-        jiveItem.setNode("home");
-        homeMenu.add(jiveItem);
-    }
-
-    public void resetShortcutNodeOnHomeMenu(JiveItem oldItem, JiveItem newItem) {
-        homeMenu.remove(oldItem);
-        homeMenu.add(newItem);
-    }
-
-    /**
-     * Get the triggered slim item
-     * @param itemToShortcut
-     */
     public boolean triggerCustomShortcut(JiveItem itemToShortcut) {
         return addShortcutNodeToCustomNodes(itemToShortcut);
     }
 
-    /**
-     * Add jive item to the home screen and save the whole list to preferences
-     * @param item
-     */
     boolean addShortcutNodeToCustomNodes(JiveItem item) {
         if (!shortcutAlreadyAdded(item)) {
-            JiveItem template = getShortcutTemplate();
+            JiveItem template = new JiveItem("customShortcut_" + customShortcuts.size(), "home", item.getName(), 1010, Window.WindowStyle.HOME_MENU);
             template.goAction = item.goAction;
-            template.setName(item.getName());
 //            TODO: add Icon to shortcut
-            addShortcutToHomeMenu(template);
+            customShortcuts.add(template);
+            homeMenu.add(template);
             new Preferences(Squeezer.getContext()).saveCustomShortcuts(convertCustomShortcutItems());
         } else {
             return false;
         }
-        return true; // item was put into shortcuts
+        return true;
     }
 
-    /**
-     * Get the first empty template to fill it as a shortcut or return the first real shortcut
-     * to overwrite it, if no space is left (and move items in list up when doing so).
-     * @return
-     */
-    private JiveItem getShortcutTemplate() {
-        for (JiveItem item : customShortcuts) {
-            if (item.getName().contains("customShortcut")) {
-                return item;     // found an empty slot
-            }
-        }
-        reorderCustomShortcutItems();
-        return customShortcuts.get(MAX_CUSTOM_SHORTCUT_NODES);
-    }
-
-    /**
-     * Returns true if the shortcut is already in memory (and therefore should be displayed).
-     * @param itemToShortcut
-     * @return
-     */
     private boolean shortcutAlreadyAdded(JiveItem itemToShortcut) {
         for (JiveItem item : customShortcuts) {
             if (item.getName().equals(itemToShortcut.getName())) {
@@ -334,58 +265,27 @@ public class HomeMenuHandling {
         return false;
     }
 
-    /**
-     * Reorder memory. Put the added item last in the list of active shortcuts.
-     * Used if the first item was empty due to a remove before.
-     **/
-    public void reorderCustomShortcutItems() {
-        List<JiveItem> reorder = new ArrayList<>();
-        for (int i = 1; i <= MAX_CUSTOM_SHORTCUT_NODES; i++) {
-            reorder.add(customShortcuts.get(i));
-        }
-        reorder.add(customShortcuts.get(0));
-        customShortcuts.clear();
-        customShortcuts.addAll(reorder);
-    }
-
-    /**
-     * Get list of current custom shortcut items from memory and deliver map of name/goAction.
-     * If item is a template with no action, make the name + "_index" and action "null".
-     * @return
-     */
-    public LinkedHashMap<String,String> convertCustomShortcutItems() {
+    public LinkedHashMap<String, String> convertCustomShortcutItems() {
         LinkedHashMap<String, String> map = new LinkedHashMap<>();
-        int index = 0;
         for (JiveItem item : customShortcuts) {
             if (item.goAction != null) {
                 map.put(item.getName(), item.goAction.toJSONString());
-            } else {
-                index = index + 1;
-                map.put("customShortcut_" + index, "null");
             }
         }
         return map;
     }
 
-    /**
-     * Remove custom shortcut item from memory and save whole list to preferences, move emptied slot
-     * to end of list and remove custom shortcut item from homeMenu.
-     * @param item
-     */
+
     public void removeCustomShortcut(JiveItem item) {
-        JiveItem newItem = new JiveItem(item.getId(), "none", R.string.CUSTOM_SHORTCUT_NODE, 1010, Window.WindowStyle.HOME_MENU);
         customShortcuts.remove(item);
-        customShortcuts.add(newItem);
         new Preferences(Squeezer.getContext()).saveCustomShortcuts(convertCustomShortcutItems());
-        resetShortcutNodeOnHomeMenu(item, newItem);
+        homeMenu.remove(item);
     }
 
     public void removeAllShortcuts() {
         for (JiveItem item : customShortcuts) {
-            JiveItem newItem = new JiveItem(item.getId(), "none", R.string.CUSTOM_SHORTCUT_NODE, 1010, Window.WindowStyle.HOME_MENU);
             customShortcuts.remove(item);
-            customShortcuts.add(newItem);
-            resetShortcutNodeOnHomeMenu(item, newItem);
+            homeMenu.remove(item);
         }
         new Preferences(Squeezer.getContext()).saveCustomShortcuts(convertCustomShortcutItems());
     }

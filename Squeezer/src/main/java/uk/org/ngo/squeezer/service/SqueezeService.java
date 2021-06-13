@@ -243,9 +243,12 @@ public class SqueezeService extends Service {
         scrobblingEnabled = preferences.isScrobbleEnabled();
         mFadeInSecs = preferences.getFadeInSecs();
         mVolumeProvider = new MyVolumeProvider(preferences.getVolumeIncrements());
-        if (squeezeService.isConnected()) {
-            mMediaSession.setPlaybackToRemote(mVolumeProvider);
-        }
+        if (squeezeService.isConnected())
+            if (preferences.isBackgroundVolume()) {
+                mMediaSession.setPlaybackToRemote(mVolumeProvider);
+            } else {
+                mMediaSession.setPlaybackToLocal(AudioManager.STREAM_MUSIC);
+            }
     }
 
     @Override
@@ -654,7 +657,9 @@ public class SqueezeService extends Service {
                 mMediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
                 mMediaSession.setPlaybackState(new PlaybackStateCompat.Builder().setState(PlaybackStateCompat.STATE_PLAYING, 0, 0).build());
 
-                mMediaSession.setPlaybackToRemote(mVolumeProvider);
+                if (new Preferences(this).isBackgroundVolume()) {
+                    mMediaSession.setPlaybackToRemote(mVolumeProvider);
+                }
                 mMediaSession.setActive(true);
             } else {
                 notification.bigContentView = notificationData.expandedView;

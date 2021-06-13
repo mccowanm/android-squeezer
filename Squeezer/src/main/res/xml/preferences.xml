@@ -19,6 +19,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:key="first_preferencescreen">
 
+    <SwitchPreferenceCompat
+        android:key="squeezer.backgroundVolume"
+        android:summaryOff="@string/settings_background_volume_off"
+        android:summaryOn="@string/settings_background_volume_on"
+        android:title="@string/settings_background_volume_title" />
+
     <SeekBarPreference
         android:key="squeezer.volumeIncrements"
         android:title="@string/settings_volume_increment_title"

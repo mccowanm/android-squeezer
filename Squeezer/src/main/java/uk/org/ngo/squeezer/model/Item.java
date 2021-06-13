@@ -94,7 +94,6 @@ public abstract class Item implements Parcelable {
 
     private static final String TAG = "Item";
     protected static String getString(Map<String, Object> record, String fieldName) {
-//        Log.d(TAG, "getString: BEN fieldName from record: " + fieldName);
         return Util.getString(record, fieldName);
     }
 

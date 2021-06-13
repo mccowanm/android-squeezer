@@ -2,15 +2,9 @@ package uk.org.ngo.squeezer.service;
 
 import androidx.annotation.NonNull;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,10 +15,8 @@ import java.util.function.Function;
 import de.greenrobot.event.EventBus;
 import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.Squeezer;
-import uk.org.ngo.squeezer.model.Action;
 import uk.org.ngo.squeezer.model.JiveItem;
 import uk.org.ngo.squeezer.model.MenuStatusMessage;
-import uk.org.ngo.squeezer.model.Window;
 import uk.org.ngo.squeezer.service.event.HomeMenuEvent;
 
 public class HomeMenuHandling {
@@ -180,76 +172,36 @@ public class HomeMenuHandling {
         }
     }
 
+    private static int CUSTOM_SHORTCUT_WEIGHT = 2000;
+    private static String CUSTOM_SHORTCUT_NODE = "home";
+
     /**
      * Load complete list of stored items from preferences.
      * Use action the values on the initialized customNodes.
      */
     public void loadShortcutItems() {
-        Map<String, String> map = new Preferences(Squeezer.getContext()).restoreCustomShortcuts();
+        Map<String, Map<String, Object>> jsonMap = new Preferences(Squeezer.getContext()).restoreCustomShortcuts();
         customShortcuts.clear();
-        for (Map.Entry<String, String> pair : map.entrySet()) {
-            JiveItem template = new JiveItem("customShortcut_" + customShortcuts.size(), "home", "customShortcut", 1010, Window.WindowStyle.HOME_MENU);
-
-            template.setName(pair.getKey());
-            JSONObject loadedObj;
-            JSONObject loadedAction;
-            JSONObject loadedJsonAction;
-            JSONObject loadedParams;
-            Object loadedCmd;
-            Map<String, String> paramsMap = new HashMap<>();
-            Action action = new Action();
-            Action.JsonAction jsonAction = new Action.JsonAction();
-            try {
-                loadedObj = new JSONObject(pair.getValue());
-                loadedAction = new JSONObject(loadedObj.getString("Action"));
-                if (loadedObj.has("nextWindow")) { // normally null
-//                      TODO: Maybe store and reload nextWindow objects
-                }
-                loadedJsonAction = new JSONObject(loadedAction.getString("JsonAction"));
-                loadedCmd = loadedJsonAction.get("cmd");
-                if (loadedCmd instanceof JSONArray) {
-                    toList((JSONArray) loadedCmd, jsonAction); // add commands to jsonAction
-                }
-                loadedParams = new JSONObject(loadedJsonAction.getString("params"));
-                Iterator<String> keys = loadedParams.keys();
-                while (keys.hasNext()) {
-                    String key = keys.next();
-                    Object value = loadedParams.get(key);
-                    paramsMap.put(key, value.toString());  // isContextMenu is Integer!
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            jsonAction.nextWindow = null;
-            jsonAction.params.putAll(paramsMap);
-            action.urlCommand = null;       // TODO: Maybe store and reload this
-            action.action = jsonAction;
-
-            template.goAction = action;
-            customShortcuts.add(template);
+        for (Map.Entry<String, Map<String, Object>> pair : jsonMap.entrySet()) {
+            HashMap<String, Object> record = (HashMap) pair.getValue(); // TODO: check cast correct
+            JiveItem shortcut = new JiveItem(record);
+            shortcut.setName(pair.getKey());
+            customShortcuts.add(setShortcut(shortcut));
         }
         homeMenu.addAll(customShortcuts);
     }
 
-    private void toList(JSONArray obj, Action.JsonAction jsonAction) throws JSONException {
-        for (int i = 0; i < obj.length(); i++) {
-            String value = (String) obj.get(i);
-            jsonAction.cmd.add(value);
-        }
-    }
-
     public boolean triggerCustomShortcut(JiveItem itemToShortcut) {
-        return addShortcutNodeToCustomNodes(itemToShortcut);
+        return addShortcut(itemToShortcut);
     }
 
-    boolean addShortcutNodeToCustomNodes(JiveItem item) {
+    private boolean addShortcut(JiveItem item) {
         if (!shortcutAlreadyAdded(item)) {
-            JiveItem template = new JiveItem("customShortcut_" + customShortcuts.size(), "home", item.getName(), 1010, Window.WindowStyle.HOME_MENU);
-            template.goAction = item.goAction;
-//            TODO: add Icon to shortcut
-            customShortcuts.add(template);
+            JiveItem template = new JiveItem(item.getRecord());
+//            TODO template.setIcon
+            customShortcuts.add(setShortcut(template));
             homeMenu.add(template);
-            new Preferences(Squeezer.getContext()).saveCustomShortcuts(convertCustomShortcutItems());
+            new Preferences(Squeezer.getContext()).saveShortcuts(convertShortcuts());
         } else {
             return false;
         }
@@ -265,20 +217,24 @@ public class HomeMenuHandling {
         return false;
     }
 
-    public LinkedHashMap<String, String> convertCustomShortcutItems() {
-        LinkedHashMap<String, String> map = new LinkedHashMap<>();
-        for (JiveItem item : customShortcuts) {
-            if (item.goAction != null) {
-                map.put(item.getName(), item.goAction.toJSONString());
-            }
-        }
-        return map;
+    private JiveItem setShortcut(JiveItem item) {
+        item.setNode(CUSTOM_SHORTCUT_NODE);
+        item.setWeight(CUSTOM_SHORTCUT_WEIGHT);
+        item.setId("customShortcut_" + customShortcuts.size());
+        return item;
     }
 
+    private Map<String, Object> convertShortcuts() {
+        Map<String, Object> map = new HashMap<>();
+        for (JiveItem item : customShortcuts) {
+            map.put(item.getName(), item.getRecord());
+        }
+    return map;
+    }
 
     public void removeCustomShortcut(JiveItem item) {
         customShortcuts.remove(item);
-        new Preferences(Squeezer.getContext()).saveCustomShortcuts(convertCustomShortcutItems());
+        new Preferences(Squeezer.getContext()).saveShortcuts(convertShortcuts());
         homeMenu.remove(item);
     }
 
@@ -287,6 +243,6 @@ public class HomeMenuHandling {
             customShortcuts.remove(item);
             homeMenu.remove(item);
         }
-        new Preferences(Squeezer.getContext()).saveCustomShortcuts(convertCustomShortcutItems());
+        new Preferences(Squeezer.getContext()).saveShortcuts(convertShortcuts());
     }
 }

@@ -317,13 +317,10 @@ public class JiveItemListActivity extends BaseListActivity<JiveItemView, JiveIte
 
     @Override
     protected void orderPage(@NonNull ISqueezeService service, int start) {
-//        Log.d(TAG, "orderPage: BEN ");
         if (parent != null) {
             if (action == null || (parent.hasInput() && !parent.isInputReady())) {
-//                Log.d(TAG, "orderPage: BEN JiveItem parent: " + parent.getId());
                 showContent();
             } else
-//                Log.d(TAG, "orderPage: BEN no parent");
                 service.pluginItems(start, parent, action, this);
         } else if (register) {
             service.register(this);
@@ -339,7 +336,6 @@ public class JiveItemListActivity extends BaseListActivity<JiveItemView, JiveIte
 
     @Override
     public void onItemsReceived(int count, int start, final Map<String, Object> parameters, List<JiveItem> items, Class<JiveItem> dataType) {
-//        Log.d(TAG, "onItemsReceived: BEN");
         if (parameters.containsKey("goNow")) {
             Action.NextWindow nextWindow = Action.NextWindow.fromString(Util.getString(parameters, "goNow"));
             switch (nextWindow.nextWindow) {

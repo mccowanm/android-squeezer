@@ -22,11 +22,14 @@ import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.Parcel;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.appcompat.content.res.AppCompatResources;
+
+import org.eclipse.jetty.util.ajax.JSON;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -101,7 +104,7 @@ public class JiveItem extends Item {
         return record;
     }
 
-
+    private String record;
     private String id;
     @NonNull
     private String name;
@@ -291,8 +294,14 @@ public class JiveItem extends Item {
         return (playAction != null || addAction != null || insertAction != null || moreAction != null || checkbox != null || radio != null);
     }
 
+    public Map<String, Object> getRecord() {
+        JSON json = new JSON();
+        return (Map) json.fromJSON(this.record);
+    }
 
     public JiveItem(Map<String, Object> record) {
+        JSON json = new JSON();
+        this.record = json.toJSON(record);
         setId(getString(record, record.containsKey("cmd") ? "cmd" : "id"));
         splitItemText(getStringOrEmpty(record, record.containsKey("name") ? "name" : "text"));
         icon = getImageUrl(record, record.containsKey("icon-id") ? "icon-id" : "icon");
@@ -421,6 +430,9 @@ public class JiveItem extends Item {
         dest.writeParcelable(downloadCommand, flags);
     }
 
+    public void setWeight(int weight) {
+        this.weight = weight;
+    }
 
     public boolean hasInput() {
         return hasInputField() || hasChoices();

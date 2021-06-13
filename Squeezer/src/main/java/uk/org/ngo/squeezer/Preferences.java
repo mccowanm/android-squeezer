@@ -30,12 +30,12 @@ import com.google.android.material.timepicker.MaterialTimePicker;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.eclipse.jetty.util.ajax.JSON;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -578,41 +578,39 @@ public final class Preferences {
         return;
     }
 
-    /**
-     * Save custom shortcuts to preferences as map of name/action.
-     * @param map
-     */
-    public void saveCustomShortcuts(LinkedHashMap<String, String> map) {
+    public void saveShortcuts(Map<String, Object> map) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        JSONObject jsonObject = new JSONObject(map);
-        String jsonString = jsonObject.toString();
-        editor.putString(CUSTOM_SHORTCUTS, jsonString);
+        JSONObject json = new JSONObject(map);
+        editor.putString(CUSTOM_SHORTCUTS, json.toString());
         editor.apply();
     }
 
     /**
-     * Restore map of custom shortcut items from preferences with name/action as strings
-     * @return
+     * Return a map of names (keys) of shortcuts with value: Map<String, Object> which is a record
+     * and can be used as such when generating JiveItems
      */
-    public LinkedHashMap<String, String> restoreCustomShortcuts() {
-        LinkedHashMap<String, String> map = new LinkedHashMap<>();
+    public HashMap<String, Map<String, Object>> restoreCustomShortcuts() {
+        HashMap<String, Map<String, Object>> allShortcutsFromPref = new HashMap<>();
         String jsonString = sharedPreferences.getString(CUSTOM_SHORTCUTS, null);
         if (TextUtils.isEmpty(jsonString)) {
-            return map;
+            return allShortcutsFromPref;
         }
         try {
-            JSONObject jsonObject = new JSONObject(jsonString);
-            Iterator<String> keysItr = jsonObject.keys();
+//          whole String to JSON, then extract name/record pairs
+            JSONObject allShortcuts = new JSONObject(jsonString);
+            Iterator<String> keysItr = allShortcuts.keys();
             while (keysItr.hasNext()) {
                 String key = keysItr.next();
-                String value = (String) jsonObject.get(key);
-                map.put(key, value);
+                JSON json = new JSON();
+                Map<String, Object> recordFromPref = (Map) json.parse(allShortcuts.getString(key));
+                allShortcutsFromPref.put(key, recordFromPref);
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return map;
+        return allShortcutsFromPref;
     }
+
 
     public boolean isDownloadEnabled() {
         return sharedPreferences.getBoolean(KEY_DOWNLOAD_ENABLED, true);

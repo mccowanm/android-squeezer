@@ -174,10 +174,14 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
         if (!mCustomJiveItemHandling.isShortcutable(item)) {
             mActivity.showDisplayMessage(message);
         } else {
-            if (mCustomJiveItemHandling.triggerCustomShortcut(item)) {
-                mActivity.showDisplayMessage(R.string.ITEM_PUT_AS_SHORTCUT_ON_HOME_MENU);
+            if (isShortcutActive) {
+                if (mCustomJiveItemHandling.triggerCustomShortcut(item)) {
+                    mActivity.showDisplayMessage(R.string.ITEM_PUT_AS_SHORTCUT_ON_HOME_MENU);
+                } else {
+                    mActivity.showDisplayMessage(R.string.ITEM_IS_ALREADY_A_SHORTCUT);
+                }
             } else {
-                mActivity.showDisplayMessage(R.string.ITEM_IS_ALREADY_A_SHORTCUT);
+                mActivity.showDisplayMessage(R.string.ITEM_CANNOT_BE_ARCHIVED);
             }
         }
         return true;

@@ -394,7 +394,6 @@ public class JiveItemListActivity extends BaseListActivity<JiveItemView, JiveIte
 
     @Override
     public void action(JiveItem item, Action action, int alreadyPopped) {
-//        Log.d(TAG, "action: BEN");
         if (getService() == null) {
             return;
         }

@@ -1,11 +1,14 @@
 package uk.org.ngo.squeezer.model;
 
+import android.util.Log;
 
 import uk.org.ngo.squeezer.itemlist.JiveItemListActivity;
 import uk.org.ngo.squeezer.service.HomeMenuHandling;
 import uk.org.ngo.squeezer.service.ISqueezeService;
 
 public class CustomJiveItemHandling {
+
+    private static final String TAG = "CustomJiveItemHandling";
 
     final ISqueezeService service;
     final HomeMenuHandling mHomeMenuHandling;
@@ -37,11 +40,32 @@ public class CustomJiveItemHandling {
             return false;
         }
         for (String s : item.goAction.action.cmd) {
-            if (s.equals("browselibrary")) {
+            if (allowMyMusic(s) || allowApps(s) || allowRadio(s)) {
                 return true;
             }
         }
     return false;
+    }
+
+    private boolean allowMyMusic(String s) {
+        if (s.equals("browselibrary")) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean allowApps(String s) {
+        if (s.equals("items")) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean allowRadio(String s) {
+        if (s.equals("play")) {
+            return true;
+        }
+        return false;
     }
 }
 

@@ -1,5 +1,7 @@
 package uk.org.ngo.squeezer.service;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
@@ -200,7 +202,7 @@ public class HomeMenuHandling {
 //            TODO template.setIcon
             customShortcuts.add(setShortcut(template));
             homeMenu.add(template);
-            new Preferences(Squeezer.getContext()).saveShortcuts(convertShortcuts());
+            new Preferences(Squeezer.getContext()).saveShortcuts(convertShortcuts()); // TODO: Check if Preferences can be saved elsewhere
         } else {
             return false;
         }

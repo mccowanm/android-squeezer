@@ -262,11 +262,6 @@ public class JiveItem extends Item {
         result.put("settingsReplayGain", R.drawable.settings_audio);
         result.put("settingsSleep", R.drawable.settings_sleep);
         result.put("settingsSync", R.drawable.settings_sync);
-        result.put("customShortcutNode_1", R.drawable.ml_folder);
-        result.put("customShortcutNode_2", R.drawable.ml_folder);
-        result.put("customShortcutNode_3", R.drawable.ml_folder);
-        result.put("customShortcutNode_4", R.drawable.ml_folder);
-        result.put("customShortcutNode_5", R.drawable.ml_folder);
 //      TODO: Make unique icon for custom shortcut, or load icon from original slim item or its parents
 
         return result;

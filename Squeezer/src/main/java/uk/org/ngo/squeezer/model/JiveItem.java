@@ -54,7 +54,7 @@ public class JiveItem extends Item {
     public static final JiveItem EXTRAS = new JiveItem("extras", "home", R.string.EXTRAS, 50, Window.WindowStyle.HOME_MENU);
     public static final JiveItem SETTINGS = new JiveItem("settings", "home", R.string.SETTINGS, 1005, Window.WindowStyle.HOME_MENU);
     public static final JiveItem ADVANCED_SETTINGS = new JiveItem("advancedSettings", "settings", R.string.ADVANCED_SETTINGS, 105, Window.WindowStyle.TEXT_ONLY);
-    public static final JiveItem ARCHIVE = new JiveItem("archiveNode", "home", R.string.ARCHIVE_NODE, 2000, Window.WindowStyle.HOME_MENU);
+    public static final JiveItem ARCHIVE = new JiveItem("archiveNode", "home", R.string.ARCHIVE_NODE, 3000, Window.WindowStyle.HOME_MENU);
 
     /**
      * Information that will be requested about songs.
@@ -229,6 +229,9 @@ public class JiveItem extends Item {
     }
 
     @DrawableRes private Integer getItemIcon() {
+        if ((id != null) && (this.id.contains("customShortcut"))) {
+            return R.drawable.icon_mymusic;
+        }
         return itemIcons.get(id);
     }
 

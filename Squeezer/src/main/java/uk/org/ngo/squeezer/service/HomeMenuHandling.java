@@ -184,7 +184,7 @@ public class HomeMenuHandling {
     public void loadShortcutItems(Map<String, Map<String, Object>> map) {
         customShortcuts.clear();
         for (Map.Entry<String, Map<String, Object>> pair : map.entrySet()) {
-            Map<String, Object> record = pair.getValue(); // TODO: check cast correct
+            Map<String, Object> record = pair.getValue();
             JiveItem shortcut = new JiveItem(record);
             shortcut.setName(pair.getKey());
             customShortcuts.add(setShortcut(shortcut));

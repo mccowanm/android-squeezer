@@ -10,6 +10,8 @@ public class CustomJiveItemHandling {
 
     private static final String TAG = "CustomJiveItemHandling";
 
+    public int ADJUSTED_CUSTOM_SHORTCUT_WEIGHT = 2000;
+
     final ISqueezeService service;
     final HomeMenuHandling mHomeMenuHandling;
     final JiveItemListActivity mActivity;
@@ -23,10 +25,11 @@ public class CustomJiveItemHandling {
     /**
      * Send long pressed JiveItem
      *
-     * @param itemToShortcut
+     * @param item
      */
-    public boolean triggerCustomShortcut(JiveItem itemToShortcut) {
-        return mHomeMenuHandling.triggerCustomShortcut(itemToShortcut);
+    public boolean triggerCustomShortcut(JiveItem item) {
+        item.appendWeight(ADJUSTED_CUSTOM_SHORTCUT_WEIGHT);
+        return mHomeMenuHandling.triggerCustomShortcut(item);
     }
 
     public boolean isCustomShortcut(JiveItem item) {
@@ -49,6 +52,7 @@ public class CustomJiveItemHandling {
 
     private boolean allowMyMusic(String s) {
         if (s.equals("browselibrary")) {
+            ADJUSTED_CUSTOM_SHORTCUT_WEIGHT = 2000;
             return true;
         }
         return false;
@@ -56,6 +60,7 @@ public class CustomJiveItemHandling {
 
     private boolean allowApps(String s) {
         if (s.equals("items")) {
+            ADJUSTED_CUSTOM_SHORTCUT_WEIGHT = 2010;
             return true;
         }
         return false;
@@ -63,6 +68,7 @@ public class CustomJiveItemHandling {
 
     private boolean allowRadio(String s) {
         if (s.equals("play")) {
+            ADJUSTED_CUSTOM_SHORTCUT_WEIGHT = 2020;
             return true;
         }
         return false;

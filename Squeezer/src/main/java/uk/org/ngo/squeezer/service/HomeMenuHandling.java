@@ -174,7 +174,6 @@ public class HomeMenuHandling {
         }
     }
 
-    private final static int CUSTOM_SHORTCUT_WEIGHT = 2000;
     private final static String CUSTOM_SHORTCUT_NODE = "home";
 
     /**
@@ -220,7 +219,6 @@ public class HomeMenuHandling {
 
     private JiveItem setShortcut(JiveItem item) {
         item.setNode(CUSTOM_SHORTCUT_NODE);
-        item.setWeight(CUSTOM_SHORTCUT_WEIGHT);
         item.setId("customShortcut_" + customShortcuts.size());
         return item;
     }

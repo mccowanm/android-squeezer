@@ -297,6 +297,13 @@ public class JiveItem extends Item {
         return (Map) json.fromJSON(this.record);
     }
 
+    public void appendWeight(int weight) {
+        JSON json = new JSON();
+        Map<String, Object> map = (Map) json.fromJSON(this.record);
+        map.put("weight", weight);
+        this.record = json.toJSON(map);
+    }
+
     public JiveItem(Map<String, Object> record) {
         JSON json = new JSON();
         this.record = json.toJSON(record);

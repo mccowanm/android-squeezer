@@ -74,6 +74,8 @@
 
         <SwitchPreferenceCompat
             android:key="squeezer.clear.current_playlist.confirmation"
+            android:summaryOff="@string/settings_clear_current_playlist_confirmation_off"
+            android:summaryOn="@string/settings_clear_current_playlist_confirmation_on"
             android:title="@string/settings_clear_current_playlist_confirmation"/>
 
         <ListPreference

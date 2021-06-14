@@ -40,6 +40,8 @@
     <string name="settings_theme_dark">Mørk</string>
     <string name="settings_theme_light_dark">Lys, mørk handlingslinie</string>
     <string name="settings_clear_current_playlist_confirmation">Bekræft før ryd afspilningsliste</string>
+    <string name="settings_clear_current_playlist_confirmation_off">Ingen bekræftelse ved anvendelse af \"Ryd afspilningsliste\" knappen</string>
+    <string name="settings_clear_current_playlist_confirmation_on">Der skal bekræftes ved anvendelse af \"Ryd afspilningsliste\" knappen</string>
     <string name="settings_username_hint">Eventuelt SqueezeBox Server brugernavn.</string>
     <string name="settings_password_hint">Eventuel SqueezeBox Server adgangskode.</string>
     <string name="settings_use_wake_on_lan">Væk server (Wake-on-LAN)</string>

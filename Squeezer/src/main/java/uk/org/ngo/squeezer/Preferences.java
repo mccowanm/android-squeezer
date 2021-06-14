@@ -108,6 +108,9 @@ public final class Preferences {
     // Do we send anonymous usage statistics?
     public static final String KEY_ANALYTICS_ENABLED = "squeezer.analytics.enabled";
 
+    // Background Volume Control
+    static final String KEY_BACKGROUND_VOLUME = "squeezer.backgroundVolume";
+
     // Volume up/down increments
     private static final String KEY_VOLUME_INCREMENTS = "squeezer.volumeIncrements";
 
@@ -405,6 +408,10 @@ public final class Preferences {
         }
 
         editor.apply();
+    }
+
+    public boolean isBackgroundVolume() {
+        return sharedPreferences.getBoolean(KEY_BACKGROUND_VOLUME, true);
     }
 
     public int getVolumeIncrements() {

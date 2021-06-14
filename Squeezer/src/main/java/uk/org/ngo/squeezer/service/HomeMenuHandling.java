@@ -142,20 +142,20 @@ public class HomeMenuHandling {
         }
     }
 
-    public void setHomeMenu(List<String> archivedItems) {
+    public void setHomeMenu(List<String> archivedItems, Map<String, Map<String, Object>> customShortcuts) {
         homeMenu.remove(JiveItem.ARCHIVE);
         homeMenu.stream().forEach(item -> item.setNode(item.getOriginalNode()));
         addArchivedItems(archivedItems);
-        loadShortcutItems();
+        loadShortcutItems(customShortcuts);
         mEventBus.postSticky(new HomeMenuEvent(homeMenu));
     }
 
-    public void setHomeMenu(List<JiveItem> items, List<String> archivedItems) {
+    public void setHomeMenu(List<JiveItem> items, List<String> archivedItems, Map<String, Map<String, Object>> customShortcuts) {
         jiveMainNodes(items);
         homeMenu.clear();
         homeMenu.addAll(items);
         addArchivedItems(archivedItems);
-        loadShortcutItems();
+        loadShortcutItems(customShortcuts);
         mEventBus.postSticky(new HomeMenuEvent(homeMenu));
     }
 
@@ -172,18 +172,17 @@ public class HomeMenuHandling {
         }
     }
 
-    private static int CUSTOM_SHORTCUT_WEIGHT = 2000;
-    private static String CUSTOM_SHORTCUT_NODE = "home";
+    private final static int CUSTOM_SHORTCUT_WEIGHT = 2000;
+    private final static String CUSTOM_SHORTCUT_NODE = "home";
 
     /**
      * Load complete list of stored items from preferences.
      * Use action the values on the initialized customNodes.
      */
-    public void loadShortcutItems() {
-        Map<String, Map<String, Object>> jsonMap = new Preferences(Squeezer.getContext()).restoreCustomShortcuts();
+    public void loadShortcutItems(Map<String, Map<String, Object>> map) {
         customShortcuts.clear();
-        for (Map.Entry<String, Map<String, Object>> pair : jsonMap.entrySet()) {
-            HashMap<String, Object> record = (HashMap) pair.getValue(); // TODO: check cast correct
+        for (Map.Entry<String, Map<String, Object>> pair : map.entrySet()) {
+            Map<String, Object> record = pair.getValue(); // TODO: check cast correct
             JiveItem shortcut = new JiveItem(record);
             shortcut.setName(pair.getKey());
             customShortcuts.add(setShortcut(shortcut));

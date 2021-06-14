@@ -127,12 +127,12 @@ public class SlimDelegate {
         return mClient.getConnectionState().getPlayers();
     }
 
-    void setHomeMenu(List<String> archivedItems) {
-        mClient.getConnectionState().getHomeMenuHandling().setHomeMenu(archivedItems);
+    void setHomeMenu(List<String> archivedItems,  Map<String, Map<String, Object>> customShortcuts) {
+        mClient.getConnectionState().getHomeMenuHandling().setHomeMenu(archivedItems, customShortcuts);
     }
 
-    void setHomeMenu(List<JiveItem> items, List<String> archivedItems) {
-        mClient.getConnectionState().getHomeMenuHandling().setHomeMenu(items, archivedItems);
+    void setHomeMenu(List<JiveItem> items, List<String> archivedItems, Map<String, Map<String, Object>> customShortcuts) {
+        mClient.getConnectionState().getHomeMenuHandling().setHomeMenu(items, archivedItems, customShortcuts);
     }
 
     public String getUsername() {

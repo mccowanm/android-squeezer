@@ -602,8 +602,12 @@ public final class Preferences {
             while (keysItr.hasNext()) {
                 String key = keysItr.next();
                 JSON json = new JSON();
-                Map<String, Object> recordFromPref = (Map) json.parse(allShortcuts.getString(key));
-                allShortcutsFromPref.put(key, recordFromPref);
+                try {
+                    Map<String, Object> recordFromPref = (Map) json.parse(allShortcuts.getString(key));
+                    allShortcutsFromPref.put(key, recordFromPref);
+                } catch (IllegalStateException e) {
+                    Log.w(TAG, "Can't parse custom shortcut '" + key + "': " + e.getMessage());
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();

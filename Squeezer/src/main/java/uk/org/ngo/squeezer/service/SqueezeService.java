@@ -348,7 +348,8 @@ public class SqueezeService extends Service {
                 Preferences preferences = new Preferences(SqueezeService.this);
                 boolean useArchive = preferences.getCustomizeHomeMenuMode() != Preferences.CustomizeHomeMenuMode.DISABLED;
                 List<String> archivedMenuItems = useArchive ? preferences.getArchivedMenuItems(mDelegate.getActivePlayer()) : Collections.emptyList();
-                mDelegate.setHomeMenu(homeMenu, archivedMenuItems);
+                Map<String, Map<String, Object>> customShortcuts = preferences.restoreCustomShortcuts();
+                mDelegate.setHomeMenu(homeMenu, archivedMenuItems, customShortcuts);
             }
         }
 
@@ -1301,7 +1302,8 @@ public class SqueezeService extends Service {
                 Preferences preferences = new Preferences(SqueezeService.this);
                 boolean useArchive = preferences.getCustomizeHomeMenuMode() != Preferences.CustomizeHomeMenuMode.DISABLED;
                 List<String> archivedMenuItems = useArchive ? preferences.getArchivedMenuItems(getActivePlayer()) : Collections.emptyList();
-                mDelegate.setHomeMenu(archivedMenuItems);
+                Map<String, Map<String, Object>> customShortcuts = preferences.restoreCustomShortcuts();
+                mDelegate.setHomeMenu(archivedMenuItems, customShortcuts);
             }
             else if (Preferences.KEY_CUSTOMIZE_SHORTCUT_MODE.equals(key)) {
                 Preferences preferences = new Preferences(SqueezeService.this);

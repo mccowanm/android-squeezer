@@ -374,21 +374,6 @@ public class SqueezeService extends Service {
             // See http://wiki.slimdevices.com/index.php/SqueezePlayAndSqueezeCenterPlugins
             mDelegate.requestItems(activePlayer, 0, new JiveItemServiceItemListCallback())
                     .cmd("menu").param("direct", "1").exec();
-//                @Override
-//                public void onItemsReceived(int count, int start, Map<String, Object> parameters, List<JiveItem> items, Class<JiveItem> dataType) {
-//                    homeMenu.addAll(items);
-//                    if (homeMenu.size() == count) {
-//                        Preferences preferences = new Preferences(SqueezeService.this);
-//                        boolean useArchive = preferences.getCustomizeHomeMenuMode() != Preferences.CustomizeHomeMenuMode.DISABLED;
-//                        List<String> archivedMenuItems = useArchive ? preferences.getArchivedMenuItems(activePlayer) : Collections.emptyList();
-//                        mDelegate.setHomeMenu(homeMenu, archivedMenuItems);
-//                    }
-//                }
-//                @Override
-//                public Object getClient() {
-//                    return SqueezeService.this;
-//                }
-//            }).cmd("menu").param("direct", "1").exec();
         }
     }
 

@@ -60,10 +60,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.slider.Slider;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -185,9 +182,9 @@ public class NowPlayingFragment extends Fragment {
                 if (!isConnected()) {
                     // Requires a serviceStub. Else we'll do this on the service
                     // connection callback.
-                    if (mService != null && !isManualDisconnect()) {
+                    if (canAutoConnect()) {
                         Log.v(TAG, "Initiated connect on WIFI connected");
-                        startVisibleConnection();
+                        startVisibleConnection(true);
                     }
                 }
             }
@@ -532,9 +529,9 @@ public class NowPlayingFragment extends Fragment {
 
         maybeRegisterCallbacks(mService);
 
-        // Assume they want to connect (unless manually disconnected).
-        if (!isConnected() && !isManualDisconnect()) {
-            startVisibleConnection();
+        // Assume they want to connect
+        if (canAutoConnect()) {
+            startVisibleConnection(true);
         }
     }
 
@@ -712,6 +709,10 @@ public class NowPlayingFragment extends Fragment {
         return mService != null && mService.isConnectInProgress();
     }
 
+    private boolean canAutoConnect() {
+        return mService != null && mService.canAutoConnect();
+    }
+
     @Override
     public void onPause() {
         Log.d(TAG, "onPause...");
@@ -843,16 +844,7 @@ public class NowPlayingFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * Has the user manually disconnected from the server?
-     *
-     * @return true if they have, false otherwise.
-     */
-    private boolean isManualDisconnect() {
-        return getActivity() instanceof ConnectActivity;
-    }
-
-    public void startVisibleConnection() {
+    public void startVisibleConnection(boolean autoConnect) {
         Log.v(TAG, "startVisibleConnection");
 
         // If were not connected to service or not attached to activity do nothing.
@@ -900,7 +892,7 @@ public class NowPlayingFragment extends Fragment {
             Log.v(TAG, "Connection is already in progress, connecting aborted");
             return;
         }
-        mService.startConnect();
+        mService.startConnect(autoConnect);
     }
 
 
@@ -914,6 +906,7 @@ public class NowPlayingFragment extends Fragment {
         }
 
         switch (event.connectionState) {
+            case ConnectionState.MANUAL_DISCONNECT:
             case ConnectionState.DISCONNECTED:
                 dismissConnectingDialog();
                 ConnectActivity.show(mActivity);

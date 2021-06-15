@@ -42,8 +42,6 @@ import uk.org.ngo.squeezer.service.event.HandshakeComplete;
  * connects.
  */
 public class ConnectActivity extends BaseActivity {
-    private static final String TAG = "ConnectActivity";
-
     @IntDef({MANUAL_DISCONNECT, CONNECTION_FAILED, LOGIN_FAILED, INVALID_URL})
     @Retention(RetentionPolicy.SOURCE)
     private  @interface DisconnectionReasons {}
@@ -161,7 +159,7 @@ public class ConnectActivity extends BaseActivity {
         if (serverAddressView.savePreferences()) {
             NowPlayingFragment fragment = (NowPlayingFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.now_playing_fragment);
-            fragment.startVisibleConnection();
+            fragment.startVisibleConnection(false);
         }
     }
 

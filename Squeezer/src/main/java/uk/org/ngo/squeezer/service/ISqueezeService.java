@@ -38,10 +38,11 @@ public interface ISqueezeService {
 
     // Instructing the service to connect to the SqueezeCenter server:
     // hostPort is the port of the CLI interface.
-    void startConnect();
+    void startConnect(boolean autoConnect);
     void disconnect();
     boolean isConnected();
     boolean isConnectInProgress();
+    boolean canAutoConnect();
 
     /** Initiate the flow to register the controller with the server */
     void register(IServiceItemListCallback<JiveItem> callback);

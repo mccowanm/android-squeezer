@@ -16,6 +16,7 @@
 
 package uk.org.ngo.squeezer.service;
 
+import android.os.SystemClock;
 import android.util.Log;
 
 import androidx.annotation.IntDef;
@@ -51,20 +52,28 @@ public class ConnectionState {
     public final static String MEDIA_DIRS = "mediadirs";
 
     // Connection state machine
-    @IntDef({DISCONNECTED, CONNECTION_STARTED, CONNECTION_FAILED, CONNECTION_COMPLETED})
+    @IntDef({MANUAL_DISCONNECT, DISCONNECTED, CONNECTION_STARTED, CONNECTION_FAILED, CONNECTION_COMPLETED})
     @Retention(RetentionPolicy.SOURCE)
     public @interface ConnectionStates {}
+    /** User disconnected */
+    public static final int MANUAL_DISCONNECT = 0;
     /** Ordinarily disconnected from the server. */
-    public static final int DISCONNECTED = 0;
+    public static final int DISCONNECTED = 1;
     /** A connection has been started. */
-    public static final int CONNECTION_STARTED = 1;
+    public static final int CONNECTION_STARTED = 2;
     /** The connection to the server did not complete. */
-    public static final int CONNECTION_FAILED = 2;
+    public static final int CONNECTION_FAILED = 3;
     /** The connection to the server completed, the handshake can start. */
-    public static final int CONNECTION_COMPLETED = 3;
+    public static final int CONNECTION_COMPLETED = 4;
 
     @ConnectionStates
     private volatile int mConnectionState = DISCONNECTED;
+
+    /** Milliseconds since boot of latest auto connect */
+    private volatile long autoConnect;
+
+    /** Minimum milliseconds between automatic connection */
+    private static final long AUTO_CONNECT_INTERVAL = 60_000;
 
     /** Map Player IDs to the {@link uk.org.ngo.squeezer.model.Player} with that ID. */
     private final Map<String, Player> mPlayers = new ConcurrentHashMap<>();
@@ -75,6 +84,15 @@ public class ConnectionState {
     private final AtomicReference<String> serverVersion = new AtomicReference<>();
 
     private final AtomicReference<String[]> mediaDirs = new AtomicReference<>();
+
+    public boolean canAutoConnect() {
+        return (mConnectionState == DISCONNECTED || mConnectionState == CONNECTION_FAILED)
+                && ((SystemClock.elapsedRealtime() - autoConnect) > AUTO_CONNECT_INTERVAL);
+    }
+
+    public void setAutoConnect() {
+        this.autoConnect = SystemClock.elapsedRealtime();
+    }
 
     /**
      * Sets a new connection state, and posts a sticky
@@ -191,6 +209,7 @@ public class ConnectionState {
         return connectionState == CONNECTION_STARTED;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "ConnectionState{" +

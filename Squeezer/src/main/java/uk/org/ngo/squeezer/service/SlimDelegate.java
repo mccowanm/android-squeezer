@@ -35,12 +35,12 @@ class SlimDelegate {
         mClient = new CometClient(eventBus);
     }
 
-    void startConnect(SqueezeService service) {
-        mClient.startConnect(service);
+    void startConnect(SqueezeService service, boolean autoConnect) {
+        mClient.startConnect(service, autoConnect);
     }
 
-    void disconnect() {
-        mClient.disconnect();
+    void disconnect(boolean fromUser) {
+        mClient.disconnect(fromUser);
     }
 
     void cancelClientRequests(Object client) {
@@ -71,6 +71,10 @@ class SlimDelegate {
 
     boolean isConnectInProgress() {
         return mClient.getConnectionState().isConnectInProgress();
+    }
+
+    boolean canAutoConnect() {
+        return mClient.getConnectionState().canAutoConnect();
     }
 
     String getServerVersion() {

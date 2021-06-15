@@ -156,7 +156,7 @@ public class SqueezeService extends Service {
 
                 if (pm.isDeviceIdleMode()) {
                     Log.d(TAG, "Entering doze mode, disconnecting");
-                    disconnect();
+                    disconnect(false);
                 }
             }
         }
@@ -272,7 +272,7 @@ public class SqueezeService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        disconnect();
+        disconnect(false);
         mEventBus.unregister(this);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -287,12 +287,12 @@ public class SqueezeService extends Service {
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
-        disconnect();
+        disconnect(false);
         super.onTaskRemoved(rootIntent);
     }
 
-    void disconnect() {
-        mDelegate.disconnect();
+    void disconnect(boolean fromUser) {
+        mDelegate.disconnect(fromUser);
     }
 
     @Nullable public PlayerState getActivePlayerState() {
@@ -945,8 +945,13 @@ public class SqueezeService extends Service {
         }
 
         @Override
-        public void startConnect() {
-            mDelegate.startConnect(SqueezeService.this);
+        public boolean canAutoConnect() {
+            return mDelegate.canAutoConnect();
+        }
+
+        @Override
+        public void startConnect(boolean autoConnect) {
+            mDelegate.startConnect(SqueezeService.this, autoConnect);
         }
 
         @Override
@@ -954,7 +959,7 @@ public class SqueezeService extends Service {
             if (!isConnected()) {
                 return;
             }
-            SqueezeService.this.disconnect();
+            SqueezeService.this.disconnect(true);
         }
 
         @Override

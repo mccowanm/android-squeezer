@@ -457,10 +457,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Download
 
     // Safe accessors
 
-    public boolean isConnected() {
-        return mService != null && mService.isConnected();
-    }
-
     /**
      * Perform the supplied <code>action</code> using parameters in <code>item</code> via
      * {@link ISqueezeService#action(JiveItem, Action)}

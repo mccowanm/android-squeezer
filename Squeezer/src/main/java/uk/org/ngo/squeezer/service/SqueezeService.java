@@ -1299,6 +1299,7 @@ public class SqueezeService extends Service {
                 Preferences preferences = new Preferences(SqueezeService.this);
                 if (preferences.getCustomizeShortcutsMode() == Preferences.CustomizeShortcutsMode.DISABLED) {
                     mDelegate.getHomeMenuHandling().removeAllShortcuts();
+                    preferences.saveShortcuts(preferences.convertShortcuts(mDelegate.getHomeMenuHandling().customShortcuts)); // TODO check for simplification
                 }
             } else {
                 cachePreferences();

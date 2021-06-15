@@ -101,6 +101,7 @@ public class HomeMenuJiveItemView extends JiveItemView {
         mItemAdapter.removeItem(getAdapterPosition());
         mHomeMenuActivity.showDisplayMessage(R.string.CUSTOM_SHORTCUT_REMOVED);
         mHomeMenuActivity.getService().removeCustomShortcut(item);
+        mPreferences.saveShortcuts(mCustomJiveItemHandling.convertShortcuts());
         return true; // don't show UndoBar if Custom Shortcut
     }
 }

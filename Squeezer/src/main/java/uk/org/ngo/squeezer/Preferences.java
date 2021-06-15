@@ -40,11 +40,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import uk.org.ngo.squeezer.download.DownloadFilenameStructure;
 import uk.org.ngo.squeezer.download.DownloadPathStructure;
 import uk.org.ngo.squeezer.framework.EnumWithText;
 import uk.org.ngo.squeezer.itemlist.dialog.ArtworkListLayout;
+import uk.org.ngo.squeezer.model.CustomJiveItemHandling;
+import uk.org.ngo.squeezer.model.JiveItem;
 import uk.org.ngo.squeezer.model.Player;
 import uk.org.ngo.squeezer.util.ThemeManager;
 
@@ -590,6 +593,15 @@ public final class Preferences {
         JSONObject json = new JSONObject(map);
         editor.putString(CUSTOM_SHORTCUTS, json.toString());
         editor.apply();
+    }
+
+//  TODO If possible, remove this or CustomJiveItemHandling.convertShortcuts()
+    public Map<String, Object> convertShortcuts(List<JiveItem> customShortcuts) {
+        Map<String, Object> map = new HashMap<>();
+        for (JiveItem item : customShortcuts) {
+            map.put(item.getName(), item.getRecord());
+        }
+        return map;
     }
 
     /**

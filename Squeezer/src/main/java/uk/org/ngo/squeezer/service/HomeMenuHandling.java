@@ -5,7 +5,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -15,8 +14,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 
 import de.greenrobot.event.EventBus;
-import uk.org.ngo.squeezer.Preferences;
-import uk.org.ngo.squeezer.Squeezer;
 import uk.org.ngo.squeezer.model.JiveItem;
 import uk.org.ngo.squeezer.model.MenuStatusMessage;
 import uk.org.ngo.squeezer.service.event.HomeMenuEvent;
@@ -201,7 +198,6 @@ public class HomeMenuHandling {
 //            TODO template.setIcon
             customShortcuts.add(setShortcut(template));
             homeMenu.add(template);
-            new Preferences(Squeezer.getContext()).saveShortcuts(convertShortcuts()); // TODO: Check if Preferences can be saved elsewhere
         } else {
             return false;
         }
@@ -223,17 +219,8 @@ public class HomeMenuHandling {
         return item;
     }
 
-    private Map<String, Object> convertShortcuts() {
-        Map<String, Object> map = new HashMap<>();
-        for (JiveItem item : customShortcuts) {
-            map.put(item.getName(), item.getRecord());
-        }
-    return map;
-    }
-
     public void removeCustomShortcut(JiveItem item) {
         customShortcuts.remove(item);
-        new Preferences(Squeezer.getContext()).saveShortcuts(convertShortcuts());
         homeMenu.remove(item);
     }
 
@@ -242,6 +229,5 @@ public class HomeMenuHandling {
             customShortcuts.remove(item);
             homeMenu.remove(item);
         }
-        new Preferences(Squeezer.getContext()).saveShortcuts(convertShortcuts());
     }
 }

@@ -27,6 +27,7 @@ import java.util.EnumSet;
 
 import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
+import uk.org.ngo.squeezer.Squeezer;
 import uk.org.ngo.squeezer.framework.ItemAdapter;
 import uk.org.ngo.squeezer.framework.ItemListActivity;
 import uk.org.ngo.squeezer.framework.ViewParamItemView;
@@ -43,8 +44,9 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
     private final JiveItemViewLogic logicDelegate;
     private Window.WindowStyle windowStyle;
 
-    final boolean isShortcutActive = new Preferences(itemView.getContext()).getCustomizeShortcutsMode() == Preferences.CustomizeShortcutsMode.ENABLED;
-    final boolean isArchiveActive = new Preferences(itemView.getContext()).getCustomizeHomeMenuMode() == Preferences.CustomizeHomeMenuMode.ARCHIVE;
+    Preferences mPreferences = new Preferences(itemView.getContext());
+    final boolean isShortcutActive = mPreferences.getCustomizeShortcutsMode() == Preferences.CustomizeShortcutsMode.ENABLED;
+    final boolean isArchiveActive = mPreferences.getCustomizeHomeMenuMode() == Preferences.CustomizeHomeMenuMode.ARCHIVE;
 
     /**
      * Width of the icon, if VIEW_PARAM_ICON is used.
@@ -176,6 +178,8 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
         } else {
             if (isShortcutActive) {
                 if (mCustomJiveItemHandling.triggerCustomShortcut(item)) {
+                    mPreferences.saveShortcuts(mCustomJiveItemHandling.convertShortcuts());
+//                  TODO: check ok?
                     mActivity.showDisplayMessage(R.string.ITEM_PUT_AS_SHORTCUT_ON_HOME_MENU);
                 } else {
                     mActivity.showDisplayMessage(R.string.ITEM_IS_ALREADY_A_SHORTCUT);

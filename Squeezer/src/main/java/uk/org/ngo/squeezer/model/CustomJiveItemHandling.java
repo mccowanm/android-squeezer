@@ -2,6 +2,9 @@ package uk.org.ngo.squeezer.model;
 
 import android.util.Log;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import uk.org.ngo.squeezer.itemlist.JiveItemListActivity;
 import uk.org.ngo.squeezer.service.HomeMenuHandling;
 import uk.org.ngo.squeezer.service.ISqueezeService;
@@ -72,6 +75,14 @@ public class CustomJiveItemHandling {
             return true;
         }
         return false;
+    }
+
+    public Map<String, Object> convertShortcuts() {
+        Map<String, Object> map = new HashMap<>();
+        for (JiveItem item : mHomeMenuHandling.customShortcuts) {
+            map.put(item.getName(), item.getRecord());
+        }
+        return map;
     }
 }
 

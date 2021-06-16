@@ -196,8 +196,8 @@ public class SqueezeService extends Service {
 
         cachePreferences();
 
-        setWifiLock(((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE)).createWifiLock(
-                WifiManager.WIFI_MODE_FULL, "Squeezer_WifiLock"));
+        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        this.wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, "Squeezer_WifiLock");
 
         mEventBus.register(this, 1);  // Get events before other subscribers
 
@@ -308,7 +308,6 @@ public class SqueezeService extends Service {
      */
     public void onEvent(PlayStatusChanged event) {
         if (event.player.equals(mDelegate.getActivePlayer())) {
-            updateWifiLock(event.player.getPlayerState().isPlaying());
             updateOngoingNotification();
         }
     }
@@ -642,6 +641,10 @@ public class SqueezeService extends Service {
             Log.i(TAG, "startForeground");
             foreGround = true;
 
+            if (!wifiLock.isHeld()) {
+                wifiLock.acquire();
+            }
+
             NotificationState notificationState = notificationState();
             NotificationData notificationData = new NotificationData(notificationState);
             Notification notification = notificationData.builder.build();
@@ -703,6 +706,10 @@ public class SqueezeService extends Service {
         Log.i(TAG, "stopForeground");
         foreGround = false;
         ongoingNotification = null;
+
+        if (wifiLock.isHeld()) {
+            wifiLock.release();
+        }
 
         mMediaSession.setPlaybackToLocal(AudioManager.STREAM_MUSIC);
         mMediaSession.setPlaybackState(new PlaybackStateCompat.Builder().setState(PlaybackStateCompat.STATE_STOPPED, 0, 0).build());
@@ -850,43 +857,6 @@ public class SqueezeService extends Service {
 
 
     private WifiManager.WifiLock wifiLock;
-
-    void setWifiLock(WifiManager.WifiLock wifiLock) {
-        this.wifiLock = wifiLock;
-    }
-
-    void updateWifiLock(boolean state) {
-        // TODO: this might be running in the wrong thread.  Is wifiLock thread-safe?
-        if (state && !wifiLock.isHeld()) {
-            Log.v(TAG, "Locking wifi while playing.");
-            wifiLock.acquire();
-        }
-        if (!state && wifiLock.isHeld()) {
-            Log.v(TAG, "Unlocking wifi.");
-            try {
-                wifiLock.release();
-                // Seen a crash here with:
-                //
-                // Permission Denial: broadcastIntent() requesting a sticky
-                // broadcast
-                // from pid=29506, uid=10061 requires
-                // android.permission.BROADCAST_STICKY
-                //
-                // Catching the exception (which seems harmless) seems better
-                // than requesting an additional permission.
-
-                // Seen a crash here with
-                //
-                // java.lang.RuntimeException: WifiLock under-locked
-                // Squeezer_WifiLock
-                //
-                // Both crashes occurred when the wifi was disabled, on HTC Hero
-                // devices running 2.1-update1.
-            } catch (SecurityException e) {
-                Log.v(TAG, "Caught odd SecurityException releasing wifilock");
-            }
-        }
-    }
 
     private final ISqueezeService squeezeService = new SqueezeServiceBinder();
     private class SqueezeServiceBinder extends Binder implements ISqueezeService {

@@ -16,8 +16,10 @@
 
 package uk.org.ngo.squeezer.itemlist;
 
+import android.content.res.Resources;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -29,6 +31,7 @@ import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.framework.ItemAdapter;
 import uk.org.ngo.squeezer.framework.ViewParamItemView;
 import uk.org.ngo.squeezer.framework.ItemListActivity;
+import uk.org.ngo.squeezer.homescreenwidgets.TextDrawable;
 import uk.org.ngo.squeezer.model.Action;
 import uk.org.ngo.squeezer.model.JiveItem;
 import uk.org.ngo.squeezer.model.Slider;
@@ -159,6 +162,20 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
         seekBar.setValue(slider.initial);
         seekBar.setValueFrom(slider.min);
         seekBar.setValueTo(slider.max);
+
+        ImageView downIcon = itemView.findViewById(R.id.slider_down_icon);
+        ImageView upIcon = itemView.findViewById(R.id.slider_up_icon);
+        downIcon.setVisibility("none".equals(slider.sliderIcons) ? View.INVISIBLE : View.VISIBLE);
+        upIcon.setVisibility("none".equals(slider.sliderIcons) ? View.INVISIBLE : View.VISIBLE);
+        if ("volume".equals(slider.sliderIcons)) {
+            downIcon.setImageResource(R.drawable.ic_volume_down);
+            upIcon.setImageResource(R.drawable.ic_volume_up);
+        } else {
+            Resources resources = itemView.getResources();
+            downIcon.setImageDrawable(new TextDrawable(resources, "-", resources.getColor(R.color.white)));
+            upIcon.setImageDrawable(new TextDrawable(resources, "+", resources.getColor(R.color.white)));
+        }
+
         seekBar.addOnSliderTouchListener(new com.google.android.material.slider.Slider.OnSliderTouchListener() {
 
             @Override

@@ -204,7 +204,6 @@ public class JiveItem extends Item {
         result.put("hm_myMusicArtists", R.drawable.icon_ml_artists);
         result.put("hm_myMusicGenres", R.drawable.icon_ml_genres);
         result.put("hm_myMusicYears", R.drawable.icon_ml_years);
-        result.put("hm_myMusicNewMusic", R.drawable.icon_ml_new_music);
         result.put("hm_extras", R.drawable.icon_settings_adv);
         result.put("hm_settings", R.drawable.icon_settings);
         result.put("hm_settingsAlarm", R.drawable.icon_alarm);
@@ -240,6 +239,7 @@ public class JiveItem extends Item {
         result.put("hm_myMusicAlbums", R.drawable.ml_albums);
         result.put("hm_myMusicMusicFolder", R.drawable.ml_folder);
         result.put("hm_myMusicPlaylists", R.drawable.ml_playlist);
+        result.put("hm_myMusicNewMusic", R.drawable.ml_new_music);
         result.put("hm_randomplay", R.drawable.ml_random);
         result.put("hm_settingsShuffle", R.drawable.shuffle);
         result.put("hm_settingsRepeat", R.drawable.settings_repeat);

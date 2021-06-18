@@ -96,7 +96,6 @@ public class JiveItem extends Item {
     }
 
 
-    private String id;
     @NonNull
     private String name;
     public String text2;
@@ -131,14 +130,6 @@ public class JiveItem extends Item {
     public JiveItem() {
         name = "";
         icon = Uri.EMPTY;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getId() {
-        return id;
     }
 
     @NonNull
@@ -196,7 +187,7 @@ public class JiveItem extends Item {
     }
 
     @DrawableRes private Integer getSlimIcon() {
-        return slimIcons.get(id);
+        return slimIcons.get(getId());
     }
 
     private static final Map<String, Integer> slimIcons = initializeSlimIcons();
@@ -220,7 +211,7 @@ public class JiveItem extends Item {
     }
 
     @DrawableRes private Integer getItemIcon() {
-        return itemIcons.get(id);
+        return itemIcons.get(getId());
     }
 
     private static final Map<String, Integer> itemIcons = initializeItemIcons();

@@ -329,6 +329,7 @@ public class JiveItemListActivity extends BaseListActivity<JiveItemView, JiveIte
     public void onEventMainThread(HandshakeComplete event) {
         super.onEventMainThread(event);
         if (parent != null && parent.hasSubItems()) {
+            updateHeader(parent);
             getItemAdapter().update(parent.subItems.size(), 0, parent.subItems);
         }
     }

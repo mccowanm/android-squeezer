@@ -900,7 +900,18 @@ public class SqueezeService extends Service {
         @Override
         public void adjustVolume(int direction) {
             if (direction != 0) {
-                mDelegate.activePlayerCommand().cmd("mixer", "volume", (direction > 0 ? "+" : "") + direction * mVolumeProvider.step).exec();
+                Player player = getActivePlayer();
+                if (player != null) {
+                    if (player.getPlayerState().isMuted()) {
+                        mDelegate.command(player).cmd("mixer", "muting", "0").exec();
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    mDelegate.command(player).cmd("mixer", "volume", (direction > 0 ? "+" : "") + direction * mVolumeProvider.step).exec();
+                }
             }
         }
 

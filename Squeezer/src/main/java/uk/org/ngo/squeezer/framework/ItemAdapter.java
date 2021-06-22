@@ -66,11 +66,6 @@ public abstract class ItemAdapter<VH extends ItemViewHolder<T>, T extends Item> 
     private final boolean mEmptyItem;
 
     /**
-     * Text to display before the items are received from SqueezeServer
-     */
-    private final String loadingText;
-
-    /**
      * Number of elements to be fetched at a time
      */
     private final int pageSize;
@@ -86,7 +81,6 @@ public abstract class ItemAdapter<VH extends ItemViewHolder<T>, T extends Item> 
     public ItemAdapter(ItemListActivity activity, boolean emptyItem) {
         this.activity = activity;
         mEmptyItem = emptyItem;
-        loadingText = getActivity().getString(R.string.loading_text);
         pageSize = getActivity().getResources().getInteger(R.integer.PageSize);
         pages.clear();
     }
@@ -126,7 +120,7 @@ public abstract class ItemAdapter<VH extends ItemViewHolder<T>, T extends Item> 
         if (item != null)
             holder.bindView(item);
         else
-            holder.bindView((position == 0 && mEmptyItem ? "" : loadingText));
+            holder.bindView("");
     }
 
     @Override

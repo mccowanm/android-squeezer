@@ -99,7 +99,6 @@
     <string name="save_playlist_hint">Name für die Wiedergabeliste eingeben</string>
     <string name="rename_title">%s umbenennen</string>
     <string name="sync_title">Synchronisiere %s…</string>
-    <string name="loading_text">Lade…</string>
     <string name="browse_items_text">%2$d %1$s</string>
 
     <string name="player_group_header">Gruppe: %s</string>

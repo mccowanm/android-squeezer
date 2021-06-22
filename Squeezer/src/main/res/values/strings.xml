@@ -111,7 +111,6 @@
     <string name="save_playlist_hint">Enter name of playlist</string>
     <string name="rename_title">Rename %s</string>
     <string name="sync_title">Synchronize %s to…</string>
-    <string name="loading_text">Loading…</string>
     <string name="browse_items_text">%2$d %1$s</string>
 
     <string name="player_group_header">Group: %s</string>

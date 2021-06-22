@@ -162,6 +162,7 @@ public class ViewParamItemView<T extends Item> extends ItemViewHolder<T> {
     @Override
     public void bindView(String text) {
         text1.setText(text);
+        text2.setText("");
         if (loadingViewParams != viewParams) {
             setViewParams(loadingViewParams);
         }

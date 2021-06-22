@@ -301,7 +301,7 @@ public abstract class ItemListActivity extends BaseActivity {
         LinearLayoutManager layoutManager = (LinearLayoutManager) listView.getLayoutManager();
         int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
         if (firstVisibleItemPosition == RecyclerView.NO_POSITION) {
-            maybeOrderPage(0);
+            clearAndReOrderItems();
         } else {
             int pos = (firstVisibleItemPosition / mPageSize) * mPageSize;
             int end = firstVisibleItemPosition + listView.getChildCount();

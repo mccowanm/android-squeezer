@@ -23,6 +23,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,6 +42,11 @@ public class HomeMenuActivity extends JiveItemListActivity {
 
     @Override
     protected void orderPage(@NonNull ISqueezeService service, int start) {
+        // Do nothing we get the home menu from the sticky HomeMenuEvent
+    }
+
+    @Override
+    public void maybeOrderVisiblePages(RecyclerView listView) {
         // Do nothing we get the home menu from the sticky HomeMenuEvent
     }
 

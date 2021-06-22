@@ -16,7 +16,7 @@
 
 package uk.org.ngo.squeezer;
 
-import android.app.ProgressDialog;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -58,6 +58,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.slider.Slider;
 
 import java.util.Arrays;
@@ -192,7 +193,7 @@ public class NowPlayingFragment extends Fragment {
     };
 
     /** Dialog displayed while connecting to the server. */
-    private ProgressDialog connectingDialog = null;
+    private Dialog connectingDialog = null;
 
     /**
      * Shows the "connecting" dialog if it's not already showing.
@@ -203,10 +204,14 @@ public class NowPlayingFragment extends Fragment {
             Preferences preferences = new Preferences(mActivity);
             Preferences.ServerAddress serverAddress = preferences.getServerAddress();
 
-            connectingDialog = ProgressDialog.show(mActivity,
-                    getText(R.string.connecting_text),
-                    getString(R.string.connecting_to_text, serverAddress.serverName()),
-                    true, false);
+            final View view = LayoutInflater.from(mActivity).inflate(R.layout.connecting, null);
+            final TextView connectingTo = view.findViewById(R.id.connecting_to);
+            connectingTo.setText(getString(R.string.connecting_to_text, serverAddress.serverName()));
+
+            connectingDialog = new MaterialAlertDialogBuilder(mActivity)
+                    .setView(view)
+                    .setCancelable(false)
+                    .show();
         }
     }
 

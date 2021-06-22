@@ -205,6 +205,9 @@ public class JiveItem extends Item {
     }
 
     @DrawableRes private Integer getSlimIcon() {
+        if ((id != null) && (this.id.contains("customShortcut"))) {
+            return R.drawable.icon_mymusic;
+        }
         return slimIcons.get(id);
     }
 
@@ -229,9 +232,6 @@ public class JiveItem extends Item {
     }
 
     @DrawableRes private Integer getItemIcon() {
-        if ((id != null) && (this.id.contains("customShortcut"))) {
-            return R.drawable.icon_mymusic;
-        }
         return itemIcons.get(id);
     }
 

@@ -451,7 +451,7 @@ public class SqueezeService extends Service {
                     getResources().getDimensionPixelSize(android.R.dimen.notification_large_icon_height),
                     (data, bitmap) -> {
                         if (bitmap == null) {
-                            bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.icon_pending_artwork);
+                            bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.icon_no_artwork);
                         }
 
                         metaBuilder.putBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART, bitmap);

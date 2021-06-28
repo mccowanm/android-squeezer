@@ -6,6 +6,7 @@ import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.Squeezer;
 import uk.org.ngo.squeezer.framework.ItemAdapter;
+import uk.org.ngo.squeezer.framework.ItemViewHolder;
 import uk.org.ngo.squeezer.model.JiveItem;
 import uk.org.ngo.squeezer.widget.UndoBarController;
 
@@ -17,9 +18,9 @@ import uk.org.ngo.squeezer.widget.UndoBarController;
 public class HomeMenuJiveItemView extends JiveItemView {
 
     HomeMenuActivity mHomeMenuActivity;
-    ItemAdapter<JiveItemView, JiveItem> mItemAdapter;
+    ItemAdapter<ItemViewHolder<JiveItem>, JiveItem> mItemAdapter;
 
-    public HomeMenuJiveItemView(HomeMenuActivity homeMenuActivity, View view, ItemAdapter<JiveItemView, JiveItem> adapter) {
+    public HomeMenuJiveItemView(HomeMenuActivity homeMenuActivity, View view, ItemAdapter<ItemViewHolder<JiveItem>, JiveItem> adapter) {
         super(homeMenuActivity, view);
         mHomeMenuActivity = homeMenuActivity;
         mItemAdapter = adapter;

@@ -107,20 +107,17 @@ public abstract class ItemAdapter<VH extends ItemViewHolder<T>, T extends Item> 
 
     @NonNull
     @Override
-    public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public final VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
-        return createViewHolder(view);
+        return createViewHolder(view, viewType);
     }
 
-    public abstract VH createViewHolder(View view);
+    public abstract VH createViewHolder(View view, int viewType);
 
     @Override
     public void onBindViewHolder(@NonNull VH holder, int position) {
         T item = getItem(position);
-        if (item != null)
-            holder.bindView(item);
-        else
-            holder.bindView("");
+        holder.bindView(item);
     }
 
     @Override

@@ -20,6 +20,7 @@ package uk.org.ngo.squeezer.itemlist;
 import android.app.Activity;
 import android.content.Intent;
 import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -32,6 +33,7 @@ import java.util.List;
 import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.framework.ItemAdapter;
+import uk.org.ngo.squeezer.framework.ItemViewHolder;
 import uk.org.ngo.squeezer.itemlist.dialog.ArtworkListLayout;
 import uk.org.ngo.squeezer.model.JiveItem;
 import uk.org.ngo.squeezer.model.Window;
@@ -108,19 +110,12 @@ public class HomeMenuActivity extends JiveItemListActivity {
     }
 
     @Override
-    protected ItemAdapter<JiveItemView, JiveItem> createItemListAdapter() {
+    protected ItemAdapter<ItemViewHolder<JiveItem>, JiveItem> createItemListAdapter() {
 
-        return new ItemAdapter<JiveItemView, JiveItem>(this) {
-
+        return new JiveItemAdapter(this) {
             @Override
-            public JiveItemView createViewHolder(View view) {
+            public ItemViewHolder<JiveItem> createViewHolder(View view, int viewType) {
                 return new HomeMenuJiveItemView(HomeMenuActivity.this, view, this);
-            }
-
-            @Override
-            protected int getItemViewType(JiveItem item) {
-                return item != null && item.hasSlider() ?
-                        R.layout.slider_item : (getListLayout() == ArtworkListLayout.grid) ? R.layout.grid_item : R.layout.list_item;
             }
         };
     }

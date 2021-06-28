@@ -89,7 +89,7 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Pl
         }
 
         @Override
-        public PlayerView createViewHolder(View view) {
+        public PlayerView createViewHolder(View view, int viewType) {
             return new PlayerView((PlayerListActivity) getActivity(), view);
         }
 

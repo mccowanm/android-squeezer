@@ -16,10 +16,8 @@
 
 package uk.org.ngo.squeezer.itemlist;
 
-import android.content.res.Resources;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -29,12 +27,11 @@ import java.util.EnumSet;
 import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.framework.ItemAdapter;
+import uk.org.ngo.squeezer.framework.ItemViewHolder;
 import uk.org.ngo.squeezer.framework.ViewParamItemView;
 import uk.org.ngo.squeezer.framework.ItemListActivity;
-import uk.org.ngo.squeezer.homescreenwidgets.TextDrawable;
 import uk.org.ngo.squeezer.model.Action;
 import uk.org.ngo.squeezer.model.JiveItem;
-import uk.org.ngo.squeezer.model.Slider;
 import uk.org.ngo.squeezer.model.Window;
 import uk.org.ngo.squeezer.itemlist.dialog.ArtworkListLayout;
 import uk.org.ngo.squeezer.util.ImageFetcher;
@@ -49,14 +46,10 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
     /** Height of the icon, if VIEW_PARAM_ICON is used. */
     private int mIconHeight;
 
-    JiveItemListActivity mActivity;
-
     JiveItemView(@NonNull JiveItemListActivity activity, @NonNull View view) {
         super(activity, view);
-        mActivity = activity;
         setWindowStyle(activity.window.windowStyle);
         this.logicDelegate = new JiveItemViewLogic(activity);
-        setLoadingViewParams(viewParamIcon() | VIEW_PARAM_TWO_LINE );
 
         // Certain LMS actions (e.g. slider) doesn't have text in their views
         if (text1 != null) {
@@ -95,11 +88,6 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
 
     @Override
     public void bindView(JiveItem item) {
-        if (item.hasSlider()) {
-            bindSlider(item);
-            return;
-        }
-
         if (item.radio != null && item.radio) {
             getActivity().setSelectedIndex(getAdapterPosition());
         }
@@ -130,7 +118,7 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
 //      if Archive node is activated in settings
         if (new Preferences(itemView.getContext()).getCustomizeHomeMenuMode() == Preferences.CustomizeHomeMenuMode.ARCHIVE) {
             itemView.setOnLongClickListener(view -> {
-                mActivity.showDisplayMessage(R.string.ITEM_CANNOT_BE_ARCHIVED);
+                getActivity().showDisplayMessage(R.string.ITEM_CANNOT_BE_ARCHIVED);
                 return true;
             });
         } else {
@@ -153,43 +141,6 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
 
     private float getAlpha(JiveItem item) {
         return isSelectable(item) ? 1.0f : (item.checkbox != null || item.radio != null) ? 0.25f : 0.75f;
-    }
-
-
-    private void bindSlider(final JiveItem item) {
-        com.google.android.material.slider.Slider seekBar = itemView.findViewById(R.id.slider);
-        final Slider slider = item.slider;
-        seekBar.setValue(slider.initial);
-        seekBar.setValueFrom(slider.min);
-        seekBar.setValueTo(slider.max);
-
-        ImageView downIcon = itemView.findViewById(R.id.slider_down_icon);
-        ImageView upIcon = itemView.findViewById(R.id.slider_up_icon);
-        downIcon.setVisibility("none".equals(slider.sliderIcons) ? View.INVISIBLE : View.VISIBLE);
-        upIcon.setVisibility("none".equals(slider.sliderIcons) ? View.INVISIBLE : View.VISIBLE);
-        if ("volume".equals(slider.sliderIcons)) {
-            downIcon.setImageResource(R.drawable.ic_volume_down);
-            upIcon.setImageResource(R.drawable.ic_volume_up);
-        } else {
-            Resources resources = itemView.getResources();
-            downIcon.setImageDrawable(new TextDrawable(resources, "-", resources.getColor(R.color.white)));
-            upIcon.setImageDrawable(new TextDrawable(resources, "+", resources.getColor(R.color.white)));
-        }
-
-        seekBar.addOnSliderTouchListener(new com.google.android.material.slider.Slider.OnSliderTouchListener() {
-
-            @Override
-            public void onStartTrackingTouch(@NonNull com.google.android.material.slider.Slider seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(@NonNull com.google.android.material.slider.Slider seekBar) {
-                if (item.goAction != null) {
-                    item.inputValue = String.valueOf((int)seekBar.getValue());
-                    getActivity().action(item, item.goAction);
-                }
-            }
-        });
     }
 
     protected boolean isSelectable(JiveItem item) {
@@ -245,7 +196,7 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
         }
 
         if (item.radio != null) {
-            ItemAdapter<JiveItemView, JiveItem> itemAdapter = getActivity().getItemAdapter();
+            ItemAdapter<ItemViewHolder<JiveItem>, JiveItem> itemAdapter = getActivity().getItemAdapter();
             int prevIndex = getActivity().getSelectedIndex();
             if (prevIndex >= 0 && prevIndex < itemAdapter.getItemCount()) {
                 JiveItem prevItem = itemAdapter.getItem(prevIndex);

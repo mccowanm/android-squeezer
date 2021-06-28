@@ -169,7 +169,7 @@ public class JiveItem extends Item {
      * @return Icon resource for this item if it is embedded in the Squeezer app, or an empty icon.
      */
     public Drawable getIconDrawable(Context context) {
-        return getIconDrawable(context, R.drawable.icon_pending_artwork);
+        return getIconDrawable(context, R.drawable.icon_no_artwork);
     }
 
     /**

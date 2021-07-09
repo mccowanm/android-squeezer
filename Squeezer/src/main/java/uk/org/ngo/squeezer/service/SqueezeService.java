@@ -308,6 +308,8 @@ public class SqueezeService extends Service {
      */
     public void onEvent(PlayStatusChanged event) {
         if (event.player.equals(mDelegate.getActivePlayer())) {
+            int state = PlayerState.PLAY_STATE_PLAY.equals(event.playStatus) ? PlaybackStateCompat.STATE_PLAYING : PlaybackStateCompat.STATE_STOPPED;
+            mMediaSession.setPlaybackState(new PlaybackStateCompat.Builder().setState(state, 0, 0).build());
             updateOngoingNotification();
         }
     }
@@ -658,7 +660,6 @@ public class SqueezeService extends Service {
 
 
                 mMediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
-                mMediaSession.setPlaybackState(new PlaybackStateCompat.Builder().setState(PlaybackStateCompat.STATE_PLAYING, 0, 0).build());
 
                 if (new Preferences(this).isBackgroundVolume()) {
                     mMediaSession.setPlaybackToRemote(mVolumeProvider);
@@ -712,7 +713,6 @@ public class SqueezeService extends Service {
         }
 
         mMediaSession.setPlaybackToLocal(AudioManager.STREAM_MUSIC);
-        mMediaSession.setPlaybackState(new PlaybackStateCompat.Builder().setState(PlaybackStateCompat.STATE_STOPPED, 0, 0).build());
         mMediaSession.setActive(false);
 
         stopForeground(true);

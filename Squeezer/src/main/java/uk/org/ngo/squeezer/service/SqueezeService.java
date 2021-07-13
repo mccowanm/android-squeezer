@@ -243,12 +243,15 @@ public class SqueezeService extends Service {
         scrobblingEnabled = preferences.isScrobbleEnabled();
         mFadeInSecs = preferences.getFadeInSecs();
         mVolumeProvider = new MyVolumeProvider(preferences.getVolumeIncrements());
-        if (squeezeService.isConnected())
-            if (preferences.isBackgroundVolume()) {
-                mMediaSession.setPlaybackToRemote(mVolumeProvider);
-            } else {
-                mMediaSession.setPlaybackToLocal(AudioManager.STREAM_MUSIC);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (squeezeService.isConnected()) {
+                if (preferences.isBackgroundVolume()) {
+                    mMediaSession.setPlaybackToRemote(mVolumeProvider);
+                } else {
+                    mMediaSession.setPlaybackToLocal(AudioManager.STREAM_MUSIC);
+                }
             }
+        }
     }
 
     @Override
@@ -308,8 +311,10 @@ public class SqueezeService extends Service {
      */
     public void onEvent(PlayStatusChanged event) {
         if (event.player.equals(mDelegate.getActivePlayer())) {
-            int state = PlayerState.PLAY_STATE_PLAY.equals(event.playStatus) ? PlaybackStateCompat.STATE_PLAYING : PlaybackStateCompat.STATE_STOPPED;
-            mMediaSession.setPlaybackState(new PlaybackStateCompat.Builder().setState(state, 0, 0).build());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                int state = PlayerState.PLAY_STATE_PLAY.equals(event.playStatus) ? PlaybackStateCompat.STATE_PLAYING : PlaybackStateCompat.STATE_STOPPED;
+                mMediaSession.setPlaybackState(new PlaybackStateCompat.Builder().setState(state, 0, 0).build());
+            }
             updateOngoingNotification();
         }
     }
@@ -418,7 +423,6 @@ public class SqueezeService extends Service {
     /**
      * Manages the state of any ongoing notification based on the player and connection state.
      */
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void updateOngoingNotification() {
         PlayerState activePlayerState = getActivePlayerState();
 
@@ -658,7 +662,6 @@ public class SqueezeService extends Service {
                 metaBuilder.putString(MediaMetadata.METADATA_KEY_TITLE, notificationState.songName);
                 mMediaSession.setMetadata(metaBuilder.build());
 
-
                 mMediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
 
                 if (new Preferences(this).isBackgroundVolume()) {
@@ -712,8 +715,10 @@ public class SqueezeService extends Service {
             wifiLock.release();
         }
 
-        mMediaSession.setPlaybackToLocal(AudioManager.STREAM_MUSIC);
-        mMediaSession.setActive(false);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mMediaSession.setPlaybackToLocal(AudioManager.STREAM_MUSIC);
+            mMediaSession.setActive(false);
+        }
 
         stopForeground(true);
         stopSelf();

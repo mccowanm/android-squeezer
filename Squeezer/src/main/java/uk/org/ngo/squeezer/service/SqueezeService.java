@@ -631,11 +631,15 @@ public class SqueezeService extends Service {
                 ConnectionState.isConnectInProgress(event.connectionState)) {
             startForeground();
 
-            TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-            telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+                telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+            }
         } else {
-            TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-            telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_NONE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+                telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_NONE);
+            }
 
             mHandshakeComplete = false;
             stopForeground();

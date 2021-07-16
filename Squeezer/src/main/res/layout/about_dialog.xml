@@ -31,8 +31,7 @@ limitations under the License.
             android:id="@+id/icon"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:layout_gravity="center_vertical"
-            app:srcCompat="@drawable/ic_launcher"/>
+            app:srcCompat="@drawable/logo"/>
 
         <TextView
             android:id="@+id/about_title"

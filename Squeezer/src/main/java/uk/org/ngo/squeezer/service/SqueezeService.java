@@ -54,8 +54,10 @@ import android.widget.RemoteViews;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import uk.org.ngo.squeezer.NowPlayingActivity;
@@ -740,6 +742,55 @@ public class SqueezeService extends Service {
         if (event.player.equals(mDelegate.getActivePlayer())) {
             updateOngoingNotification();
         }
+        handleRandomOnEvent(event.player);
+    }
+
+    private void handleRandomOnEvent(Player player) {
+
+        // TODO BUG: An additional item will only be added to the playlist on an event
+        // if the app will at some after or at the event change the active player to the
+        // one with the playlist.
+        // E.g. the playlist will not be updated if the app is showing a
+        // different player and the randomly playing player will get pressed FFWD.
+
+        // TODO check if last item of playlist is playing
+        // (maybe event changed to previous track, in this case do nothing)
+        // Do this by checking number of playlist items vs. the currently playing index
+
+
+        // Get instance for the player
+        RandomPlay randomPlay = mDelegate.getRandomPlay(player);
+
+        Preferences preferences = new Preferences(SqueezeService.this);
+
+        if (!randomPlay.getNextTrack().equals("inactive")) {
+
+            // load folder items from class
+            String folderID = randomPlay.getActiveFolderID();
+
+            // load tracks from instance (not preferences)
+            Set<String> tracks = randomPlay.getTracks(folderID);
+            Log.d(TAG, "handleRandomOnEvent: (RandomPlay) tracks: " + tracks);
+
+            // load played from preferences
+            Set<String> played = preferences.loadRandomPlayed(folderID);
+            Log.d(TAG, "handleRandomOnEvent: (RandomPlay) played: " + played);
+
+            // Set now playing track (formerly the second one, now the last one) to played
+            String next = randomPlay.getNext();
+            played.add(next);
+
+            // And save it with the other ones to preferences
+            preferences.saveRandomPlayed(folderID, played);
+
+            // generate next load for playlist
+            Set<String> unplayed = new HashSet<>(tracks); // probably unnecessary copy
+            unplayed.removeAll(played);
+            try {
+                randomPlay.refillPlaylist(unplayed);
+            } catch (Exception e) {
+            }
+        }
     }
 
     public void onEvent(PlayersChanged event) {
@@ -1414,6 +1465,35 @@ public class SqueezeService extends Service {
             SlimCommand command = item.downloadCommand();
             IServiceItemListCallback<?> callback = ("musicfolder".equals(command.cmd.get(0))) ? musicFolderDownloadCallback : songDownloadCallback;
             mDelegate.requestItems(-1, callback).params(command.params).cmd(command.cmd()).exec();
+        }
+
+        public void randomPlayFolder(JiveItem item) throws HandshakeNotCompleteException {
+
+            // Has to be instantiated once to have an mDelegate
+            new RandomPlayDelegate(mDelegate);
+
+            SlimCommand command = item.randomPlayFolderCommand();
+            String folderID = "";
+            try {
+                folderID = (String) command.params.get("folder_id");
+            } catch (Exception e) {
+                Log.e(TAG, "randomPlayFolder: Could not cast value of 'folder_id' to String");
+            }
+
+            // Load played from preferences
+            Set<String> played =
+                    new Preferences(SqueezeService.this).loadRandomPlayed(folderID);
+
+            Player player = mDelegate.getActivePlayer();
+            RandomPlay randomPlay = new RandomPlay(player);  // might return an existing class
+            RandomPlay.RandomPlayCallback randomPlayCallback
+                    = randomPlay.new RandomPlayCallback(folderID, played);
+
+            // Request all items for 'Random play folder', Callback handles first play
+            mDelegate.requestItems(-1,randomPlayCallback)
+                    .params(command.params)
+                    .cmd(command.cmd())
+                    .exec();
         }
 
         public boolean toggleArchiveItem(JiveItem item) {

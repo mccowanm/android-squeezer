@@ -24,7 +24,10 @@ import androidx.annotation.NonNull;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -48,6 +51,7 @@ public class ConnectionState {
 
     private final EventBus mEventBus;
     private final HomeMenuHandling mHomeMenuHandling;
+    private final Map<Player, RandomPlay> mRandomPlay = new HashMap<>();
 
     public final static String MEDIA_DIRS = "mediadirs";
 
@@ -162,6 +166,17 @@ public class ConnectionState {
 
     public HomeMenuHandling getHomeMenuHandling() {
         return mHomeMenuHandling;
+    }
+
+    public RandomPlay getRandomPlay(Player player) {
+        RandomPlay randomPlay = mRandomPlay.get(player);
+        if (randomPlay != null) {
+            return mRandomPlay.get(player);
+        } else {
+            RandomPlay newRandomPlay = new RandomPlay(player);
+            mRandomPlay.put(player, newRandomPlay);
+            return newRandomPlay;
+        }
     }
 
 //    For menu updates sent from LMS, handling of archived nodes needs testing!

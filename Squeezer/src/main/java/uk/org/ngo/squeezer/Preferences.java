@@ -30,8 +30,10 @@ import com.google.android.material.timepicker.MaterialTimePicker;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.UUID;
 
 import uk.org.ngo.squeezer.download.DownloadFilenameStructure;
@@ -174,6 +176,9 @@ public final class Preferences {
     // Show total time or remaining time.
     private static final String KEY_SHOW_REMAINING_TIME = "squeezer.show_remaining_Time";
 
+    // Store played tracks per folderID for 'Random play folders'
+    private static final String KEY_FOLDERID_RANDOM_PLAYED = "squeezer.random_played_tracks.%s";
+
     private final Context context;
     private final SharedPreferences sharedPreferences;
     private final int defaultCliPort;
@@ -258,6 +263,23 @@ public final class Preferences {
 
     private String prefix(ServerAddress serverAddress) {
         return (serverAddress.bssId != null ? serverAddress.bssId + "_ " : "") + serverAddress.localAddress() + "_";
+    }
+
+    public void saveRandomPlayed(String folderID, Set<String> set) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(String.format(KEY_FOLDERID_RANDOM_PLAYED, folderID),
+                TextUtils.join(";", set));
+        editor.apply();
+    }
+
+    public Set<String> loadRandomPlayed(String folderID) {
+        Set<String> set = new HashSet<>();
+        String string = sharedPreferences.getString(String.format(KEY_FOLDERID_RANDOM_PLAYED, folderID), null);
+        if (TextUtils.isEmpty(string)) {
+            return set;
+        }
+        Collections.addAll(set, string.split(";"));
+        return set;
     }
 
     public static class ServerAddress {

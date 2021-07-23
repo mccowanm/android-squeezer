@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import de.greenrobot.event.EventBus;
 import uk.org.ngo.squeezer.itemlist.IServiceItemListCallback;
@@ -161,6 +162,31 @@ class SlimDelegate {
     public void triggerHomeMenuEvent() {
         mClient.getConnectionState().getHomeMenuHandling().triggerHomeMenuEvent();
     }
+
+    public int addItems(String folderID, Set<String> set) {
+        Player player = mClient.getConnectionState().getActivePlayer();
+        return mClient.getConnectionState().getRandomPlay(player).addItems(folderID, set);
+    }
+
+    public Set<String> getTracks(String folderID) {
+        Player player = mClient.getConnectionState().getActivePlayer();
+        return mClient.getConnectionState().getRandomPlay(player).getTracks(folderID);
+    }
+
+    public RandomPlay getRandomPlay(Player player) {
+        return mClient.getConnectionState().getRandomPlay(player);
+    }
+
+    public void setRandomPlayIsActive(String nextTrack) {
+        Player player = mClient.getConnectionState().getActivePlayer();
+        mClient.getConnectionState().getRandomPlay(player).setNextTrack(nextTrack);
+    }
+
+    public void setActiveFolderID(String folderID) {
+        Player player = mClient.getConnectionState().getActivePlayer();
+        mClient.getConnectionState().getRandomPlay(player).setActiveFolderID(folderID);
+    }
+
 
     static class Command extends SlimCommand {
         final SlimClient slimClient;

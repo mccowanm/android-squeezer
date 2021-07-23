@@ -223,4 +223,6 @@ public interface ISqueezeService {
      * Trigger the event from another class
      */
     void triggerHomeMenuEvent();
+
+    void randomPlayFolder(JiveItem item);
 }

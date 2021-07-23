@@ -157,13 +157,20 @@ public class JiveItemViewLogic implements IServiceItemListCallback<JiveItem>, Po
         if (preferences.isDownloadEnabled() && contextMenuItem != null && contextMenuItem.canDownload()) {
             menu.add(Menu.NONE, index++, Menu.NONE, R.string.DOWNLOAD);
         }
+        if (contextMenuItem != null) {
+            menu.add(Menu.NONE, index++, Menu.NONE, "Play random"); // TODO Context menu 1
+        }
+
         final int offset = index;
         for (JiveItem jiveItem : items) {
             menu.add(Menu.NONE, index++, Menu.NONE, jiveItem.getName()).setEnabled(jiveItem.goAction != null);
         }
 
         contextPopup.setOnMenuItemClickListener(menuItem -> {
-            if (menuItem.getItemId() < offset) {
+            if (menuItem.getItemId() == offset - 1) {
+                activity.randomPlayFolder(contextMenuItem); // TODO Context menu 2
+            }
+            else if (menuItem.getItemId() < offset) {
                 activity.downloadItem(contextMenuItem);
             } else {
                 doItemContext(viewHolder, items.get(menuItem.getItemId() - offset));

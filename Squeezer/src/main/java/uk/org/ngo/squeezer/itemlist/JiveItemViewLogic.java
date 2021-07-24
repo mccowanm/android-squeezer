@@ -157,8 +157,8 @@ public class JiveItemViewLogic implements IServiceItemListCallback<JiveItem>, Po
         if (preferences.isDownloadEnabled() && contextMenuItem != null && contextMenuItem.canDownload()) {
             menu.add(Menu.NONE, index++, Menu.NONE, R.string.DOWNLOAD);
         }
-        if (contextMenuItem != null) {
-            menu.add(Menu.NONE, index++, Menu.NONE, "Play random"); // TODO Context menu 1
+        if (contextMenuItem != null && contextMenuItem.moreAction.action.cmd.contains("folderinfo")) {
+            menu.add(Menu.NONE, index++, Menu.NONE, R.string.PLAY_RANDOM_FOLDER);
         }
 
         final int offset = index;
@@ -168,7 +168,7 @@ public class JiveItemViewLogic implements IServiceItemListCallback<JiveItem>, Po
 
         contextPopup.setOnMenuItemClickListener(menuItem -> {
             if (menuItem.getItemId() == offset - 1) {
-                activity.randomPlayFolder(contextMenuItem); // TODO Context menu 2
+                activity.randomPlayFolder(contextMenuItem); //
             }
             else if (menuItem.getItemId() < offset) {
                 activity.downloadItem(contextMenuItem);

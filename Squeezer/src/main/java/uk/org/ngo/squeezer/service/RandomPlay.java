@@ -69,8 +69,11 @@ public class RandomPlay {
         this.activeFolderID = folderID;
     }
 
+    // add a track if the last track is playing
     public void refillPlaylist(Set<String> unplayed) throws Exception {
-        RandomPlayDelegate.fillPlaylist(unplayed, this.player);
+        if (RandomPlayDelegate.getPlaylistStatus(this.player)) {
+            RandomPlayDelegate.fillPlaylist(unplayed, this.player);
+        }
     }
 
     class RandomPlayCallback implements IServiceItemListCallback<MusicFolderItem> {

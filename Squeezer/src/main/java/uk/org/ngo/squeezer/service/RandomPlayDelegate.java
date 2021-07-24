@@ -5,6 +5,7 @@ import android.util.Log;
 import java.util.Random;
 import java.util.Set;
 
+import uk.org.ngo.squeezer.itemlist.IServiceItemListCallback;
 import uk.org.ngo.squeezer.model.Player;
 
 // Has to be instantiated once to have the mDelegate
@@ -59,5 +60,19 @@ public class RandomPlayDelegate {
         } else {
             throw new Exception("Could not find next track to load it");
         }
+    }
+
+    static public Boolean getPlaylistStatus(Player player) {
+
+        // Get number of tracks in playlist
+        mDelegate.command(player).cmd("playlist", "tracks", "?").exec();
+
+        // Get index of playing track
+        mDelegate.command(player).cmd("playlist", "index", "?").exec();
+
+        // TODO: Read return messages
+        // if numbers do not match return false;
+
+        return true;
     }
 }

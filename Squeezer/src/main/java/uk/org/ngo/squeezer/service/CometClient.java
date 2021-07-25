@@ -147,7 +147,8 @@ class CometClient extends BaseClient {
                 new AlarmPlaylistsListener(),
                 new SongListener(),
                 new MusicFolderListener(),
-                new JiveItemListener()
+                new JiveItemListener(),
+                new PlaylistListener()
         );
         mItemRequestMap = new HashMap<>();
         for (ItemListener<?> itemListener : itemListeners) {
@@ -155,6 +156,10 @@ class CometClient extends BaseClient {
         }
 
         mRequestMap = new FluentHashMap<String, ResponseHandler>()
+                .with("playlist", (player, request, message) -> {
+                    String index = (String) message.getDataAsMap().get("_index");
+                    Log.d(TAG, "CometClient: RandomPlay: index: " + index + " from message: " + message);
+                })
                 .with("sync", (player, request, message) -> {
                     // LMS does not send new player status for the affected players, even if status
                     // changes are subscribed, so we order them  here
@@ -544,6 +549,14 @@ class CometClient extends BaseClient {
 
         void parseMessage(String itemLoopName, Message message) {
             parseMessage("count", itemLoopName, message);
+        }
+    }
+
+    private class PlaylistListener extends ItemListener<String> {
+        @Override
+        public void onResponse(Player player, Request request, Message message) {
+            Log.d("RandomPlay", "onResponse: message: " + message);
+            // TODO maybe parse message for DATA, but DATA is empty anyway
         }
     }
 

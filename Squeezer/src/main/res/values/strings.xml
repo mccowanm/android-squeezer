@@ -424,6 +424,7 @@ of your accepting any such warranty or additional liability.&lt;/p&gt;</string>
     <string name="settings_custom_shortcut_disabled">Custom shortcuts disabled</string>
     <string name="settings_custom_shortcut_locked">Disable long press, but leave shortcuts on home screen.</string>
     <string name="settings_customize_customShortcut_mode">Custom Shortcuts</string>
-    <string name="settings_customize_customShortcut_info">Long press puts up to five suitable items on the home screen as shortcuts.</string>
+    <string name="settings_customize_customShortcut_info">Long press puts shortcuts on top level menu.
+        (Changes in folders need renewed shortcuts.)</string>
     <string name="ITEM_CANNOT_BE_SHORTCUT">Item can not be shortcut!</string>
 </resources>

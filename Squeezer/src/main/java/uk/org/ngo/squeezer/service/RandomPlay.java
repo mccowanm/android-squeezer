@@ -1,7 +1,5 @@
 package uk.org.ngo.squeezer.service;
 
-import android.util.Log;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -69,13 +67,6 @@ public class RandomPlay {
         this.activeFolderID = folderID;
     }
 
-    // add a track if the last track is playing
-    public void refillPlaylist(Set<String> unplayed) throws Exception {
-        if (RandomPlayDelegate.getPlaylistStatus(this.player)) {
-            RandomPlayDelegate.fillPlaylist(unplayed, this.player);
-        }
-    }
-
     class RandomPlayCallback implements IServiceItemListCallback<MusicFolderItem> {
 
         String folderID;
@@ -88,6 +79,8 @@ public class RandomPlay {
 
         public void onItemsReceived(int count, int start, Map<String, Object> parameters,
                                     List<MusicFolderItem> items, Class<MusicFolderItem> dataType) {
+
+            SlimDelegate delegate = RandomPlayDelegate.delegate;
             Set<String> folderTracks = new HashSet<>();
             for (MusicFolderItem item : items) {
                 if ("track".equals(item.type)) {
@@ -96,17 +89,16 @@ public class RandomPlay {
             }
 
             // Add 50 items and folderID to correct RandomPlay(player), not this instance!
-            RandomPlayDelegate.mDelegate.addItems(this.folderID, folderTracks);
-            RandomPlayDelegate.mDelegate.setActiveFolderID(this.folderID);
+            delegate.addItems(this.folderID, folderTracks);
+            delegate.setActiveFolderID(this.folderID);
 
-            // Get Set of all current items and try to find one unplayed
-            // If this has not yet been done
+            // Get Set of all current items and try to find one unplayed, if this has not yet been done
             if (!RandomPlay.this.firstFound) {
-                Set<String> loaded = new HashSet<>(RandomPlayDelegate.mDelegate.getTracks(this.folderID));
+                Set<String> loaded = new HashSet<>(delegate.getTracks(this.folderID));
                 loaded.removeAll(this.played);
                 try {
-                    playFirst(loaded); // new HashSet<>(loaded) ??
-                } catch (Exception e) { // OK?
+                    playFirst(loaded);
+                } catch (Exception e) {
                 }
             }
 
@@ -115,14 +107,14 @@ public class RandomPlay {
                 if (!RandomPlay.this.firstFound) {
                     this.played.clear();
                     try {
-                        playFirst(new HashSet<>(RandomPlayDelegate.mDelegate.getTracks(this.folderID)));
+                        playFirst(new HashSet<>(delegate.getTracks(this.folderID)));
                     } catch (Exception e) {
                     }
                 }
 
                 // Generate playlist
                 try {
-                    RandomPlayDelegate.fillPlaylist(new HashSet<>(RandomPlayDelegate.mDelegate.getTracks(this.folderID)));
+                    RandomPlayDelegate.fillPlaylist(new HashSet<>(delegate.getTracks(this.folderID)));
                 } catch (Exception e) {
                 }
             }
@@ -133,16 +125,17 @@ public class RandomPlay {
             return null;
         }
 
-        // Get a track to play it, add it to played, save played to pref
         private String playFirst(Set<String> unplayed) throws Exception {
+            return playFirst(unplayed, "no_ignore");
+        }
+
+        // Get a track to play it, add it to played, save played to pref
+        private String playFirst(Set<String> unplayed, String ignore) throws Exception {
             if (unplayed.size() > 0 ) {
-                String first = RandomPlayDelegate.pickTrack(unplayed);
-                RandomPlayDelegate.mDelegate.command(RandomPlayDelegate.mDelegate.getActivePlayer())
-                        .cmd("playlistcontrol")
-                        .param("cmd", "load")
-                        .param("play_index", "1")
-                        .param("track_id", first)
-                        .exec();
+                String first = RandomPlayDelegate.pickTrack(unplayed, ignore);
+                RandomPlayDelegate.delegate.command(RandomPlayDelegate.delegate.getActivePlayer())
+                        .cmd("playlistcontrol").param("cmd", "load")
+                        .param("play_index", "1").param("track_id", first).exec();
                 this.played.add(first);
                 RandomPlay.this.firstFound = true;
                 new Preferences(Squeezer.getContext()).saveRandomPlayed(folderID, played);

@@ -753,42 +753,39 @@ public class SqueezeService extends Service {
         // E.g. the playlist will not be updated if the app is showing a
         // different player and the randomly playing player will get pressed FFWD.
 
-        // TODO check if last item of playlist is playing
-        // (maybe event changed to previous track, in this case do nothing)
-        // Do this by checking number of playlist items vs. the currently playing index
-
-
-        // Get instance for the player
         RandomPlay randomPlay = mDelegate.getRandomPlay(player);
-
         Preferences preferences = new Preferences(SqueezeService.this);
+        PlayerState playerState = player.getPlayerState();
 
-        if (!randomPlay.getNextTrack().equals("inactive")) {
+        int number = playerState.getCurrentPlaylistTracksNum();
+        int index = playerState.getCurrentPlaylistIndex();
+        if (number - index == 1) {
+            if (!randomPlay.getNextTrack().equals("inactive")) {
 
-            // load folder items from class
-            String folderID = randomPlay.getActiveFolderID();
+                // pressing 'Random play' sets this ID, should be better
+                String folderID = randomPlay.getActiveFolderID();
 
-            // load tracks from instance (not preferences)
-            Set<String> tracks = randomPlay.getTracks(folderID);
-            Log.d(TAG, "handleRandomOnEvent: (RandomPlay) tracks: " + tracks);
+                Set<String> tracks = randomPlay.getTracks(folderID);
+                Set<String> played = preferences.loadRandomPlayed(folderID);
 
-            // load played from preferences
-            Set<String> played = preferences.loadRandomPlayed(folderID);
-            Log.d(TAG, "handleRandomOnEvent: (RandomPlay) played: " + played);
+                String next = randomPlay.getNext();
+                played.add(next);
 
-            // Set now playing track (formerly the second one, now the last one) to played
-            String next = randomPlay.getNext();
-            played.add(next);
+                preferences.saveRandomPlayed(folderID, played);
 
-            // And save it with the other ones to preferences
-            preferences.saveRandomPlayed(folderID, played);
-
-            // generate next load for playlist
-            Set<String> unplayed = new HashSet<>(tracks); // probably unnecessary copy
-            unplayed.removeAll(played);
-            try {
-                randomPlay.refillPlaylist(unplayed);
-            } catch (Exception e) {
+                Set<String> unplayed = new HashSet<>(tracks);
+                if (played.size() == tracks.size()) {
+                    Log.v(TAG, "handleRandomOnEvent: (RandomPlay) all played, clear played");
+                    played.clear();
+                    preferences.saveRandomPlayed(folderID, played);
+                } else {
+                    unplayed.removeAll(played);
+                }
+                try {
+                    RandomPlayDelegate.fillPlaylist(unplayed, player, next);
+                } catch (Exception e) {
+                    Log.e(TAG, "handleRandomOnEvent: (RandomPlay) Unable to fill playlist");
+                }
             }
         }
     }
@@ -1488,7 +1485,6 @@ public class SqueezeService extends Service {
             RandomPlay randomPlay = new RandomPlay(player);  // might return an existing class
             RandomPlay.RandomPlayCallback randomPlayCallback
                     = randomPlay.new RandomPlayCallback(folderID, played);
-
             // Request all items for 'Random play folder', Callback handles first play
             mDelegate.requestItems(-1,randomPlayCallback)
                     .params(command.params)

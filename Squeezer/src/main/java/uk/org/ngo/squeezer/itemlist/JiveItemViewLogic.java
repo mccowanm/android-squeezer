@@ -17,6 +17,7 @@
 package uk.org.ngo.squeezer.itemlist;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -157,7 +158,10 @@ public class JiveItemViewLogic implements IServiceItemListCallback<JiveItem>, Po
         if (preferences.isDownloadEnabled() && contextMenuItem != null && contextMenuItem.canDownload()) {
             menu.add(Menu.NONE, index++, Menu.NONE, R.string.DOWNLOAD);
         }
-        if (contextMenuItem != null && contextMenuItem.moreAction.action.cmd.contains("folderinfo")) {
+        if (contextMenuItem != null && contextMenuItem.moreAction.action.cmd.contains("folderinfo") &&
+                // Ignore the headline item of the folder if Nullobject. It works fine on first level.
+                // TODO: Maybe make this work for all folders. See JiveItem.randomPlayFolderCommand()
+                contextMenuItem.randomPlayFolderCommand() != null) {
             menu.add(Menu.NONE, index++, Menu.NONE, R.string.PLAY_RANDOM_FOLDER);
         }
 

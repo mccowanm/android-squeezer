@@ -2,8 +2,6 @@ package uk.org.ngo.squeezer.service;
 
 import android.util.Log;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -13,7 +11,7 @@ import uk.org.ngo.squeezer.model.Player;
 // Has to be instantiated once to have the mDelegate
 public class RandomPlayDelegate {
 
-    private static final String TAG = "RandomPlayDelegate";
+    private static final String TAG = "RandomPlayStatic";
 
     public RandomPlayDelegate(SlimDelegate mDelegate) {
         if (RandomPlayDelegate.mDelegate == null) {
@@ -65,31 +63,12 @@ public class RandomPlayDelegate {
     }
 
     static public Boolean getPlaylistStatus(Player player) {
-        Log.d(TAG, "getPlaylistStatus:");
 
-//        mDelegate.command(player).cmd("playlist", "tracks", "?").exec();
+        // Get number of tracks in playlist
+        mDelegate.command(player).cmd("playlist", "tracks", "?").exec();
 
-
+        // Get index of playing track
         mDelegate.command(player).cmd("playlist", "index", "?").exec();
-        // SEND: {"clientId":"4527a24a","data":{"request":["00:04:20:1e:8f:2e",["playlist","index","?"]],"response":"/4527a24a/slim/request/20"},"channel":"/slim/request","id":"35"}
-        // RECV: {"ext":{"priority":""},"data":{"_index":"1"},"channel":"/4527a24a/slim/request/20","id":"35"}
-
-        final IServiceItemListCallback<String> callback = new IServiceItemListCallback<String>() {
-            @Override
-            public void onItemsReceived(int count, int start, Map<String, Object> parameters, List<String> items, Class<String> dataType) {
-                Log.d(TAG, "onItemsReceived: parameters: ");
-            }
-
-            @Override
-            public Object getClient() {
-                return this;
-            }
-        };
-
-        //        mDelegate.requestItems(player, -1, callback).cmd("playlist", "index", "?").exec();
-        // SEND: {"clientId":"f422775a","data":{"request":["00:04:20:1e:8f:2e",["playlist","index","?","0","200"]],"response":"/f422775a/slim/request/33"},"channel":"/slim/request","id":"55"}
-        // RECV: {"ext":{"priority":""},"data":{},"channel":"/f422775a/slim/request/33","id":"55"}
-
 
         // TODO: Read return messages
         // if numbers do not match return false;

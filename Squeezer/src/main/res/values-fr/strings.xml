@@ -18,7 +18,7 @@
  limitations under the License.
 -->
 
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="undo">Annuler</string>
     <string name="on">On</string>
     <string name="off">Off</string>
@@ -134,7 +134,7 @@
 
 
     <plurals name="seconds">
-        <item quantity="one">seconde</item>
+        <item quantity="one" tools:ignore="ImpliedQuantity">seconde</item>
         <item quantity="other">secondes</item>
     </plurals>
 

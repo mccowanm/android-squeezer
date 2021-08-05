@@ -13,7 +13,9 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingTranslation">
     <string name="app_name" translatable="false">Squeezer</string>
     <string name="undo">Undo</string>
     <string name="on">On</string>

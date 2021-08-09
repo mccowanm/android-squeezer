@@ -80,6 +80,8 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
     private static final int GO = 1;
     private static final String FINISH = "FINISH";
     private static final String RELOAD = "RELOAD";
+    private static final String WINDOW = "WINDOW";
+    public static final String WINDOW_EXTRA = "windowId";
 
     private JiveItemViewLogic pluginViewDelegate;
     private boolean register;
@@ -443,7 +445,8 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
                     finish();
                     break;
                 case windowId:
-                    //TODO implement
+                    setResult(Activity.RESULT_OK, new Intent(WINDOW).putExtra(WINDOW_EXTRA, nextWindow.windowId));
+                    finish();
                     break;
             }
         }
@@ -473,6 +476,14 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
                     finish();
                 } else if (RELOAD.equals(data.getAction())) {
                     clearAndReOrderItems();
+                } else if (WINDOW.equals(data.getAction())) {
+                    String windowId = data.getStringExtra(WINDOW_EXTRA);
+                    if (!(windowId.equals(parent.getId()) ||
+                            (parent.window != null && windowId.equals(parent.window.windowId)) ||
+                            JiveItem.HOME.getId().equals(parent.getId()))) {
+                        setResult(Activity.RESULT_OK, new Intent(WINDOW).putExtra(WINDOW_EXTRA, windowId));
+                        finish();
+                    }
                 }
             }
         }

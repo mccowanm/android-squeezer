@@ -418,7 +418,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Download
         text.setText(display.text);
 
         if (display.isIcon() || display.isMixed() || display.isPopupAlbum()) {
-            if (display.isIcon() && new HashSet<String>(Arrays.asList("play", "pause", "fwd", "rew")).contains(display.style)) {
+            if (display.isIcon() && new HashSet<String>(Arrays.asList("play", "pause", "stop", "fwd", "rew")).contains(display.style)) {
                 // Play status is updated in the NowPlayingFragment (either full-screen or mini)
                 showMe = false;
             } else {

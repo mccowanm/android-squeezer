@@ -473,12 +473,12 @@ public class SqueezeService extends Service {
             nm.notify(PLAYBACKSERVICE_STATUS, notification);
 
             ImageFetcher.getInstance(this).loadImage(this, notificationState.artworkUrl, notificationData.normalView, R.id.album,
-                    getResources().getDimensionPixelSize(R.dimen.album_art_icon_normal_notification_width),
-                    getResources().getDimensionPixelSize(R.dimen.album_art_icon_normal_notification_height),
+                    getResources().getDimensionPixelSize(R.dimen.album_art_icon_normal_notification_size),
+                    getResources().getDimensionPixelSize(R.dimen.album_art_icon_normal_notification_size),
                     nm, PLAYBACKSERVICE_STATUS, notification);
             ImageFetcher.getInstance(this).loadImage(this, notificationState.artworkUrl, notificationData.expandedView, R.id.album,
-                    getResources().getDimensionPixelSize(R.dimen.album_art_icon_expanded_notification_width),
-                    getResources().getDimensionPixelSize(R.dimen.album_art_icon_expanded_notification_height),
+                    getResources().getDimensionPixelSize(R.dimen.album_art_icon_expanded_notification_size),
+                    getResources().getDimensionPixelSize(R.dimen.album_art_icon_expanded_notification_size),
                     nm, PLAYBACKSERVICE_STATUS, notification);
         }
     }

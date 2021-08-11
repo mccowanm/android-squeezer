@@ -31,13 +31,13 @@
 
     <uk.org.ngo.squeezer.widget.SquareImageView
         android:id="@+id/album"
-        android:layout_width="@dimen/album_art_icon_width"
-        android:layout_height="@dimen/album_art_icon_height"
+        android:layout_width="@dimen/album_art_icon_size"
+        android:layout_height="@dimen/album_art_icon_size"
         android:layout_below="@id/progressbar"
-        android:maxHeight="@dimen/album_art_icon_height"
-        android:maxWidth="@dimen/album_art_icon_width"
-        android:minHeight="@dimen/album_art_icon_height"
-        android:minWidth="@dimen/album_art_icon_width"
+        android:maxHeight="@dimen/album_art_icon_size"
+        android:maxWidth="@dimen/album_art_icon_size"
+        android:minHeight="@dimen/album_art_icon_size"
+        android:minWidth="@dimen/album_art_icon_size"
         tools:src="@drawable/pending"/>
 
     <TextView

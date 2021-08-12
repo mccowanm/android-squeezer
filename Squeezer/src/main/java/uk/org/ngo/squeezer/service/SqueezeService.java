@@ -517,7 +517,7 @@ public class SqueezeService extends Service {
                 builder.setShowWhen(false);
                 builder.setContentTitle(notificationState.songName);
                 builder.setContentText(notificationState.artistAlbum());
-                builder.setSubText(notificationState.playerName);
+                builder.setSubText(notificationState.player());
                 builder.setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
                         .setShowActionsInCompactView(2, 3)
                         .setMediaSession(mMediaSession.getSessionToken()));
@@ -599,6 +599,8 @@ public class SqueezeService extends Service {
             final PlayerState activePlayerState = activePlayer.getPlayerState();
 
             notificationState.playing = activePlayerState.isPlaying();
+            notificationState.currentTrack = activePlayerState.getCurrentPlaylistIndex()+1;
+            notificationState.numTracks = activePlayerState.getCurrentPlaylistTracksNum();
 
             final CurrentPlaylistItem currentSong = activePlayerState.getCurrentSong();
             notificationState.hasSong = (currentSong != null);

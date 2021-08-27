@@ -70,6 +70,9 @@ public interface ISqueezeService {
     // XXX: Delete, now that PlayerState is tracked in the player?
     PlayerState getActivePlayerState();
 
+    // Get the volume info of the active player or sync group if active player is synced
+    @NonNull VolumeInfo getVolume();
+
     // Player control
     void togglePower(Player player);
     void playerRename(Player player, String newName);
@@ -116,7 +119,6 @@ public interface ISqueezeService {
 
     boolean setSecondsElapsed(int seconds);
 
-    PlayerState getPlayerState();
     String getCurrentPlaylist();
 
     /**
@@ -223,4 +225,22 @@ public interface ISqueezeService {
      * Trigger the event from another class
      */
     void triggerHomeMenuEvent();
+
+    class VolumeInfo {
+        /** True if the volume is muted */
+        public final boolean muted;
+
+        /** The player's new volume. */
+        public final int volume;
+
+        /** Name of player or group. */
+        @NonNull
+        public final String name;
+
+        public VolumeInfo(boolean muted, int volume, @NonNull String name) {
+            this.muted = muted;
+            this.volume = volume;
+            this.name = name;
+        }
+    }
 }

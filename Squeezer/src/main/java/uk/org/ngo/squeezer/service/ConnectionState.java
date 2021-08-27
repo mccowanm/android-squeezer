@@ -17,6 +17,7 @@
 package uk.org.ngo.squeezer.service;
 
 import android.os.SystemClock;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.IntDef;
@@ -24,7 +25,11 @@ import androidx.annotation.NonNull;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -32,6 +37,7 @@ import de.greenrobot.event.EventBus;
 import uk.org.ngo.squeezer.Util;
 import uk.org.ngo.squeezer.model.MenuStatusMessage;
 import uk.org.ngo.squeezer.model.Player;
+import uk.org.ngo.squeezer.model.PlayerState;
 import uk.org.ngo.squeezer.service.event.ActivePlayerChanged;
 import uk.org.ngo.squeezer.service.event.ConnectionChanged;
 import uk.org.ngo.squeezer.service.event.HandshakeComplete;
@@ -130,6 +136,7 @@ public class ConnectionState {
     }
 
     Player getPlayer(String playerId) {
+        if (playerId == null) return null;
         return mPlayers.get(playerId);
     }
 
@@ -139,6 +146,55 @@ public class ConnectionState {
 
     public Player getActivePlayer() {
         return mActivePlayer.get();
+    }
+
+    private @NonNull Set<Player> getSyncGroup() {
+        Set<Player> out = new HashSet<>();
+
+        Player player = getActivePlayer();
+        if (player != null) {
+            out.add(player);
+
+            Player master = getPlayer(player.getPlayerState().getSyncMaster());
+            if (master != null) out.add(master);
+
+            for (String slave : player.getPlayerState().getSyncSlaves()) {
+                Player syncSlave = getPlayer(slave);
+                if (syncSlave != null) out.add(syncSlave);
+            }
+        }
+
+        return out;
+    }
+
+    public @NonNull Set<Player> getVolumeSyncGroup() {
+        Player player = getActivePlayer();
+        if (player != null && player.isSyncVolume()) {
+            Set<Player> players = new HashSet<>();
+            players.add(player);
+            return players;
+        }
+
+        return getSyncGroup();
+    }
+
+    public @NonNull ISqueezeService.VolumeInfo getVolume() {
+        Set<Player> syncGroup = getVolumeSyncGroup();
+        int lowestVolume = 100;
+        int higestVolume = 0;
+        boolean muted = false;
+        List<String> playerNames = new ArrayList<>();
+        for (Player player : syncGroup) {
+            int currentVolume = player.getPlayerState().getCurrentVolume();
+            if (currentVolume < lowestVolume) lowestVolume = currentVolume;
+            if (currentVolume > higestVolume) higestVolume = currentVolume;
+
+            muted |= player.getPlayerState().isMuted();
+            playerNames.add(player.getName());
+        }
+
+        long volume = Math.round(lowestVolume / (100.0 - (higestVolume - lowestVolume)) * 100);
+        return new ISqueezeService.VolumeInfo(muted, (int) volume, TextUtils.join(", ", playerNames));
     }
 
     void setActivePlayer(Player player) {

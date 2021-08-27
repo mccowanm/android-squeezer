@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import de.greenrobot.event.EventBus;
 import uk.org.ngo.squeezer.itemlist.IServiceItemListCallback;
@@ -124,6 +125,14 @@ class SlimDelegate {
 
     public Map<String, Player> getPlayers() {
         return mClient.getConnectionState().getPlayers();
+    }
+
+    public Set<Player> getVolumeSyncGroup() {
+        return mClient.getConnectionState().getVolumeSyncGroup();
+    }
+
+    public @NonNull ISqueezeService.VolumeInfo getVolume() {
+        return mClient.getConnectionState().getVolume();
     }
 
     void setHomeMenu(List<String> archivedItems) {

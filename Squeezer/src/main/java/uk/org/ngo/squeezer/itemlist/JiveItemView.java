@@ -40,12 +40,6 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
     private final JiveItemViewLogic logicDelegate;
     private Window.WindowStyle windowStyle;
 
-    /** Width of the icon, if VIEW_PARAM_ICON is used. */
-    private int mIconWidth;
-
-    /** Height of the icon, if VIEW_PARAM_ICON is used. */
-    private int mIconHeight;
-
     JiveItemView(@NonNull JiveItemListActivity activity, @NonNull View view) {
         super(activity, view);
         setWindowStyle(activity.window.windowStyle);
@@ -77,13 +71,6 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
 
     void setWindowStyle(Window.WindowStyle windowStyle) {
         this.windowStyle = windowStyle;
-        if (listLayout() == ArtworkListLayout.grid) {
-            mIconWidth = getActivity().getResources().getDimensionPixelSize(R.dimen.album_art_icon_grid_width);
-            mIconHeight = getActivity().getResources().getDimensionPixelSize(R.dimen.album_art_icon_grid_height);
-        } else {
-            mIconWidth = getActivity().getResources().getDimensionPixelSize(R.dimen.album_art_icon_width);
-            mIconHeight = getActivity().getResources().getDimensionPixelSize(R.dimen.album_art_icon_height);
-        }
     }
 
     @Override
@@ -102,8 +89,6 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
             ImageFetcher.getInstance(getActivity()).loadImage(
                     item.getIcon(),
                     icon,
-                    mIconWidth,
-                    mIconHeight,
                     this::onIcon
             );
         } else {

@@ -251,7 +251,7 @@ public class CurrentPlaylistActivity extends JiveItemListActivity implements Pla
             return;
         }
 
-        int selectedIndex = service.getPlayerState().getCurrentPlaylistIndex();
+        int selectedIndex = service.getActivePlayerState().getCurrentPlaylistIndex();
         setSelectedIndex(selectedIndex);
         // Initially position the list at the currently playing song.
         // Do it again once it has loaded because the newly displayed items

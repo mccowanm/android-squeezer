@@ -136,7 +136,7 @@
     <string name="all_alarms_off_hint">Alle vækkeure er slået fra</string>
     <string name="alarm_music_prompt">Vækkelyd</string>
     <string name="alarms_settings_dialog_title">%s indstillinger for vækkeur</string>
-    <string name="alarm_volume_text" translatable="false">Lydstyrke for vækkeur</string>
+    <string name="alarm_volume_text">Lydstyrke for vækkeur</string>
     <string name="alarm_fade_text">Skru langsomt op for vækkeur</string>
     <string name="alarm_fade_off_text">Vækkeuret skruer ikke langsomt op</string>
     <string name="alarm_fade_on_text">Vækkeuret skruer langsomt op</string>

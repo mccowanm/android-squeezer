@@ -52,8 +52,8 @@ for the implementation.
         android:id="@+id/icon"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_width="@dimen/album_art_icon_width"
-        android:layout_height="@dimen/album_art_icon_height"
+        android:layout_width="@dimen/album_art_icon_size"
+        android:layout_height="@dimen/album_art_icon_size"
         android:contentDescription="@string/app_name"
         tools:src="@drawable/ic_transporter" />
 

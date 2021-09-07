@@ -691,7 +691,7 @@ public class NowPlayingFragment extends Fragment {
         if (mService == null) {
             return null;
         }
-        return mService.getPlayerState();
+        return mService.getActivePlayerState();
     }
 
     private Player getActivePlayer() {

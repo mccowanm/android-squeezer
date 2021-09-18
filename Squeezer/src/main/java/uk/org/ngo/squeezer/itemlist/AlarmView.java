@@ -106,7 +106,7 @@ public class AlarmView extends ItemViewHolder<Alarm> {
             if (getActivity().getService() != null) {
                 alarm.setRepeat(b);
                 getActivity().getService().alarmRepeat(alarm.getId(), b);
-                dowHolder.setVisibility(b ? View.VISIBLE : View.GONE);
+                activity.getItemAdapter().notifyItemChanged(getAdapterPosition());
             }
         });
         delete = view.findViewById(R.id.delete);

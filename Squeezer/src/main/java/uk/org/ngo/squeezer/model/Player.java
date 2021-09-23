@@ -199,6 +199,7 @@ public class Player extends Item implements Comparable<Player> {
     }
 
     public boolean isSynced(Player otherPlayer) {
+        if (otherPlayer == null) return false;
         return (getId().equals(otherPlayer.getPlayerState().getSyncMaster()) ||
                 otherPlayer.getId().equals(getPlayerState().getSyncMaster()));
     }

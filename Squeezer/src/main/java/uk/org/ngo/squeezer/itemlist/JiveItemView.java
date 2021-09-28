@@ -73,7 +73,6 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
         }
         setWindowStyle(activity.window.windowStyle);
         this.logicDelegate = new JiveItemViewLogic(activity);
-        setLoadingViewParams(viewParamIcon() | VIEW_PARAM_TWO_LINE);
 
         // Certain LMS actions (e.g. slider) doesn't have text in their views
         if (text1 != null) {

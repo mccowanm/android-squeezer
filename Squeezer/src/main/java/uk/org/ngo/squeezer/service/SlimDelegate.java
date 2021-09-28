@@ -140,8 +140,6 @@ public class SlimDelegate {
         return mClient.getConnectionState().getVolume();
     }
 
-    void setHomeMenu(List<String> archivedItems) {
-        mClient.getConnectionState().getHomeMenuHandling().setHomeMenu(archivedItems);
     void setHomeMenu(List<String> archivedItems,  Map<String, Map<String, Object>> customShortcuts) {
         mClient.getConnectionState().getHomeMenuHandling().setHomeMenu(archivedItems, customShortcuts);
     }

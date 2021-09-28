@@ -38,10 +38,11 @@ public interface ISqueezeService {
 
     // Instructing the service to connect to the SqueezeCenter server:
     // hostPort is the port of the CLI interface.
-    void startConnect();
+    void startConnect(boolean autoConnect);
     void disconnect();
     boolean isConnected();
     boolean isConnectInProgress();
+    boolean canAutoConnect();
 
     /** Initiate the flow to register the controller with the server */
     void register(IServiceItemListCallback<JiveItem> callback);
@@ -68,6 +69,9 @@ public interface ISqueezeService {
 
     // XXX: Delete, now that PlayerState is tracked in the player?
     PlayerState getActivePlayerState();
+
+    // Get the volume info of the active player or sync group if active player is synced
+    @NonNull VolumeInfo getVolume();
 
     // Player control
     void togglePower(Player player);
@@ -115,7 +119,6 @@ public interface ISqueezeService {
 
     boolean setSecondsElapsed(int seconds);
 
-    PlayerState getPlayerState();
     String getCurrentPlaylist();
 
     /**
@@ -234,4 +237,22 @@ public interface ISqueezeService {
      * @param item
      */
     void removeCustomShortcut(JiveItem item);
+
+    class VolumeInfo {
+        /** True if the volume is muted */
+        public final boolean muted;
+
+        /** The player's new volume. */
+        public final int volume;
+
+        /** Name of player or group. */
+        @NonNull
+        public final String name;
+
+        public VolumeInfo(boolean muted, int volume, @NonNull String name) {
+            this.muted = muted;
+            this.volume = volume;
+            this.name = name;
+        }
+    }
 }

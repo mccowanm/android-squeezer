@@ -104,12 +104,14 @@ public class JiveItem extends Item {
         return record;
     }
 
+
     private String record;
     private String id;
     @NonNull
     private String name;
     public String text2;
     @NonNull private final Uri icon;
+    private String iconStyle;
 
     private String node;
     private String originalNode;
@@ -140,14 +142,6 @@ public class JiveItem extends Item {
     public JiveItem() {
         name = "";
         icon = Uri.EMPTY;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getId() {
-        return id;
     }
 
     @NonNull
@@ -186,7 +180,7 @@ public class JiveItem extends Item {
      * @return Icon resource for this item if it is embedded in the Squeezer app, or an empty icon.
      */
     public Drawable getIconDrawable(Context context) {
-        return getIconDrawable(context, R.drawable.icon_pending_artwork);
+        return getIconDrawable(context, R.drawable.icon_no_artwork);
     }
 
     /**
@@ -204,11 +198,16 @@ public class JiveItem extends Item {
         return AppCompatResources.getDrawable(context, slimIcon != null ? slimIcon : defaultIcon);
     }
 
+    private String iconStyle() {
+        return TextUtils.isEmpty(iconStyle) ? "hm_" + getId() : iconStyle;
+    }
+
     @DrawableRes private Integer getSlimIcon() {
         if ((id != null) && (this.id.contains("customShortcut"))) {
             return R.drawable.icon_mymusic;
         }
         return slimIcons.get(id);
+        return slimIcons.get(iconStyle());
     }
 
     private static final Map<String, Integer> slimIcons = initializeSlimIcons();
@@ -216,23 +215,22 @@ public class JiveItem extends Item {
     private static Map<String, Integer> initializeSlimIcons() {
         Map<String, Integer> result = new HashMap<>();
 
-        result.put("myMusic", R.drawable.icon_mymusic);
-        result.put("myMusicArtists", R.drawable.icon_ml_artists);
-        result.put("myMusicGenres", R.drawable.icon_ml_genres);
-        result.put("myMusicYears", R.drawable.icon_ml_years);
-        result.put("myMusicNewMusic", R.drawable.icon_ml_new_music);
-        result.put("extras", R.drawable.icon_settings_adv);
-        result.put("settings", R.drawable.icon_settings);
-        result.put("settingsAlarm", R.drawable.icon_alarm);
-        result.put("appletCustomizeHome", R.drawable.icon_settings_home);
-        result.put("settingsPlayerNameChange", R.drawable.icon_settings_name);
-        result.put("advancedSettings", R.drawable.icon_settings_adv);
+        result.put("hm_myMusic", R.drawable.icon_mymusic);
+        result.put("hm_myMusicArtists", R.drawable.icon_ml_artists);
+        result.put("hm_myMusicGenres", R.drawable.icon_ml_genres);
+        result.put("hm_myMusicYears", R.drawable.icon_ml_years);
+        result.put("hm_extras", R.drawable.icon_settings_adv);
+        result.put("hm_settings", R.drawable.icon_settings);
+        result.put("hm_settingsAlarm", R.drawable.icon_alarm);
+        result.put("hm_appletCustomizeHome", R.drawable.icon_settings_home);
+        result.put("hm_settingsPlayerNameChange", R.drawable.icon_settings_name);
+        result.put("hm_advancedSettings", R.drawable.icon_settings_adv);
 
         return result;
     }
 
     @DrawableRes private Integer getItemIcon() {
-        return itemIcons.get(id);
+        return itemIcons.get(iconStyle());
     }
 
     private static final Map<String, Integer> itemIcons = initializeItemIcons();
@@ -240,31 +238,32 @@ public class JiveItem extends Item {
     private static Map<String, Integer> initializeItemIcons() {
         Map<String, Integer> result = new HashMap<>();
 
-        result.put("archiveNode", R.drawable.ic_archive);
-        result.put("radio", R.drawable.internet_radio);
-        result.put("radios", R.drawable.internet_radio);
-        result.put("favorites", R.drawable.favorites);
-        result.put("globalSearch", R.drawable.search);
-        result.put("homeSearchRecent", R.drawable.search);
-        result.put("playerpower", R.drawable.power);
-        result.put("myMusicSearch", R.drawable.search);
-        result.put("myMusicSearchArtists", R.drawable.search);
-        result.put("myMusicSearchAlbums", R.drawable.search);
-        result.put("myMusicSearchSongs", R.drawable.search);
-        result.put("myMusicSearchPlaylists", R.drawable.search);
-        result.put("myMusicSearchRecent", R.drawable.search);
-        result.put("myMusicAlbums", R.drawable.ml_albums);
-        result.put("myMusicMusicFolder", R.drawable.ml_folder);
-        result.put("myMusicPlaylists", R.drawable.ml_playlist);
-        result.put("randomplay", R.drawable.ml_random);
-        result.put("settingsShuffle", R.drawable.shuffle);
-        result.put("settingsRepeat", R.drawable.settings_repeat);
-        result.put("settingsAudio", R.drawable.settings_audio);
-        result.put("settingsFixedVolume", R.drawable.settings_audio);
-        result.put("settingsXfade", R.drawable.settings_audio);
-        result.put("settingsReplayGain", R.drawable.settings_audio);
-        result.put("settingsSleep", R.drawable.settings_sleep);
-        result.put("settingsSync", R.drawable.settings_sync);
+        result.put("hm_archiveNode", R.drawable.ic_archive);
+        result.put("hm_radio", R.drawable.internet_radio);
+        result.put("hm_radios", R.drawable.internet_radio);
+        result.put("hm_favorites", R.drawable.favorites);
+        result.put("hm_globalSearch", R.drawable.search);
+        result.put("hm_homeSearchRecent", R.drawable.search);
+        result.put("hm_playerpower", R.drawable.power);
+        result.put("hm_myMusicSearch", R.drawable.search);
+        result.put("hm_myMusicSearchArtists", R.drawable.search);
+        result.put("hm_myMusicSearchAlbums", R.drawable.search);
+        result.put("hm_myMusicSearchSongs", R.drawable.search);
+        result.put("hm_myMusicSearchPlaylists", R.drawable.search);
+        result.put("hm_myMusicSearchRecent", R.drawable.search);
+        result.put("hm_myMusicAlbums", R.drawable.ml_albums);
+        result.put("hm_myMusicMusicFolder", R.drawable.ml_folder);
+        result.put("hm_myMusicPlaylists", R.drawable.ml_playlist);
+        result.put("hm_myMusicNewMusic", R.drawable.ml_new_music);
+        result.put("hm_randomplay", R.drawable.ml_random);
+        result.put("hm_settingsShuffle", R.drawable.shuffle);
+        result.put("hm_settingsRepeat", R.drawable.settings_repeat);
+        result.put("hm_settingsAudio", R.drawable.settings_audio);
+        result.put("hm_settingsSleep", R.drawable.settings_sleep);
+        result.put("hm_settingsSync", R.drawable.settings_sync);
+        result.put("hm_settingsBrightness", R.drawable.settings_brightness);
+        result.put("hm_settingsLineInLevel", R.drawable.icon_line_in);
+        result.put("hm_settingsLineInAlwaysOn", R.drawable.icon_line_in);
 //      TODO: Make unique icon for custom shortcut, or load icon from original slim item or its parents
 
         return result;
@@ -310,6 +309,7 @@ public class JiveItem extends Item {
         setId(getString(record, record.containsKey("cmd") ? "cmd" : "id"));
         splitItemText(getStringOrEmpty(record, record.containsKey("name") ? "name" : "text"));
         icon = getImageUrl(record, record.containsKey("icon-id") ? "icon-id" : "icon");
+        iconStyle = getString(record, "iconStyle");
         node = originalNode = getString(record, "node");
         weight = getInt(record, "weight");
         type = getString(record, "type");
@@ -376,6 +376,7 @@ public class JiveItem extends Item {
         name = source.readString();
         text2 = source.readString();
         icon = Uri.parse(source.readString());
+        iconStyle = source.readString();
         node = source.readString();
         weight = source.readInt();
         type = source.readString();
@@ -409,6 +410,7 @@ public class JiveItem extends Item {
         dest.writeString(name);
         dest.writeString(text2);
         dest.writeString(icon.toString());
+        dest.writeString(iconStyle);
         dest.writeString(node);
         dest.writeInt(weight);
         dest.writeString(type);

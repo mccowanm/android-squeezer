@@ -106,7 +106,7 @@ public class AlarmView extends ItemViewHolder<Alarm> {
             if (getActivity().getService() != null) {
                 alarm.setRepeat(b);
                 getActivity().getService().alarmRepeat(alarm.getId(), b);
-                dowHolder.setVisibility(b ? View.VISIBLE : View.GONE);
+                activity.getItemAdapter().notifyItemChanged(getAdapterPosition());
             }
         });
         delete = view.findViewById(R.id.delete);
@@ -189,11 +189,6 @@ public class AlarmView extends ItemViewHolder<Alarm> {
         for (int day = 0; day < 7; day++) {
             setDowText(day);
         }
-    }
-
-    @Override
-    public void bindView(String text) {
-        text1.setText(text);
     }
 
 

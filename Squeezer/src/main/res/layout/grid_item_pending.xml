@@ -38,40 +38,30 @@ for the implementation.
 -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     style="@style/SqueezerWidget.Grid.Item">
 
     <uk.org.ngo.squeezer.widget.SquareImageView
         android:id="@+id/icon"
         style="@style/SqueezerWidget.Grid.CoverArt"
+        android:padding="4dp"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
         android:contentDescription="@string/app_name"
-        tools:src="@drawable/pending"/>
+        android:src="@drawable/pending"/>
 
-    <TextView
+    <ImageView
         android:id="@+id/text1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="28dp"
         android:layout_below="@id/icon"
-        android:layout_toStartOf="@id/context_menu"
-        android:paddingTop="4dp"
-        android:textAppearance="@style/SqueezerTextAppearance.GridItem.Primary"
-        tools:text="Album name"/>
+        android:padding="4dp"
+        android:src="@drawable/pending"/>
 
-    <TextView
+    <ImageView
         android:id="@+id/text2"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="24dp"
+        android:padding="4dp"
         android:layout_below="@id/text1"
-        android:layout_toStartOf="@id/context_menu"
-        android:textAppearance="@style/SqueezerTextAppearance.GridItem.Secondary"
-        tools:text="Artist info"/>
-
-    <include
-        layout="@layout/context_menu_image_button"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_below="@id/icon"
-        android:layout_alignParentEnd="true"/>
+        android:src="@drawable/pending"/>
 </RelativeLayout>

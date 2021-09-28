@@ -1,4 +1,4 @@
-<resources>"xmlns:tools="http://schemas.android.com/tools"<!-- 
+<resources xmlns:tools='http://schemas.android.com/tools' tools:ignore='MissingTranslation'><!-- 
 Automatically generated file. DO NOT MODIFY
  -->
   <string name='X_MINUTES'>%s minutter</string>

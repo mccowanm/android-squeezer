@@ -37,6 +37,7 @@ import java.util.Map;
 import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.framework.ItemAdapter;
+import uk.org.ngo.squeezer.framework.ItemViewHolder;
 import uk.org.ngo.squeezer.itemlist.dialog.PlaylistClearDialog;
 import uk.org.ngo.squeezer.itemlist.dialog.PlaylistSaveDialog;
 import uk.org.ngo.squeezer.model.JiveItem;
@@ -103,17 +104,20 @@ public class CurrentPlaylistActivity extends JiveItemListActivity implements Pla
     }
 
     @Override
-    protected ItemAdapter<JiveItemView, JiveItem> createItemListAdapter() {
-        return new ItemAdapter<JiveItemView, JiveItem>(this) {
-
+    protected ItemAdapter<ItemViewHolder<JiveItem>, JiveItem> createItemListAdapter() {
+        return new JiveItemAdapter(this) {
             @Override
-            public JiveItemView createViewHolder(View view) {
-                return new CurrentPlaylistItemView(CurrentPlaylistActivity.this, view);
+            public ItemViewHolder<JiveItem> createViewHolder(View view, int viewType) {
+                if (viewType == R.layout.list_item_pending) {
+                    return new JiveItemViewPending(getActivity(), view);
+                } else {
+                    return new CurrentPlaylistItemView(CurrentPlaylistActivity.this, view);
+                }
             }
 
             @Override
             protected int getItemViewType(JiveItem item) {
-                return R.layout.list_item;
+                return (item != null) ? R.layout.list_item : R.layout.list_item_pending;
             }
         };
     }
@@ -247,7 +251,7 @@ public class CurrentPlaylistActivity extends JiveItemListActivity implements Pla
             return;
         }
 
-        int selectedIndex = service.getPlayerState().getCurrentPlaylistIndex();
+        int selectedIndex = service.getActivePlayerState().getCurrentPlaylistIndex();
         setSelectedIndex(selectedIndex);
         // Initially position the list at the currently playing song.
         // Do it again once it has loaded because the newly displayed items

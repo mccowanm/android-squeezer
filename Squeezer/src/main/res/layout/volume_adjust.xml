@@ -49,6 +49,7 @@
         app:label=""
         app:label_size="0"
         app:main_circle_color="?attr/colorSurface"
+        app:min="0"
         app:max="100"
         app:progress_primary_color="?attr/colorPrimary"
         app:progress_secondary_color="?attr/colorOnSurface"

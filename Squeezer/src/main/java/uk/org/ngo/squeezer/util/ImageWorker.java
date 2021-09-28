@@ -37,6 +37,7 @@ import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.res.ResourcesCompat;
 
 import android.text.TextUtils;
 import android.util.Log;
@@ -50,6 +51,7 @@ import java.lang.ref.WeakReference;
 import java.util.Arrays;
 
 import uk.org.ngo.squeezer.BuildConfig;
+import uk.org.ngo.squeezer.Util;
 
 /**
  * This class wraps up completing some arbitrary long running work when loading a bitmap to an
@@ -112,8 +114,9 @@ public abstract class ImageWorker {
      *
      * @param data The URL of the image to download
      * @param imageView The ImageView to bind the downloaded image to
+     * @param callback Will be called once an image is set on the view.
      */
-    public void loadImage(final Object data, final ImageView imageView) {
+    public void loadImage(final Object data, final ImageView imageView, LoadImageCallback callback) {
         if (data == null) {
             return;
         }
@@ -146,7 +149,14 @@ public abstract class ImageWorker {
             return;
         }
 
-        loadImage(data, imageView, width, height);
+        loadImage(data, imageView, width, height, callback);
+    }
+
+    /**
+     * Like {@link #loadImage(Object, ImageView, LoadImageCallback)} but without callback.
+     */
+    public void loadImage(final Object data, final ImageView imageView) {
+        loadImage(data, imageView, null);
     }
 
     /**
@@ -190,18 +200,6 @@ public abstract class ImageWorker {
     }
 
     /**
-     * Like {@link #loadImage(Object, ImageView)} but with explicit width and height parameters.
-     *
-     * @param data The URL of the image to download
-     * @param imageView The ImageView to bind the downloaded image to
-     * @param width Resize the image to this width (and save it in the memory cache as such)
-     * @param height Resize the image to this height (and save it in the memory cache as such)
-     */
-    public void loadImage(final Object data, final ImageView imageView, int width, int height) {
-        loadImage(data, imageView, width, height, null);
-    }
-
-    /**
      * Interface for callbacks passed to {@link #loadImage(Object, ImageView, int, int, LoadImageCallback)}
      */
     public interface LoadImageCallback {
@@ -226,7 +224,7 @@ public abstract class ImageWorker {
     }
 
     /**
-     * Like {@link #loadImage(Object, ImageView, int, int)} but calls the provided callback after
+     * Like {@link #loadImage(Object, ImageView, int, int, LoadImageCallback)} but calls the provided callback after
      * the image has been loaded instead of saving it in to an imageview.
      *
      * @param data The URL of the image to download
@@ -328,7 +326,7 @@ public abstract class ImageWorker {
      * @param resId
      */
     public void setLoadingImage(int resId) {
-        mLoadingBitmap = BitmapFactory.decodeResource(mResources, resId);
+        mLoadingBitmap = Util.drawableToBitmap(ResourcesCompat.getDrawable(mResources, resId, null));
     }
 
     /**

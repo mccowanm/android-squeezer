@@ -114,7 +114,6 @@
     <string name="save_playlist_hint">Angiv navn på afspilningsliste</string>
     <string name="rename_title">Omdøb %s</string>
     <string name="sync_title">Synkronisér %s med…</string>
-    <string name="loading_text">Henter…</string>
     <string name="browse_items_text">%2$d %1$s</string>
 
     <string name="player_group_header">Gruppe: %s</string>
@@ -137,7 +136,7 @@
     <string name="all_alarms_off_hint">Alle vækkeure er slået fra</string>
     <string name="alarm_music_prompt">Vækkelyd</string>
     <string name="alarms_settings_dialog_title">%s indstillinger for vækkeur</string>
-    <string name="alarm_volume_text" translatable="false">Lydstyrke for vækkeur</string>
+    <string name="alarm_volume_text">Lydstyrke for vækkeur</string>
     <string name="alarm_fade_text">Skru langsomt op for vækkeur</string>
     <string name="alarm_fade_off_text">Vækkeuret skruer ikke langsomt op</string>
     <string name="alarm_fade_on_text">Vækkeuret skruer langsomt op</string>

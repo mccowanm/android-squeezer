@@ -22,6 +22,7 @@ import androidx.annotation.NonNull;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import de.greenrobot.event.EventBus;
 import uk.org.ngo.squeezer.itemlist.IServiceItemListCallback;
@@ -40,12 +41,12 @@ public class SlimDelegate {
         mClient = new CometClient(eventBus);
     }
 
-    void startConnect(SqueezeService service) {
-        mClient.startConnect(service);
+    void startConnect(SqueezeService service, boolean autoConnect) {
+        mClient.startConnect(service, autoConnect);
     }
 
-    void disconnect() {
-        mClient.disconnect();
+    void disconnect(boolean fromUser) {
+        mClient.disconnect(fromUser);
     }
 
     void cancelClientRequests(Object client) {
@@ -76,6 +77,10 @@ public class SlimDelegate {
 
     boolean isConnectInProgress() {
         return mClient.getConnectionState().isConnectInProgress();
+    }
+
+    boolean canAutoConnect() {
+        return mClient.getConnectionState().canAutoConnect();
     }
 
     String getServerVersion() {
@@ -127,6 +132,16 @@ public class SlimDelegate {
         return mClient.getConnectionState().getPlayers();
     }
 
+    public Set<Player> getVolumeSyncGroup() {
+        return mClient.getConnectionState().getVolumeSyncGroup();
+    }
+
+    public @NonNull ISqueezeService.VolumeInfo getVolume() {
+        return mClient.getConnectionState().getVolume();
+    }
+
+    void setHomeMenu(List<String> archivedItems) {
+        mClient.getConnectionState().getHomeMenuHandling().setHomeMenu(archivedItems);
     void setHomeMenu(List<String> archivedItems,  Map<String, Map<String, Object>> customShortcuts) {
         mClient.getConnectionState().getHomeMenuHandling().setHomeMenu(archivedItems, customShortcuts);
     }

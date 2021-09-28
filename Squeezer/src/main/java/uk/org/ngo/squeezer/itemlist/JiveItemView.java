@@ -30,12 +30,12 @@ import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.Squeezer;
 import uk.org.ngo.squeezer.framework.ItemAdapter;
 import uk.org.ngo.squeezer.framework.ItemListActivity;
+import uk.org.ngo.squeezer.framework.ItemViewHolder;
 import uk.org.ngo.squeezer.framework.ViewParamItemView;
 import uk.org.ngo.squeezer.itemlist.dialog.ArtworkListLayout;
 import uk.org.ngo.squeezer.model.Action;
 import uk.org.ngo.squeezer.model.CustomJiveItemHandling;
 import uk.org.ngo.squeezer.model.JiveItem;
-import uk.org.ngo.squeezer.model.Slider;
 import uk.org.ngo.squeezer.model.Window;
 import uk.org.ngo.squeezer.util.ImageFetcher;
 
@@ -101,22 +101,10 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
 
     void setWindowStyle(Window.WindowStyle windowStyle) {
         this.windowStyle = windowStyle;
-        if (listLayout() == ArtworkListLayout.grid) {
-            mIconWidth = getActivity().getResources().getDimensionPixelSize(R.dimen.album_art_icon_grid_width);
-            mIconHeight = getActivity().getResources().getDimensionPixelSize(R.dimen.album_art_icon_grid_height);
-        } else {
-            mIconWidth = getActivity().getResources().getDimensionPixelSize(R.dimen.album_art_icon_width);
-            mIconHeight = getActivity().getResources().getDimensionPixelSize(R.dimen.album_art_icon_height);
-        }
     }
 
     @Override
     public void bindView(JiveItem item) {
-        if (item.hasSlider()) {
-            bindSlider(item);
-            return;
-        }
-
         if (item.radio != null && item.radio) {
             getActivity().setSelectedIndex(getAdapterPosition());
         }
@@ -131,8 +119,6 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
             ImageFetcher.getInstance(getActivity()).loadImage(
                     item.getIcon(),
                     icon,
-                    mIconWidth,
-                    mIconHeight,
                     this::onIcon
             );
         } else {
@@ -195,29 +181,6 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
         return isSelectable(item) ? 1.0f : (item.checkbox != null || item.radio != null) ? 0.25f : 0.75f;
     }
 
-
-    private void bindSlider(final JiveItem item) {
-        com.google.android.material.slider.Slider seekBar = itemView.findViewById(R.id.slider);
-        final Slider slider = item.slider;
-        seekBar.setValue(slider.initial);
-        seekBar.setValueFrom(slider.min);
-        seekBar.setValueTo(slider.max);
-        seekBar.addOnSliderTouchListener(new com.google.android.material.slider.Slider.OnSliderTouchListener() {
-
-            @Override
-            public void onStartTrackingTouch(@NonNull com.google.android.material.slider.Slider seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(@NonNull com.google.android.material.slider.Slider seekBar) {
-                if (item.goAction != null) {
-                    item.inputValue = String.valueOf((int) seekBar.getValue());
-                    getActivity().action(item, item.goAction);
-                }
-            }
-        });
-    }
-
     protected boolean isSelectable(JiveItem item) {
         return item.isSelectable();
     }
@@ -271,7 +234,7 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
         }
 
         if (item.radio != null) {
-            ItemAdapter<JiveItemView, JiveItem> itemAdapter = getActivity().getItemAdapter();
+            ItemAdapter<ItemViewHolder<JiveItem>, JiveItem> itemAdapter = getActivity().getItemAdapter();
             int prevIndex = getActivity().getSelectedIndex();
             if (prevIndex >= 0 && prevIndex < itemAdapter.getItemCount()) {
                 JiveItem prevItem = itemAdapter.getItem(prevIndex);

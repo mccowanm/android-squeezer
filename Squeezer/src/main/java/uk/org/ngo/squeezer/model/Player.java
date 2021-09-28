@@ -155,7 +155,7 @@ public class Player extends Item implements Comparable<Player> {
     /**
      * Comparator to compare two players by ID.
      */
-    public static final Comparator<Player> compareById = (lhs, rhs) -> lhs.getId().compareTo(rhs.getId());
+    public static final Comparator<Player> compareById = Comparator.comparing(Item::getId);
 
     @Override
     public boolean equals(Object o) {
@@ -196,5 +196,15 @@ public class Player extends Item implements Comparable<Player> {
         double remaining = (correction <= 0 ? mPlayerState.getSleep() : mPlayerState.getSleep() - correction);
 
         return (int) remaining;
+    }
+
+    public boolean isSynced(Player otherPlayer) {
+        if (otherPlayer == null) return false;
+        return (getId().equals(otherPlayer.getPlayerState().getSyncMaster()) ||
+                otherPlayer.getId().equals(getPlayerState().getSyncMaster()));
+    }
+
+    public boolean isSyncVolume() {
+        return "1".equals(getPlayerState().prefs.get(Player.Pref.SYNC_VOLUME));
     }
 }

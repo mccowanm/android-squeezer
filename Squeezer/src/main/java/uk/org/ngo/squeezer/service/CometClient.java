@@ -169,13 +169,10 @@ class CometClient extends BaseClient {
                             int newVolume = Integer.parseInt(volume);
                             PlayerState playerState = player.getPlayerState();
                             playerState.setCurrentVolume(newVolume);
-                            mEventBus.post(new PlayerVolume(playerState.isMuted(), playerState.getCurrentVolume(), player));
+                            mEventBus.post(new PlayerVolume(player));
                         } else {
-                            // LMS delays player status for volume changes, so order it immediately to respond faster to user input
-                            command(player, new String[]{"mixer", "volume", "?"}, Collections.emptyMap());
-
                             // Since LMS doesn't send player status when volume is updated via a synced player we order them explicitly
-                            if ("1".equals(player.getPlayerState().prefs.get(Player.Pref.SYNC_VOLUME))) {
+                            if (player.isSyncVolume()) {
                                 List<String> slaves = player.getPlayerState().getSyncSlaves();
                                 Player master = getConnectionState().getPlayer(player.getPlayerState().getSyncMaster());
                                 if (master != null && master != player) {
@@ -195,7 +192,7 @@ class CometClient extends BaseClient {
 
     // Shims around ConnectionState methods.
     @Override
-    public void startConnect(final SqueezeService service) {
+    public void startConnect(final SqueezeService service, boolean autoConnect) {
         Log.i(TAG, "startConnect()");
         // Start the background connect
         mBackgroundHandler.post(() -> {
@@ -212,6 +209,7 @@ class CometClient extends BaseClient {
             if (!mEventBus.isRegistered(CometClient.this)) {
                 mEventBus.register(CometClient.this);
             }
+            if (autoConnect) mConnectionState.setAutoConnect();
             mConnectionState.setConnectionState(ConnectionState.CONNECTION_STARTED);
             final boolean isSqueezeNetwork = serverAddress.squeezeNetwork;
 
@@ -282,7 +280,7 @@ class CometClient extends BaseClient {
             mBayeuxClient.getChannel(Channel.META_CONNECT).addListener((ClientSessionChannel.MessageListener) (channel, message) -> {
                 if (!message.isSuccessful() && (getAdviceAction(message.getAdvice()) == null)) {
                     // Advices are handled internally by the bayeux protocol, so skip these here
-                    disconnect();
+                    disconnect(false);
                 }
             });
 
@@ -597,8 +595,8 @@ class CometClient extends BaseClient {
     }
 
     @Override
-    public void disconnect() {
-        disconnect(ConnectionState.DISCONNECTED);
+    public void disconnect(boolean fromUser) {
+        disconnect(fromUser ? ConnectionState.MANUAL_DISCONNECT : ConnectionState.DISCONNECTED);
     }
 
     private void disconnect(@ConnectionState.ConnectionStates int connectionState) {
@@ -754,7 +752,7 @@ class CometClient extends BaseClient {
                     break;
                 case MSG_HANDSHAKE_TIMEOUT:
                     Log.w(TAG, "Handshake timeout: " + mConnectionState);
-                    disconnect();
+                    disconnect(false);
                     break;
                 case MSG_SERVER_STATUS_TIMEOUT:
                     Log.w(TAG, "Server status timeout: initiate a new handshake");

@@ -16,7 +16,7 @@
 
 package uk.org.ngo.squeezer;
 
-import android.app.ProgressDialog;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -58,12 +58,10 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.slider.Slider;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -185,9 +183,9 @@ public class NowPlayingFragment extends Fragment {
                 if (!isConnected()) {
                     // Requires a serviceStub. Else we'll do this on the service
                     // connection callback.
-                    if (mService != null && !isManualDisconnect()) {
+                    if (canAutoConnect()) {
                         Log.v(TAG, "Initiated connect on WIFI connected");
-                        startVisibleConnection();
+                        startVisibleConnection(true);
                     }
                 }
             }
@@ -195,7 +193,7 @@ public class NowPlayingFragment extends Fragment {
     };
 
     /** Dialog displayed while connecting to the server. */
-    private ProgressDialog connectingDialog = null;
+    private Dialog connectingDialog = null;
 
     /**
      * Shows the "connecting" dialog if it's not already showing.
@@ -206,10 +204,14 @@ public class NowPlayingFragment extends Fragment {
             Preferences preferences = new Preferences(mActivity);
             Preferences.ServerAddress serverAddress = preferences.getServerAddress();
 
-            connectingDialog = ProgressDialog.show(mActivity,
-                    getText(R.string.connecting_text),
-                    getString(R.string.connecting_to_text, serverAddress.serverName()),
-                    true, false);
+            final View view = LayoutInflater.from(mActivity).inflate(R.layout.connecting, null);
+            final TextView connectingTo = view.findViewById(R.id.connecting_to);
+            connectingTo.setText(getString(R.string.connecting_to_text, serverAddress.serverName()));
+
+            connectingDialog = new MaterialAlertDialogBuilder(mActivity)
+                    .setView(view)
+                    .setCancelable(false)
+                    .show();
         }
     }
 
@@ -532,9 +534,9 @@ public class NowPlayingFragment extends Fragment {
 
         maybeRegisterCallbacks(mService);
 
-        // Assume they want to connect (unless manually disconnected).
-        if (!isConnected() && !isManualDisconnect()) {
-            startVisibleConnection();
+        // Assume they want to connect
+        if (canAutoConnect()) {
+            startVisibleConnection(true);
         }
     }
 
@@ -689,7 +691,7 @@ public class NowPlayingFragment extends Fragment {
         if (mService == null) {
             return null;
         }
-        return mService.getPlayerState();
+        return mService.getActivePlayerState();
     }
 
     private Player getActivePlayer() {
@@ -710,6 +712,10 @@ public class NowPlayingFragment extends Fragment {
 
     private boolean isConnectInProgress() {
         return mService != null && mService.isConnectInProgress();
+    }
+
+    private boolean canAutoConnect() {
+        return mService != null && mService.canAutoConnect();
     }
 
     @Override
@@ -843,16 +849,7 @@ public class NowPlayingFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * Has the user manually disconnected from the server?
-     *
-     * @return true if they have, false otherwise.
-     */
-    private boolean isManualDisconnect() {
-        return getActivity() instanceof ConnectActivity;
-    }
-
-    public void startVisibleConnection() {
+    public void startVisibleConnection(boolean autoConnect) {
         Log.v(TAG, "startVisibleConnection");
 
         // If were not connected to service or not attached to activity do nothing.
@@ -900,7 +897,7 @@ public class NowPlayingFragment extends Fragment {
             Log.v(TAG, "Connection is already in progress, connecting aborted");
             return;
         }
-        mService.startConnect();
+        mService.startConnect(autoConnect);
     }
 
 
@@ -914,6 +911,7 @@ public class NowPlayingFragment extends Fragment {
         }
 
         switch (event.connectionState) {
+            case ConnectionState.MANUAL_DISCONNECT:
             case ConnectionState.DISCONNECTED:
                 dismissConnectingDialog();
                 ConnectActivity.show(mActivity);

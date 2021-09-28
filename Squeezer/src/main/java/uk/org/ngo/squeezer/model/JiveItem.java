@@ -22,11 +22,14 @@ import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.Parcel;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.appcompat.content.res.AppCompatResources;
+
+import org.eclipse.jetty.util.ajax.JSON;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,7 +54,7 @@ public class JiveItem extends Item {
     public static final JiveItem EXTRAS = new JiveItem("extras", "home", R.string.EXTRAS, 50, Window.WindowStyle.HOME_MENU);
     public static final JiveItem SETTINGS = new JiveItem("settings", "home", R.string.SETTINGS, 1005, Window.WindowStyle.HOME_MENU);
     public static final JiveItem ADVANCED_SETTINGS = new JiveItem("advancedSettings", "settings", R.string.ADVANCED_SETTINGS, 105, Window.WindowStyle.TEXT_ONLY);
-    public static final JiveItem ARCHIVE = new JiveItem("archiveNode", "home", R.string.ARCHIVE_NODE, 2000, Window.WindowStyle.HOME_MENU);
+    public static final JiveItem ARCHIVE = new JiveItem("archiveNode", "home", R.string.ARCHIVE_NODE, 10, Window.WindowStyle.HOME_MENU);
 
     /**
      * Information that will be requested about songs.
@@ -81,21 +84,29 @@ public class JiveItem extends Item {
     };
 
     private JiveItem(String id, String node, @StringRes int text, int weight, Window.WindowStyle windowStyle) {
+        this(record(id, node, Squeezer.getContext().getString(text), weight));
+        window = new Window();
+        window.windowStyle = windowStyle;
+    }
+
+    public JiveItem(String id, String node, String text, int weight, Window.WindowStyle windowStyle) {
         this(record(id, node, text, weight));
         window = new Window();
         window.windowStyle = windowStyle;
     }
 
-    private static Map<String, Object> record(String id, String node, @StringRes int text, int weight) {
+    private static Map<String, Object> record(String id, String node, String text, int weight) {
         Map<String, Object> record = new HashMap<>();
         record.put("id", id);
         record.put("node", node);
-        record.put("name", Squeezer.getContext().getString(text));
+        record.put("name", text);
         record.put("weight", weight);
         return record;
     }
 
 
+    private String record;
+    private String id;
     @NonNull
     private String name;
     public String text2;
@@ -192,6 +203,9 @@ public class JiveItem extends Item {
     }
 
     @DrawableRes private Integer getSlimIcon() {
+        if ((id != null) && (this.id.contains("customShortcut"))) {
+            return R.drawable.icon_mymusic;
+        }
         return slimIcons.get(iconStyle());
     }
 
@@ -249,6 +263,7 @@ public class JiveItem extends Item {
         result.put("hm_settingsBrightness", R.drawable.settings_brightness);
         result.put("hm_settingsLineInLevel", R.drawable.icon_line_in);
         result.put("hm_settingsLineInAlwaysOn", R.drawable.icon_line_in);
+//      TODO: Make unique icon for custom shortcut, or load icon from original slim item or its parents
 
         return result;
     }
@@ -275,8 +290,21 @@ public class JiveItem extends Item {
         return (playAction != null || addAction != null || insertAction != null || moreAction != null || checkbox != null || radio != null);
     }
 
+    public Map<String, Object> getRecord() {
+        JSON json = new JSON();
+        return (Map) json.fromJSON(this.record);
+    }
+
+    public void appendWeight(int weight) {
+        JSON json = new JSON();
+        Map<String, Object> map = (Map) json.fromJSON(this.record);
+        map.put("weight", weight);
+        this.record = json.toJSON(map);
+    }
 
     public JiveItem(Map<String, Object> record) {
+        JSON json = new JSON();
+        this.record = json.toJSON(record);
         setId(getString(record, record.containsKey("cmd") ? "cmd" : "id"));
         splitItemText(getStringOrEmpty(record, record.containsKey("name") ? "name" : "text"));
         icon = getImageUrl(record, record.containsKey("icon-id") ? "icon-id" : "icon");
@@ -408,6 +436,9 @@ public class JiveItem extends Item {
         dest.writeParcelable(downloadCommand, flags);
     }
 
+    public void setWeight(int weight) {
+        this.weight = weight;
+    }
 
     public boolean hasInput() {
         return hasInputField() || hasChoices();

@@ -84,7 +84,7 @@ public final class Preferences {
     private static final String KEY_LAST_PLAYER = "squeezer.lastplayer";
 
     // Do we automatically try and connect on WiFi availability?
-    public static final String KEY_AUTO_CONNECT = "squeezer.autoconnect";
+    private static final String KEY_AUTO_CONNECT = "squeezer.autoconnect";
 
     // Pause music on incoming call? (OLD setting use to initialize action on incoming call
     private static final String KEY_PAUSE_ON_INCOMING_CALL = "squeezer.pause_on_incoming_call";
@@ -445,10 +445,6 @@ public final class Preferences {
 
     public void setClearPlaylistConfirmation(boolean b) {
         sharedPreferences.edit().putBoolean(Preferences.KEY_CLEAR_PLAYLIST_CONFIRMATION, b).apply();
-    }
-
-    public boolean isAutoConnect() {
-        return sharedPreferences.getBoolean(KEY_AUTO_CONNECT, true);
     }
 
     public IncomingCallAction getActionOnIncomingCall() {

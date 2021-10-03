@@ -62,10 +62,6 @@
     <string name="settings_fadeinsecs_summary">Enter the amount of time to take to fade in when
         unpausing, in seconds. Enter 0 to disable fade in.
     </string>
-    <string name="settings_autoconnect_title">Auto-connect</string>
-    <string name="settings_autoconnect_summary">Offer to enable Wi-Fi, and on Wi-Fi availability,
-        try to connect
-    </string>
     <string name="settings_action_on_incoming_call_title">Action when you receive or make a call</string>
     <string name="settings_no_action_on_incoming_call">No action</string>
 
@@ -101,13 +97,6 @@
     <string name="login_failed_text">Login failed. Make sure the correct user name and password is entered.</string>
     <string name="invalid_url_text">Please enter a valid address.</string>
     <string name="disconnected_text">Disconnected.</string>
-    <string name="wifi_disabled_text">Wi-Fi is disabled</string>
-    <string name="enable_wifi_text">This will turn on Wi-Fi on your Android device. When an active
-        Wi-Fi connection is made, Squeezer will automatically try to connect to your SqueezeBox
-        Server. Turn on Wi-Fi now?
-    </string>
-    <string name="wifi_enabled_text">Wi-Fi is enabled. Please wait for an active Wi-Fi connection.
-    </string>
     <string name="notification_playing_text">%s playing</string>
     <string name="save_playlist_title">Save playlist</string>
     <string name="save_playlist_hint">Enter name of playlist</string>

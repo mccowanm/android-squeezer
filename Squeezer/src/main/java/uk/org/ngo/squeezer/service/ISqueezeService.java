@@ -226,6 +226,18 @@ public interface ISqueezeService {
      */
     void triggerHomeMenuEvent();
 
+    /**
+     * Get mDelegate
+     * @return
+     */
+    SlimDelegate getDelegate();
+
+    /**
+     * Remove the item after it was long pressed on the home menu screen
+     * @param item
+     */
+    void removeCustomShortcut(JiveItem item);
+
     class VolumeInfo {
         /** True if the volume is muted */
         public final boolean muted;

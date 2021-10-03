@@ -79,7 +79,6 @@ import uk.org.ngo.squeezer.service.event.ConnectionChanged;
 import uk.org.ngo.squeezer.service.event.HandshakeComplete;
 import uk.org.ngo.squeezer.service.event.MusicChanged;
 import uk.org.ngo.squeezer.service.event.PlayStatusChanged;
-import uk.org.ngo.squeezer.service.event.PlayerStateChanged;
 import uk.org.ngo.squeezer.service.event.PlayerVolume;
 import uk.org.ngo.squeezer.service.event.PlayersChanged;
 import uk.org.ngo.squeezer.util.ImageFetcher;
@@ -398,16 +397,7 @@ public class SqueezeService extends Service {
      * how frequently we need to know its status.
      */
     private PlayerState.PlayerSubscriptionType calculateSubscriptionTypeFor(Player player) {
-        Player activePlayer = mDelegate.getActivePlayer();
-
-        if (mEventBus.hasSubscriberForEvent(PlayerStateChanged.class) ||
-                (mEventBus.hasSubscriberForEvent(PlayStatusChanged.class)
-                        && (player.equals(activePlayer) || (player.isSynced(activePlayer) && !player.isSyncVolume())))
-        ) {
-            return PlayerState.PlayerSubscriptionType.NOTIFY_ON_CHANGE;
-        } else {
-            return PlayerState.PlayerSubscriptionType.NOTIFY_NONE;
-        }
+        return PlayerState.PlayerSubscriptionType.NOTIFY_ON_CHANGE;
     }
 
     /**

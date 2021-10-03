@@ -30,9 +30,6 @@
     <string name="settings_manual_server_addr">Manuelle Eingabe der IP-Adresse</string>
     <string name="settings_server_prompt">Wählen Sie einen Server</string>
     <string name="settings_server_rescan">Neu suchen…</string>
-    <string name="settings_server_scanning_disabled_msg">Serversuche ist nur bei aktiviertem WLAN
-        möglich.
-    </string>
     <string name="settings_local_server">Lokaler Server</string>
     <string name="settings_theme_title">Erscheinungsbild</string>
     <string name="settings_theme_dark">Dunkel</string>

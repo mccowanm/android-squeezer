@@ -25,9 +25,6 @@
     <string name="activity_settings_name">Instellingen</string>
     <string name="settings_serveraddr_hint">Naam of IP adres van server</string>
     <string name="settings_server_prompt">Kies een server</string>
-    <string name="settings_server_scanning_disabled_msg">Scannen is uitgeschakeld, omdat Wi-Fi
-        niet is verbonden.
-    </string>
     <string name="settings_username_hint">Gebruikersnaam (optioneel)</string>
     <string name="settings_password_hint">Wachtwoord (optioneel)</string>
     <string name="settings_server_scan_progress">Zoeken naar servers…</string>

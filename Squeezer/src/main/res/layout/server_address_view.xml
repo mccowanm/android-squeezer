@@ -45,14 +45,6 @@
             android:text="@string/settings_server_scan_progress" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/scan_disabled_msg"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="4dp"
-        android:text="@string/settings_server_scanning_disabled_msg"
-        android:textAppearance="@style/SqueezerTextAppearance.Medium" />
-
     <LinearLayout
         android:id="@+id/scan_results"
         android:layout_width="fill_parent"

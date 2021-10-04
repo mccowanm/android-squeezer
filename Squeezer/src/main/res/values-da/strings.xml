@@ -32,9 +32,6 @@
     <string name="settings_manual_server_addr">Angiv adressen manuelt</string>
     <string name="settings_server_prompt">Vælg en server</string>
     <string name="settings_server_rescan">Opdatér</string>
-    <string name="settings_server_scanning_disabled_msg">Server-opdagelse er deaktiveret, fordi Wi-Fi ikke
-        er tilsluttet.
-    </string>
     <string name="settings_local_server">Lokal server</string>
     <string name="settings_theme_title">Tema</string>
     <string name="settings_theme_dark">Mørk</string>
@@ -61,10 +58,6 @@
     <string name="settings_fadeinsecs_title">Indtoningsperiode</string>
     <string name="settings_fadeinsecs_summary">Angiv hvor mange sekunder der indtones. Angiv 0 for
         at deaktivere indtoning.
-    </string>
-    <string name="settings_autoconnect_title">Forbind automatisk</string>
-    <string name="settings_autoconnect_summary">Tilbyd at aktivere Wi-Fi, og prøv at forbinde ved
-        aktiv Wi-Fi forbindelse
     </string>
     <string name="settings_action_on_incoming_call_title">Handling når du modtager eller foretager et opkald</string>
     <string name="settings_no_action_on_incoming_call">No action</string>
@@ -101,14 +94,6 @@
     <string name="login_failed_text">Login mislykkedes, kontrollér at brugernavn og adgangskode er korrekte.</string>
     <string name="invalid_url_text">Angiv venligst en gyldig adresse.</string>
     <string name="disconnected_text">Afbrudt.</string>
-    <string name="wifi_disabled_text">Wi-Fi er slået fra</string>
-    <string name="enable_wifi_text">Dette vil tænde for Wi-Fi på din Android enhed.\nNår der opnås
-        en aktiv forbindelse, vil Squeezer automatisk forsøge at forbinde til din SqueezeBox
-        server.\nSlå Wi-Fi til?
-    </string>
-    <string name="wifi_enabled_text">Wi-Fi er aktiveret. Vent venligst på en aktiv
-        Wi-Fi-forbindelse.
-    </string>
     <string name="notification_playing_text">%s spiller</string>
     <string name="save_playlist_title">Gem afspilningsliste</string>
     <string name="save_playlist_hint">Angiv navn på afspilningsliste</string>

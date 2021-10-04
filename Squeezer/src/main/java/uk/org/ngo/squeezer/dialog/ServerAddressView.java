@@ -17,8 +17,6 @@
 package uk.org.ngo.squeezer.dialog;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
@@ -155,23 +153,13 @@ public class ServerAddressView extends LinearLayout implements ScanNetworkTask.S
             scanResults = findViewById(R.id.scan_results);
             scanProgress = findViewById(R.id.scan_progress);
             scanProgress.setVisibility(GONE);
-            TextView scanDisabledMessage = findViewById(R.id.scan_disabled_msg);
 
             setSqueezeNetwork(serverAddress.squeezeNetwork);
             setServerAddress(serverAddress.localAddress());
 
-            // Only support network scanning on WiFi.
-            ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo ni = connectivityManager.getActiveNetworkInfo();
-            boolean isWifi = ni != null && ni.getType() == ConnectivityManager.TYPE_WIFI;
-            if (isWifi) {
-                scanDisabledMessage.setVisibility(GONE);
-                startNetworkScan(context);
-                Button scanButton = findViewById(R.id.scan_button);
-                scanButton.setOnClickListener(v -> startNetworkScan(context));
-            } else {
-                scanResults.setVisibility(GONE);
-            }
+            startNetworkScan(context);
+            Button scanButton = findViewById(R.id.scan_button);
+            scanButton.setOnClickListener(v -> startNetworkScan(context));
         }
     }
 

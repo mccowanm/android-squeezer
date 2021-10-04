@@ -26,7 +26,6 @@ import android.content.ServiceConnection;
 import android.content.res.ColorStateList;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -52,10 +51,7 @@ import androidx.annotation.UiThread;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.view.GestureDetectorCompat;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -67,7 +63,6 @@ import java.util.List;
 import java.util.Map;
 
 import uk.org.ngo.squeezer.dialog.AboutDialog;
-import uk.org.ngo.squeezer.dialog.EnableWifiDialog;
 import uk.org.ngo.squeezer.framework.BaseActivity;
 import uk.org.ngo.squeezer.framework.ViewParamItemView;
 import uk.org.ngo.squeezer.itemlist.AlarmsActivity;
@@ -549,10 +544,8 @@ public class NowPlayingFragment extends Fragment {
             maybeRegisterCallbacks(mService);
         }
 
-        if (new Preferences(mActivity).isAutoConnect()) {
-            mActivity.registerReceiver(broadcastReceiver, new IntentFilter(
-                    ConnectivityManager.CONNECTIVITY_ACTION));
-        }
+        mActivity.registerReceiver(broadcastReceiver, new IntentFilter(
+                ConnectivityManager.CONNECTIVITY_ACTION));
     }
 
     /**
@@ -724,9 +717,7 @@ public class NowPlayingFragment extends Fragment {
 
         dismissConnectingDialog();
 
-        if (new Preferences(mActivity).isAutoConnect()) {
-            mActivity.unregisterReceiver(broadcastReceiver);
-        }
+        mActivity.unregisterReceiver(broadcastReceiver);
 
         if (mRegisteredCallbacks) {
             mService.getEventBus().unregister(this);
@@ -858,34 +849,6 @@ public class NowPlayingFragment extends Fragment {
         }
 
         Preferences preferences = new Preferences(mActivity);
-
-        // If we are configured to automatically connect on Wi-Fi availability
-        // we will also give the user the opportunity to enable Wi-Fi
-        if (preferences.isAutoConnect()) {
-            WifiManager wifiManager = (WifiManager) mActivity
-                    .getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-            if (!wifiManager.isWifiEnabled()) {
-                FragmentManager fragmentManager = getParentFragmentManager();
-                if (fragmentManager == null) {
-                    Log.i(TAG, "fragment manager is null so we can't show EnableWifiDialog");
-                    return;
-                }
-
-                FragmentTransaction ft = fragmentManager.beginTransaction();
-                Fragment prev = fragmentManager.findFragmentByTag(EnableWifiDialog.TAG);
-                if (prev != null) {
-                    ft.remove(prev);
-                }
-                ft.addToBackStack(null);
-
-                // Create and show the dialog.
-                DialogFragment enableWifiDialog = new EnableWifiDialog();
-                enableWifiDialog.show(ft, EnableWifiDialog.TAG);
-                return;
-                // When a Wi-Fi connection is made this method will be called again by the
-                // broadcastReceiver
-            }
-        }
 
         if (!preferences.hasServerConfig()) {
             // Set up a server connection, if it is not present

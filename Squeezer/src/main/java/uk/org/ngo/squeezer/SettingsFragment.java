@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import uk.org.ngo.squeezer.download.DownloadFilenameStructure;
 import uk.org.ngo.squeezer.download.DownloadPathStructure;
 import uk.org.ngo.squeezer.framework.EnumWithText;
-import uk.org.ngo.squeezer.model.Player;
 import uk.org.ngo.squeezer.service.ISqueezeService;
 import uk.org.ngo.squeezer.service.SqueezeService;
 import uk.org.ngo.squeezer.util.Scrobble;
@@ -77,9 +76,6 @@ public class SettingsFragment  extends PreferenceFragmentCompat implements
         fadeInPref = findPreference(Preferences.KEY_FADE_IN_SECS);
         fadeInPref.setOnPreferenceChangeListener(this);
         updateFadeInSecondsSummary(preferences.getFadeInSecs());
-
-        SwitchPreferenceCompat autoConnectPref = findPreference(Preferences.KEY_AUTO_CONNECT);
-        autoConnectPref.setChecked(preferences.isAutoConnect());
 
         fillIncomingCallPreferences(preferences);
 

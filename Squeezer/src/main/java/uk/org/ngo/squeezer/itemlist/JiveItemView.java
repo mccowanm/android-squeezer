@@ -210,7 +210,7 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
     protected void onIcon() {
     }
 
-    private void onItemSelected(JiveItem item) {
+    public void onItemSelected(JiveItem item) {
         Action.JsonAction action = (item.goAction != null && item.goAction.action != null) ? item.goAction.action : null;
         Action.NextWindow nextWindow = (action != null ? action.nextWindow : item.nextWindow);
         if (item.checkbox != null) {

@@ -823,7 +823,7 @@ public class SqueezeService extends Service {
                 if ("track".equals(item.type)) {
                     Log.i(TAG, "downloadMusicFolderTrack(" + item + ")");
                     SlimCommand command = JiveItem.downloadCommand(item.id);
-                    mDelegate.requestItems(-1, songDownloadCallback).params(command.params).cmd(command.cmd()).exec();
+                    mDelegate.requestAllItems(songDownloadCallback).params(command.params).cmd(command.cmd()).exec();
                 }
             }
         }
@@ -1462,7 +1462,7 @@ public class SqueezeService extends Service {
             Log.i(TAG, "downloadItem(" + item + ")");
             SlimCommand command = item.downloadCommand();
             IServiceItemListCallback<?> callback = ("musicfolder".equals(command.cmd.get(0))) ? musicFolderDownloadCallback : songDownloadCallback;
-            mDelegate.requestItems(-1, callback).params(command.params).cmd(command.cmd()).exec();
+            mDelegate.requestAllItems(callback).params(command.params).cmd(command.cmd()).exec();
         }
 
         public boolean toggleArchiveItem(JiveItem item) {

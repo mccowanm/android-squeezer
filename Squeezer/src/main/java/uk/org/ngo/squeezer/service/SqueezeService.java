@@ -1534,7 +1534,7 @@ public class SqueezeService extends Service {
             RandomPlay.RandomPlayCallback randomPlayCallback
                     = randomPlay.new RandomPlayCallback(folderID, played);
             // Request all items for 'Random play folder', Callback handles first play
-            mDelegate.requestItems(-1,randomPlayCallback)
+            mDelegate.requestAllItems(randomPlayCallback)
                     .params(command.params)
                     .cmd(command.cmd())
                     .exec();

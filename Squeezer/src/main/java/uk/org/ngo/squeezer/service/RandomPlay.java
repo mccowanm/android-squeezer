@@ -114,7 +114,8 @@ public class RandomPlay {
 
                 // Generate playlist
                 try {
-                    RandomPlayDelegate.fillPlaylist(new HashSet<>(delegate.getTracks(this.folderID)));
+                    RandomPlayDelegate.fillPlaylist(new HashSet<>(delegate.getTracks(this.folderID)),
+                            player, "no_ignore");
                 } catch (Exception e) {
                 }
             }

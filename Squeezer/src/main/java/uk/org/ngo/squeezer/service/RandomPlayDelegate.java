@@ -35,11 +35,6 @@ public class RandomPlayDelegate {
         return track;
     }
 
-    // If no player was given, find active one (initial setup)
-    static public void fillPlaylist(Set<String> unplayed) throws Exception {
-        fillPlaylist(unplayed, delegate.getActivePlayer(), "no_ignore");
-    }
-
     // Use if player was specified (refill)
     static public void fillPlaylist(Set<String> unplayed, Player player, String ignore) throws Exception {
         if (unplayed.size() > 0 ) {

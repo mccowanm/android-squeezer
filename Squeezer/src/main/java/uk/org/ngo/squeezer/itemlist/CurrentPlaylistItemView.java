@@ -16,26 +16,19 @@
 
 package uk.org.ngo.squeezer.itemlist;
 
-import android.content.ClipData;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
-import android.os.Build;
-import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.graphics.drawable.DrawableCompat;
-import androidx.core.view.GestureDetectorCompat;
 import androidx.palette.graphics.Palette;
 
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.Util;
 import uk.org.ngo.squeezer.model.JiveItem;
 import uk.org.ngo.squeezer.service.ISqueezeService;
-import uk.org.ngo.squeezer.widget.OnSwipeListener;
-import uk.org.ngo.squeezer.widget.UndoBarController;
 
 class CurrentPlaylistItemView extends JiveItemView {
     private final CurrentPlaylistActivity activity;
@@ -48,6 +41,7 @@ class CurrentPlaylistItemView extends JiveItemView {
     @Override
     public void bindView(JiveItem item) {
         super.bindView(item);
+        itemView.setOnLongClickListener(null);
 
         if (getAdapterPosition() == activity.getSelectedIndex()) {
             itemView.setBackgroundResource(getActivity().getAttributeValue(R.attr.currentTrackBackground));
@@ -60,53 +54,6 @@ class CurrentPlaylistItemView extends JiveItemView {
         }
 
         itemView.setAlpha(getAdapterPosition() == activity.getDraggedIndex() ? 0 : 1);
-
-        final GestureDetectorCompat detector = new GestureDetectorCompat(getActivity(), new OnSwipeListener() {
-            @Override
-            public boolean onDown(MotionEvent e) {
-                itemView.setPressed(true);
-                return super.onDown(e);
-            }
-
-            @Override
-            public void onLongPress(MotionEvent e) {
-                activity.setDraggedIndex(getAdapterPosition());
-                itemView.setPressed(false);
-                ClipData data = ClipData.newPlainText("", "");
-                View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(itemView);
-                itemView.setActivated(true);
-                itemView.startDrag(data, shadowBuilder, null, 0);
-            }
-
-            @Override
-            public boolean onSingleTapUp(MotionEvent e) {
-                onItemSelected();
-                return true;
-            }
-
-            @Override
-            public boolean onSwipeLeft() {
-                removeItem(item);
-                return true;
-            }
-
-            @Override
-            public boolean onSwipeRight() {
-                removeItem(item);
-                return true;
-            }
-        });
-
-        itemView.setOnTouchListener((v, event) -> {
-            if (event.getAction() == MotionEvent.ACTION_CANCEL) {
-                itemView.setPressed(false);
-            }
-            if (event.getAction() == MotionEvent.ACTION_UP) {
-                itemView.setPressed(false);
-                itemView.performClick();
-            }
-            return detector.onTouchEvent(event);
-        });
     }
 
     @Override
@@ -130,30 +77,11 @@ class CurrentPlaylistItemView extends JiveItemView {
         }
     }
 
-    private void removeItem(JiveItem item) {
-        final int position = getAdapterPosition();
-        activity.getItemAdapter().removeItem(position);
-        UndoBarController.show(activity, activity.getString(R.string.JIVE_POPUP_REMOVING_FROM_PLAYLIST, item.getName()), new UndoBarController.UndoListener() {
-            @Override
-            public void onUndo() {
-                activity.getItemAdapter().insertItem(position, item);
-            }
-
-            @Override
-            public void onDone() {
-                ISqueezeService service = activity.getService();
-                if (service != null) {
-                    service.playlistRemove(position);
-                    activity.skipPlaylistChanged();
-                }
-            }
-        });
-    }
-
     /**
      * Jumps to whichever song the user chose.
      */
-    public void onItemSelected() {
+    @Override
+    public void onItemSelected(JiveItem item) {
         ISqueezeService service = getActivity().getService();
         if (service != null) {
             getActivity().getService().playlistIndex(getAdapterPosition());

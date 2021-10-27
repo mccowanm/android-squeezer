@@ -16,8 +16,6 @@
 
 package uk.org.ngo.squeezer.service;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 
 import java.util.List;
@@ -32,8 +30,6 @@ import uk.org.ngo.squeezer.model.PlayerState;
 import uk.org.ngo.squeezer.model.SlimCommand;
 
 public class SlimDelegate {
-
-    private static final String TAG = "SlimDelegate";
 
     @NonNull private final SlimClient mClient;
 
@@ -100,20 +96,20 @@ public class SlimDelegate {
         return new PlayerCommand(mClient, mClient.getConnectionState().getActivePlayer());
     }
 
-    <T> Request requestItems(Player player, int start, IServiceItemListCallback<T> callback) {
-        return new Request<>(mClient, player, start, callback);
+    <T> Request<T> requestItems(Player player, int start, IServiceItemListCallback<T> callback) {
+        return new Request<>(mClient, player, start, BaseClient.mPageSize, callback);
     }
 
-    <T> Request requestItems(Player player, IServiceItemListCallback<T> callback) {
-        return new Request<>(mClient, player, 0, 200, callback);
+    <T> Request<T> requestItems(Player player, IServiceItemListCallback<T> callback) {
+        return new Request<>(mClient, player, 0, BaseClient.mPageSize, callback);
     }
 
-    <T> Request requestItems(int start, IServiceItemListCallback<T> callback) {
-        return new Request<>(mClient, start, callback);
+    <T> Request<T> requestAllItems(IServiceItemListCallback<T> callback) {
+        return new Request<>(mClient, null, -1, BaseClient.mPageSize, callback);
     }
 
-    <T> Request requestItems(IServiceItemListCallback<T> callback) {
-        return new Request<>(mClient, 0, 200, callback);
+    <T> Request<T> requestItems(IServiceItemListCallback<T> callback) {
+        return new Request<>(mClient, null, 0, BaseClient.mPageSize, callback);
     }
 
     public Player getActivePlayer() {
@@ -273,18 +269,6 @@ public class SlimDelegate {
             this.callback = callback;
             this.start = start;
             this.pageSize = pageSize;
-        }
-
-        private Request(SlimClient slimClient, Player player, int start, IServiceItemListCallback<T> callback) {
-            this(slimClient, player, start, BaseClient.mPageSize, callback);
-        }
-
-        private Request(SlimClient slimClient, int start, IServiceItemListCallback<T> callback) {
-            this(slimClient, null, start, BaseClient.mPageSize, callback);
-        }
-
-        private Request(SlimClient slimClient, int start, int pageSize, IServiceItemListCallback<T> callback) {
-            this(slimClient, null, start, pageSize, callback);
         }
 
         @Override

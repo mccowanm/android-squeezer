@@ -6,6 +6,5 @@ android:layout_height="wrap_content"
 android:ellipsize="end"
 android:maxLines="1"
 android:padding="16dp"
-android:paddingStart="28dp"
 android:textAppearance="?attr/textAppearanceSubtitle1"
 tools:text= "text"/>

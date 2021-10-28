@@ -44,7 +44,7 @@ public class ScanNetworkTask implements Runnable {
     /**
      * Maximum time to wait between discovery attempts (ms).
      */
-    private static final int DISCOVERY_ATTEMPT_TIMEOUT = 1400;
+    public static final int DISCOVERY_ATTEMPT_TIMEOUT = 1400;
 
     public ScanNetworkTask(Context context, ScanNetworkCallback callback) {
         this.callback = callback;

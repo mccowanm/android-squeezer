@@ -52,6 +52,10 @@
         <item name="overlapAnchor">false</item>
     </style>
 
+    <style name="Widget.Squeezer.ToolBar.ExposedDropdownMenu" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+        <item name="boxStrokeColor">@android:color/transparent</item>
+    </style>
+
     <style name="Widget.App.Slider" parent="Widget.MaterialComponents.Slider">
         <item name="trackHeight">2dp</item>
         <item name="thumbRadius">6dp</item>

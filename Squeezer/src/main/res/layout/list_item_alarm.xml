@@ -110,13 +110,19 @@
         <include layout="@layout/day_of_week_button" />
     </LinearLayout>
 
-    <Spinner
-        android:id="@+id/playlist"
-        android:layout_width="fill_parent"
-        android:layout_height="?attr/dropdownListPreferredItemHeight"
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@id/dow"
-        android:prompt="@string/alarm_music_prompt"
-        android:spinnerMode="dialog"
-        tools:layout_height="?android:attr/dropdownListPreferredItemHeight" />
+        android:labelFor="@id/playlist"
+        android:hint="@string/alarm_music_prompt"
+        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu">
+        <AutoCompleteTextView
+            android:id="@+id/playlist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
 </RelativeLayout>
 </com.google.android.material.card.MaterialCardView>

@@ -41,7 +41,7 @@ public class RandomPlayDelegate {
             delegate.command(player).cmd("playlistcontrol")
                     .param("cmd", "add").param("track_id", next).exec();
 
-            // Get the next track and set it to the instance for the active player.
+            // Get the next track and set it for this player's instance.
             // It will be loaded to be added to the played tracks when the next track begins
             // to play (the track info does not contain the ID, so we have to do this).
             delegate.setRandomPlayIsActive(player, next);

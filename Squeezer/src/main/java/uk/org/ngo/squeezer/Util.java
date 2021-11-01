@@ -29,10 +29,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 
 import android.text.TextUtils;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -320,33 +316,6 @@ public class Util {
     private static final Pattern MAC_REGEX = Pattern.compile(MAC_REGEX_STRING);
     public static boolean validateMac(CharSequence mac) {
         return (mac != null && MAC_REGEX.matcher(mac).matches());
-    }
-
-    /**
-     * @return a view suitable for use as a spinner view.
-     */
-    public static View getSpinnerItemView(Context context, View convertView, ViewGroup parent,
-                                          String label) {
-        return getSpinnerView(context, convertView, parent, label,
-                android.R.layout.simple_spinner_item);
-    }
-
-    public static View getActionBarSpinnerItemView(Context context, View convertView,
-                                                   ViewGroup parent, String label) {
-        return getSpinnerView(context, convertView, parent, label,
-                androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
-    }
-
-    private static View getSpinnerView(Context context, View convertView, ViewGroup parent,
-                                       String label, int layout) {
-        TextView view;
-        view = (TextView) (convertView != null
-                && TextView.class.isAssignableFrom(convertView.getClass())
-                ? convertView
-                : ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(
-                layout, parent, false));
-        view.setText(label);
-        return view;
     }
 
     @NonNull

@@ -36,12 +36,11 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.MainThread;
@@ -477,36 +476,25 @@ public class NowPlayingFragment extends Fragment {
             actionBar.setDisplayShowTitleEnabled(false);
             actionBar.setDisplayShowCustomEnabled(true);
             actionBar.setCustomView(R.layout.action_bar_custom_view);
-            Spinner spinner = (Spinner) actionBar.getCustomView();
+            AutoCompleteTextView spinner = actionBar.getCustomView().findViewById(R.id.player);
             final Context actionBarContext = actionBar.getThemedContext();
-            final ArrayAdapter<Player> playerAdapter = new ArrayAdapter<Player>(
-                    actionBarContext, android.R.layout.simple_spinner_dropdown_item,
-                    connectedPlayers) {
-                @Override
-                public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
-                    return Util.getActionBarSpinnerItemView(actionBarContext, convertView, parent,
-                            getItem(position).getName());
-                }
-
+            final ArrayAdapter<Player> playerAdapter = new ArrayAdapter<>(actionBarContext, R.layout.dropdown_item, connectedPlayers) {
                 @Override
                 public @NonNull View getView(int position, View convertView, @NonNull ViewGroup parent) {
-                    return Util.getActionBarSpinnerItemView(actionBarContext, convertView, parent,
-                            getItem(position).getName());
+                    TextView view = (TextView) getActivity().getLayoutInflater().inflate(R.layout.dropdown_item, parent, false);
+                    view.setText(getItem(position).getName());
+                    return view;
                 }
             };
             spinner.setAdapter(playerAdapter);
-            spinner.setOnItemSelectedListener(null);
             playerAdapter.notifyDataSetChanged();
-            spinner.setSelection((activePlayer != null) ? playerAdapter.getPosition(activePlayer) : 0, false);
-            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    mService.setActivePlayer(playerAdapter.getItem(position));
+            spinner.setText((activePlayer != null) ? activePlayer.getName() : "", false);
+            spinner.setOnItemClickListener((adapterView, parent, position, id) -> {
+                Player selectedItem = playerAdapter.getItem(position);
+                spinner.setText(selectedItem.getName(), false);
+                if (getActivePlayer() != selectedItem) {
+                    mService.setActivePlayer(selectedItem);
                     updateUiFromPlayerState(mService.getActivePlayerState());
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
                 }
             });
         } else {
@@ -632,7 +620,7 @@ public class NowPlayingFragment extends Fragment {
                 artistText.setText(song.getArtist());
                 albumText.setText(song.getAlbum());
 
-                mService.pluginItems(song.moreAction, new IServiceItemListCallback<JiveItem>() {
+                mService.pluginItems(song.moreAction, new IServiceItemListCallback<>() {
                     @Override
                     public void onItemsReceived(int count, int start, Map<String, Object> parameters, List<JiveItem> items, Class<JiveItem> dataType) {
                         albumItem = findBrowseAction(items, "album_id");

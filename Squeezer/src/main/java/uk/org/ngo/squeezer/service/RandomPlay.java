@@ -67,6 +67,10 @@ public class RandomPlay {
         this.activeFolderID = folderID;
     }
 
+    public void resetFirstFound() {
+        this.firstFound = false;
+    }
+
     class RandomPlayCallback implements IServiceItemListCallback<MusicFolderItem> {
 
         String folderID;

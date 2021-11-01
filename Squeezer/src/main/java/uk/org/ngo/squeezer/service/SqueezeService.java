@@ -759,12 +759,8 @@ public class SqueezeService extends Service {
 
     private void handleRandomOnEvent(Player player) {
 
-        // TODO BUG: If the playlist changes due to action fron another client
-        //  the last random track stays in the playlist and therefore
-        //  the player will resume Random Play after the end of the inserted items.
-        //  Also, at the moment, the only indication for an end of Random Play is if
-        //  number - index IS NOT 1. And even in this case 'nextTrack' is never reset
-        //  to "inactive".
+        // TODO: Random Play currently only ends when tracks are otherwise added to the playlist.
+        // TODO: Check serverstatus.lastscan for changes in folder structure
 
         RandomPlay randomPlay = mDelegate.getRandomPlay(player);
         Preferences preferences = new Preferences(SqueezeService.this);
@@ -787,7 +783,7 @@ public class SqueezeService extends Service {
 
                 Set<String> unplayed = new HashSet<>(tracks);
                 if (played.size() == tracks.size()) {
-                    Log.v(TAG, "handleRandomOnEvent: (RandomPlay) all played, clear played");
+                    Log.v(TAG, "handleRandomOnEvent: All played, clear played");
                     played.clear();
                     preferences.saveRandomPlayed(folderID, played);
                 } else {
@@ -796,8 +792,13 @@ public class SqueezeService extends Service {
                 try {
                     RandomPlayDelegate.fillPlaylist(unplayed, player, next);
                 } catch (Exception e) {
-                    Log.e(TAG, "handleRandomOnEvent: (RandomPlay) Unable to fill playlist");
+                    Log.e(TAG, "handleRandomOnEvent: Unable to fill playlist");
                 }
+            }
+            if (number > 1) {
+                    // This could be an option to chose in settings.
+                    Log.v(TAG, "handleRandomOnEvent: End Random Play by not adding more tracks");
+                    randomPlay.setNextTrack("inactive");
             }
         }
     }

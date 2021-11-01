@@ -759,11 +759,9 @@ public class SqueezeService extends Service {
 
     private void handleRandomOnEvent(Player player) {
 
-        // TODO BUG: An additional item will only be added to the playlist on an event
-        // if the app will at some after or at the event change the active player to the
-        // one with the playlist.
-        // E.g. the playlist will not be updated if the app is showing a
-        // different player and the randomly playing player will get pressed FFWD.
+        // TODO BUG: If the playlist changes due to action fron another client
+        //  the last random track stays in the playlist and therefore
+        //  the player will resume Random Play after the end of the playlist
 
         RandomPlay randomPlay = mDelegate.getRandomPlay(player);
         Preferences preferences = new Preferences(SqueezeService.this);

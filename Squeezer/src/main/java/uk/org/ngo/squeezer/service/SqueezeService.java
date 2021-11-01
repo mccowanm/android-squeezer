@@ -761,7 +761,10 @@ public class SqueezeService extends Service {
 
         // TODO BUG: If the playlist changes due to action fron another client
         //  the last random track stays in the playlist and therefore
-        //  the player will resume Random Play after the end of the playlist
+        //  the player will resume Random Play after the end of the inserted items.
+        //  Also, at the moment, the only indication for an end of Random Play is if
+        //  number - index IS NOT 1. And even in this case 'nextTrack' is never reset
+        //  to "inactive".
 
         RandomPlay randomPlay = mDelegate.getRandomPlay(player);
         Preferences preferences = new Preferences(SqueezeService.this);

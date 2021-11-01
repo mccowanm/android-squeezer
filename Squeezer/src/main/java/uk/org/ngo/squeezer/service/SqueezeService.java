@@ -1527,7 +1527,7 @@ public class SqueezeService extends Service {
                     new Preferences(SqueezeService.this).loadRandomPlayed(folderID);
 
             Player player = mDelegate.getActivePlayer();
-            RandomPlay randomPlay = new RandomPlay(player);  // might return an existing class
+            RandomPlay randomPlay = mDelegate.getRandomPlay(player);
             RandomPlay.RandomPlayCallback randomPlayCallback
                     = randomPlay.new RandomPlayCallback(folderID, played);
             // Request all items for 'Random play folder', Callback handles first play

@@ -16,6 +16,8 @@
 
 package uk.org.ngo.squeezer.service;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import java.util.List;
@@ -194,8 +196,7 @@ public class SlimDelegate {
         return mClient.getConnectionState().getRandomPlay(player);
     }
 
-    public void setRandomPlayIsActive(String nextTrack) {
-        Player player = mClient.getConnectionState().getActivePlayer();
+    public void setRandomPlayIsActive(Player player, String nextTrack) {
         mClient.getConnectionState().getRandomPlay(player).setNextTrack(nextTrack);
     }
 

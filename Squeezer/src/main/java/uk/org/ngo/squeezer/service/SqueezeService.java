@@ -771,9 +771,8 @@ public class SqueezeService extends Service {
 
         int number = playerState.getCurrentPlaylistTracksNum();
         int index = playerState.getCurrentPlaylistIndex();
-        if (number - index == 1) {
-            if (!randomPlay.getNextTrack().equals("inactive")) {
-
+        if (!randomPlay.getNextTrack().equals("inactive")) {
+            if (number - index == 1) {
                 // pressing 'Random play' sets this ID, should be better
                 String folderID = randomPlay.getActiveFolderID();
 

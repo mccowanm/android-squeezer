@@ -134,6 +134,7 @@ public class RandomPlay {
         private String playFirst(Set<String> unplayed, String ignore) throws Exception {
             if (unplayed.size() > 0 ) {
                 String first = RandomPlayDelegate.pickTrack(unplayed, ignore);
+                RandomPlayDelegate.delegate.activePlayerCommand().cmd("playlist", "clear").exec();
                 RandomPlayDelegate.delegate.command(RandomPlayDelegate.delegate.getActivePlayer())
                         .cmd("playlistcontrol").param("cmd", "load")
                         .param("play_index", "1").param("track_id", first).exec();

@@ -24,11 +24,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.res.ColorStateList;
+import android.graphics.Paint;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -42,6 +44,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
@@ -189,6 +192,9 @@ public class NowPlayingFragment extends Fragment {
     /** Dialog displayed while connecting to the server. */
     private Dialog connectingDialog = null;
 
+    /** Toast displayed on fast forward or fast backwards */
+    private Toast cueToast;
+
     /**
      * Shows the "connecting" dialog if it's not already showing.
      */
@@ -324,6 +330,28 @@ public class NowPlayingFragment extends Fragment {
                 }
             });
 
+            final GestureDetectorCompat detector = new GestureDetectorCompat(mActivity, new OnSwipeListener() {
+                @Override
+                public boolean onSwipeDown() {
+                    mActivity.finish();
+                    return true;
+                }
+
+                @Override
+                public boolean onDoubleTap(MotionEvent e) {
+                    PlayerState playerState = getPlayerState();
+                    if (playerState != null && playerState.isPlaying()) {
+                        boolean forward = (e.getX() > albumArt.getX() + albumArt.getWidth() * 0.5);
+                        adjustSecondsElapsed(forward ? 10 : -10);
+                        cueToast(forward);
+                    }
+                    return true;
+                }
+            });
+            albumArt.setOnTouchListener((view, event) -> {
+                return detector.onTouchEvent(event);
+            });
+
             shuffleButton.setOnClickListener(view -> mService.toggleShuffle());
 
             repeatButton.setOnClickListener(view -> mService.toggleRepeat());
@@ -342,7 +370,7 @@ public class NowPlayingFragment extends Fragment {
                 new Preferences(mActivity).setShowRemainingTime(showRemainingTime);
                 PlayerState playerState = getPlayerState();
                 if (playerState != null) {
-                    updateTimeDisplayTo((int)playerState.getCurrentTimeSecond(), playerState.getCurrentSongDuration());
+                    updateTimeDisplayTo(playerState.getTrackElapsed(), playerState.getCurrentSongDuration());
                 }
             });
 
@@ -400,6 +428,27 @@ public class NowPlayingFragment extends Fragment {
         }
 
         return v;
+    }
+
+    private void cueToast(boolean forward) {
+        if (cueToast != null) {
+            cueToast.cancel();
+        }
+        TextView layout = (TextView) getLayoutInflater().inflate(R.layout.cue_toast, null);
+        String text = forward ? "10 \u23E9" : "\u23EA 10";
+        layout.setText(text);
+        int[] location = new int[2];
+        albumArt.getLocationOnScreen(location);
+        double x = location[0] + albumArt.getWidth() * (forward ? 0.75 : 0.25);
+        double y = location[1] + albumArt.getHeight() * 0.4;
+        Paint paint = new Paint();
+        paint.setTextSize(layout.getTextSize());
+        double textSize = paint.measureText(text);
+        cueToast = new Toast(mActivity.getApplicationContext());
+        cueToast.setDuration(Toast.LENGTH_SHORT);
+        cueToast.setView(layout);
+        cueToast.setGravity(Gravity.TOP | Gravity.START, (int)(x - textSize * 0.5), (int)y);
+        cueToast.show();
     }
 
     @UiThread
@@ -596,8 +645,7 @@ public class NowPlayingFragment extends Fragment {
      */
     @UiThread
     private void updateSongInfo(@NonNull PlayerState playerState) {
-        updateTimeDisplayTo((int)playerState.getCurrentTimeSecond(),
-                playerState.getCurrentSongDuration());
+        updateTimeDisplayTo(playerState.getTrackElapsed(), playerState.getCurrentSongDuration());
 
         CurrentPlaylistItem song = playerState.getCurrentSong();
         if (song == null) {
@@ -664,8 +712,16 @@ public class NowPlayingFragment extends Fragment {
         return null;
     }
 
-    private boolean setSecondsElapsed(int seconds) {
-        return mService != null && mService.setSecondsElapsed(seconds);
+    private void disconnect() {
+        if (mService != null) mService.disconnect();
+    }
+
+    private void setSecondsElapsed(int seconds) {
+        if (mService != null) mService.setSecondsElapsed(seconds);
+    }
+
+    private void adjustSecondsElapsed(int seconds) {
+        if (mService != null) mService.adjustSecondsElapsed(seconds);
     }
 
     private PlayerState getPlayerState() {
@@ -812,7 +868,7 @@ public class NowPlayingFragment extends Fragment {
             SettingsActivity.show(mActivity);
             return true;
         } else if (itemId == R.id.menu_item_disconnect) {
-            mService.disconnect();
+            disconnect();
             return true;
         } else if (itemId == R.id.menu_item_players) {
             PlayerListActivity.show(mActivity);

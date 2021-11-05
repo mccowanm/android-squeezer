@@ -1302,17 +1302,17 @@ public class SqueezeService extends Service {
         }
 
         @Override
-        public boolean setSecondsElapsed(int seconds) {
-            if (!isConnected()) {
-                return false;
+        public void setSecondsElapsed(int seconds) {
+            if (isConnected() && seconds >= 0) {
+                mDelegate.activePlayerCommand().cmd("time", String.valueOf(seconds)).exec();
             }
-            if (seconds < 0) {
-                return false;
+        }
+
+        @Override
+        public void adjustSecondsElapsed(int seconds) {
+            if (isConnected()) {
+                mDelegate.activePlayerCommand().cmd("time", (seconds > 0 ? "+" : "") + seconds).exec();
             }
-
-            mDelegate.activePlayerCommand().cmd("time", String.valueOf(seconds)).exec();
-
-            return true;
         }
 
         @Override

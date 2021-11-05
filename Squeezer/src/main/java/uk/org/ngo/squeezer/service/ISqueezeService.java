@@ -117,7 +117,8 @@ public interface ISqueezeService {
     boolean playlistSave(String name);
     boolean button(Player player, IRButton button);
 
-    boolean setSecondsElapsed(int seconds);
+    void setSecondsElapsed(int seconds);
+    void adjustSecondsElapsed(int seconds);
 
     String getCurrentPlaylist();
 

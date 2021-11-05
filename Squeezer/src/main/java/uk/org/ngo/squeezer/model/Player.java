@@ -130,7 +130,7 @@ public class Player extends Item implements Comparable<Player> {
         return mPlayerState;
     }
 
-    public static final Creator<Player> CREATOR = new Creator<Player>() {
+    public static final Creator<Player> CREATOR = new Creator<>() {
         @Override
         public Player[] newArray(int size) {
             return new Player[size];
@@ -183,11 +183,7 @@ public class Player extends Item implements Comparable<Player> {
     }
 
     public SongTimeChanged getTrackElapsed() {
-        double now = SystemClock.elapsedRealtime() / 1000.0;
-        double trackCorrection = mPlayerState.rate * (now - mPlayerState.statusSeen);
-        int trackElapsed = (int) (trackCorrection <= 0 ? mPlayerState.getCurrentTimeSecond() : mPlayerState.getCurrentTimeSecond() + trackCorrection);
-
-        return new SongTimeChanged(this, trackElapsed, mPlayerState.getCurrentSongDuration());
+        return new SongTimeChanged(this, mPlayerState.getTrackElapsed(), mPlayerState.getCurrentSongDuration());
     }
 
     public int getSleepingIn() {

@@ -20,8 +20,8 @@
 
     <!-- Cover art on the Now Playing widget -->
     <style name="SqueezerWidget.CoverArt">
-        <item name="android:paddingStart">8dp</item>
-        <item name="android:paddingEnd">8dp</item>
+        <item name="android:layout_marginStart">0dp</item>
+        <item name="android:layout_marginEnd">0dp</item>
     </style>
 
 </resources>

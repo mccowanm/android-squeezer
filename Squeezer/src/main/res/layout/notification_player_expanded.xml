@@ -21,7 +21,6 @@
     android:layout_width="match_parent"
     android:layout_height="128dp">
 
-    <!-- RemoteViews do not support custom views such as uk.org.ngo.squeezer.widget.SquareImageView. -->
     <ImageView
         android:id="@+id/album"
         android:layout_width="@dimen/album_art_icon_expanded_notification_size"

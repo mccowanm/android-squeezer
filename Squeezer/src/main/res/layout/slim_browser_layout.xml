@@ -34,15 +34,11 @@
         android:visibility="gone"
         tools:visibility="visible">
 
-        <uk.org.ngo.squeezer.widget.SquareImageView
+        <ImageView
             android:id="@+id/icon"
             android:layout_width="@dimen/album_art_large_icon_size"
             android:layout_height="@dimen/album_art_large_icon_size"
             android:contentDescription="@string/app_name"
-            android:maxHeight="@dimen/album_art_large_icon_size"
-            android:maxWidth="@dimen/album_art_large_icon_size"
-            android:minHeight="@dimen/album_art_large_icon_size"
-            android:minWidth="@dimen/album_art_large_icon_size"
             android:layout_marginEnd="8dp"
             tools:src="@drawable/pending"/>
 

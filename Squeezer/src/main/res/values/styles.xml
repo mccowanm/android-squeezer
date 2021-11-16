@@ -135,7 +135,7 @@
     <style name="SqueezerWidget.NowPlaying"/>
 
     <style name="SqueezerWidget.SingleLine">
-        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:singleLine">true</item>
     </style>
@@ -162,10 +162,8 @@
     </style>
 
     <style name="SqueezerWidget.NowPlaying.Timestamp">
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_gravity">center_horizontal</item>
-        <item name="android:gravity">center_vertical</item>
         <item name="android:text">0:00</item>
         <item name="android:textAppearance">@style/SqueezerTextAppearance.NowPlaying.Tertiary</item>
     </style>
@@ -188,8 +186,8 @@
 
     <!-- Media controller styles -->
     <style name="SqueezerWidget.MediaButton" parent="ImageButton">
-        <item name="android:layout_width">0dip</item>
-        <item name="android:layout_height">52dip</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">52dp</item>
         <item name="android:layout_weight">1</item>
     </style>
 
@@ -236,8 +234,8 @@
 
     <!-- Cover art on the Now Playing widget -->
     <style name="SqueezerWidget.CoverArt">
-        <item name="android:paddingStart">36dp</item>
-        <item name="android:paddingEnd">36dp</item>
+        <item name="android:layout_marginStart">40dp</item>
+        <item name="android:layout_marginEnd">40dp</item>
     </style>
 
     <style name="SqueezerWidget.List"/>
@@ -274,10 +272,6 @@
     <style name="SqueezerWidget.Grid.CoverArt">
         <item name="android:layout_height">@dimen/album_art_icon_grid_size</item>
         <item name="android:layout_width">@dimen/album_art_icon_grid_size</item>
-        <item name="android:maxHeight">@dimen/album_art_icon_grid_size</item>
-        <item name="android:maxWidth">@dimen/album_art_icon_grid_size</item>
-        <item name="android:minHeight">@dimen/album_art_icon_grid_size</item>
-        <item name="android:minWidth">@dimen/album_art_icon_grid_size</item>
     </style>
 
     <!-- Media controller buttons on bottom bar -->
@@ -346,8 +340,10 @@
 
     <!-- Toast -->
     <style name="DisplayMessage">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
         <item name="android:paddingStart">16dp</item>
         <item name="android:paddingEnd">16dp</item>
         <item name="android:background">@drawable/toast_background</item>
@@ -356,31 +352,23 @@
     <style name="DisplayMessageArtwork">
         <item name="android:layout_width">@dimen/display_message_icon_size</item>
         <item name="android:layout_height">@dimen/display_message_icon_size</item>
-        <item name="android:padding">8dp</item>
-        <item name="android:layout_gravity">center</item>
-        <item name="android:gravity">center</item>
-        <item name="android:maxHeight">@dimen/display_message_icon_size</item>
-        <item name="android:maxWidth">@dimen/display_message_icon_size</item>
-        <item name="android:minHeight">@dimen/display_message_icon_size</item>
-        <item name="android:minWidth">@dimen/display_message_icon_size</item>
     </style>
 
     <style name="DisplayMessageIcon">
         <item name="android:layout_width">@dimen/album_art_icon_size</item>
         <item name="android:layout_height">@dimen/album_art_icon_size</item>
-        <item name="android:layout_gravity">center_vertical</item>
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:maxHeight">@dimen/album_art_icon_size</item>
-        <item name="android:maxWidth">@dimen/album_art_icon_size</item>
-        <item name="android:minHeight">@dimen/album_art_icon_size</item>
-        <item name="android:minWidth">@dimen/album_art_icon_size</item>
     </style>
 
     <style name="DisplayMessageText">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_gravity">center_vertical</item>
-        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">#fff</item>
+        <item name="android:textAppearance">?android:textAppearanceMedium</item>
+    </style>
+
+    <style name="CueText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">#fff</item>
         <item name="android:textAppearance">?android:textAppearanceMedium</item>
     </style>

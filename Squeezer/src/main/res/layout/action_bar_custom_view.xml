@@ -4,7 +4,6 @@
     style="@style/Widget.Squeezer.ToolBar.ExposedDropdownMenu"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_below="@id/dow"
     android:labelFor="@id/player"
     app:hintEnabled="false">
 

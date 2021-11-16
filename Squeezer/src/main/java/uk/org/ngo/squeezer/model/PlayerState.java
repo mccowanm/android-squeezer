@@ -19,6 +19,7 @@ package uk.org.ngo.squeezer.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.os.SystemClock;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
@@ -285,16 +286,18 @@ public class PlayerState implements Parcelable {
         this.remote = remote;
     }
 
-    public double getCurrentTimeSecond() {
-        return currentTimeSecond;
-    }
-
     public boolean setCurrentTimeSecond(double value) {
         if (value == currentTimeSecond)
             return false;
 
         currentTimeSecond = value;
         return true;
+    }
+
+    public int getTrackElapsed() {
+        double now = SystemClock.elapsedRealtime() / 1000.0;
+        double trackCorrection = rate * (now - statusSeen);
+        return  (int) (trackCorrection <= 0 ? currentTimeSecond : currentTimeSecond + trackCorrection);
     }
 
     public int getCurrentSongDuration() {

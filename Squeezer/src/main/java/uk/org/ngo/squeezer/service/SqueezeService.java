@@ -126,6 +126,8 @@ public class SqueezeService extends Service {
 
     private final SlimDelegate mDelegate = new SlimDelegate(mEventBus);
 
+    private final RandomPlayDelegate randomPlayDelegate = new RandomPlayDelegate(mDelegate);
+
     /**
      * Is scrobbling enabled?
      */
@@ -1506,9 +1508,6 @@ public class SqueezeService extends Service {
 
         public void randomPlayFolder(JiveItem item) throws HandshakeNotCompleteException {
 
-            // Has to be instantiated once to have an mDelegate
-            new RandomPlayDelegate(mDelegate);
-
             SlimCommand command = item.randomPlayFolderCommand();
             String folderID = "";
             try {
@@ -1524,7 +1523,7 @@ public class SqueezeService extends Service {
             Player player = mDelegate.getActivePlayer();
             RandomPlay randomPlay = mDelegate.getRandomPlay(player);
             RandomPlay.RandomPlayCallback randomPlayCallback
-                    = randomPlay.new RandomPlayCallback(folderID, played);
+                    = randomPlay.new RandomPlayCallback(randomPlayDelegate, folderID, played);
             // Request all items for 'Random play folder', Callback handles first play
             mDelegate.requestAllItems(randomPlayCallback)
                     .params(command.params)

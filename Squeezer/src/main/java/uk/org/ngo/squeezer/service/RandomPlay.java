@@ -20,8 +20,6 @@ One instance of class per Player
  */
 public class RandomPlay {
 
-    private static final String TAG = "RandomPlay";
-
     public RandomPlay(Player player) {
         this.player = player;
         this.firstFound = false;
@@ -75,16 +73,18 @@ public class RandomPlay {
 
         String folderID;
         Set<String> played;
+        final RandomPlayDelegate rDelegate;
 
-        public RandomPlayCallback(String folderID, Set<String> played) {
+        public RandomPlayCallback(RandomPlayDelegate randomPlayDelegate,
+                                  String folderID, Set<String> played) {
             this.folderID = folderID;
             this.played = played;
+            this.rDelegate = randomPlayDelegate;
         }
 
         public void onItemsReceived(int count, int start, Map<String, Object> parameters,
                                     List<MusicFolderItem> items, Class<MusicFolderItem> dataType) {
 
-            SlimDelegate delegate = RandomPlayDelegate.delegate;
             Set<String> folderTracks = new HashSet<>();
             for (MusicFolderItem item : items) {
                 if ("track".equals(item.type)) {
@@ -93,12 +93,12 @@ public class RandomPlay {
             }
 
             // Add 50 items and folderID to correct RandomPlay(player), not this instance!
-            delegate.addItems(this.folderID, folderTracks);
-            delegate.setActiveFolderID(this.folderID);
+            rDelegate.addItems(this.folderID, folderTracks);
+            rDelegate.setActiveFolderID(this.folderID);
 
             // Get Set of all current items and try to find one unplayed, if this has not yet been done
             if (!RandomPlay.this.firstFound) {
-                Set<String> loaded = new HashSet<>(delegate.getTracks(this.folderID));
+                Set<String> loaded = new HashSet<>(rDelegate.getTracks(this.folderID));
                 loaded.removeAll(this.played);
                 try {
                     playFirst(loaded);
@@ -111,14 +111,14 @@ public class RandomPlay {
                 if (!RandomPlay.this.firstFound) {
                     this.played.clear();
                     try {
-                        playFirst(new HashSet<>(delegate.getTracks(this.folderID)));
+                        playFirst(new HashSet<>(rDelegate.getTracks(this.folderID)));
                     } catch (Exception e) {
                     }
                 }
 
                 // Generate playlist
                 try {
-                    RandomPlayDelegate.fillPlaylist(new HashSet<>(delegate.getTracks(this.folderID)),
+                    rDelegate.fillPlaylist(new HashSet<>(rDelegate.getTracks(this.folderID)),
                             player, "no_ignore");
                 } catch (Exception e) {
                 }
@@ -137,9 +137,9 @@ public class RandomPlay {
         // Get a track to play it, add it to played, save played to pref
         private String playFirst(Set<String> unplayed, String ignore) throws Exception {
             if (unplayed.size() > 0 ) {
-                String first = RandomPlayDelegate.pickTrack(unplayed, ignore);
-                RandomPlayDelegate.delegate.activePlayerCommand().cmd("playlist", "clear").exec();
-                RandomPlayDelegate.delegate.command(RandomPlayDelegate.delegate.getActivePlayer())
+                String first = rDelegate.pickTrack(unplayed, ignore);
+                rDelegate.getSlimDelegate().activePlayerCommand().cmd("playlist", "clear").exec();
+                rDelegate.getSlimDelegate().command(rDelegate.getSlimDelegate().getActivePlayer())
                         .cmd("playlistcontrol").param("cmd", "load")
                         .param("play_index", "1").param("track_id", first).exec();
                 this.played.add(first);

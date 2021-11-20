@@ -19,7 +19,9 @@ package uk.org.ngo.squeezer.service;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import de.greenrobot.event.EventBus;
 import uk.org.ngo.squeezer.itemlist.IServiceItemListCallback;

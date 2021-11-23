@@ -25,16 +25,12 @@ public class RandomPlayDelegate {
         Random random = new Random();
         do {
             int r = random.nextInt(unplayed.size());
-            try {
-                track = (String) stringArray[r];
-            } catch (Exception e) {
-                Log.e(TAG, "Unable to get track from Array: " + e.getMessage());
-            }
+            track = (String) stringArray[r];
         } while (ignore.equals(track)); // ignore the last track in case of new cycle
         return track;
     }
 
-    static void fillPlaylist(Set<String> unplayed, Player player, String ignore) throws Exception {
+    static void fillPlaylist(Set<String> unplayed, Player player, String ignore) {
         if (unplayed.size() > 0 ) {
             String next = pickTrack(unplayed, ignore);
             slimDelegate.command(player).cmd("playlistcontrol")
@@ -44,9 +40,8 @@ public class RandomPlayDelegate {
             // It will be loaded to be added to the played tracks when the next track begins
             // to play (the track info does not contain the ID, so we have to do this).
             slimDelegate.setRandomPlayIsActive(player, next);
-
         } else {
-            throw new Exception("Could not find next track to load it");
+            Log.e(TAG, "fillPlaylist: Could not find track and load it.");
         }
     }
 

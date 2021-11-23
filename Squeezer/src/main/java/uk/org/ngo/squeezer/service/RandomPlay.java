@@ -1,5 +1,7 @@
 package uk.org.ngo.squeezer.service;
 
+import android.util.Log;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -27,6 +29,7 @@ public class RandomPlay {
         this.activeFolderID = "";
     }
 
+    private static final String TAG = "RandomPlay";
     private final Player player;
     private String activeFolderID;
 
@@ -100,28 +103,19 @@ public class RandomPlay {
             if (!RandomPlay.this.firstFound) {
                 Set<String> loaded = new HashSet<>(rDelegate.getTracks(this.folderID));
                 loaded.removeAll(this.played);
-                try {
-                    playFirst(loaded);
-                } catch (Exception e) {
-                }
+                playFirst(loaded);
             }
 
             // All items loaded, if no unplayed are found, clear played
             if (start + items.size() >= count) {
                 if (!RandomPlay.this.firstFound) {
                     this.played.clear();
-                    try {
-                        playFirst(new HashSet<>(rDelegate.getTracks(this.folderID)));
-                    } catch (Exception e) {
-                    }
+                    playFirst(new HashSet<>(rDelegate.getTracks(this.folderID)));
                 }
 
                 // Generate playlist
-                try {
-                    rDelegate.fillPlaylist(new HashSet<>(rDelegate.getTracks(this.folderID)),
-                            player, "no_ignore");
-                } catch (Exception e) {
-                }
+                rDelegate.fillPlaylist(new HashSet<>(rDelegate.getTracks(this.folderID)),
+                        player, "no_ignore");
             }
         }
 
@@ -130,12 +124,12 @@ public class RandomPlay {
             return null;
         }
 
-        private String playFirst(Set<String> unplayed) throws Exception {
-            return playFirst(unplayed, "no_ignore");
+        private void playFirst(Set<String> unplayed) {
+            playFirst(unplayed, "no_ignore");
         }
 
         // Get a track to play it, add it to played, save played to pref
-        private String playFirst(Set<String> unplayed, String ignore) throws Exception {
+        private void playFirst(Set<String> unplayed, String ignore) {
             if (unplayed.size() > 0 ) {
                 String first = rDelegate.pickTrack(unplayed, ignore);
                 rDelegate.getSlimDelegate().activePlayerCommand().cmd("playlist", "clear").exec();
@@ -145,9 +139,8 @@ public class RandomPlay {
                 this.played.add(first);
                 RandomPlay.this.firstFound = true;
                 new Preferences(Squeezer.getContext()).saveRandomPlayed(folderID, played);
-                return first;
             } else {
-                throw new Exception("Could not find a first track to play it");
+                Log.e(TAG, "playFirst: Could not load first track.");
             }
         }
     }

@@ -59,7 +59,6 @@ public class AlarmView extends ItemViewHolder<Alarm> {
     private final String timeFormat;
     private final String am;
     private final String pm;
-    private Alarm alarm;
     private final TextView time;
     private final TextView amPm;
     private final CompoundButtonWrapper enabled;
@@ -87,16 +86,16 @@ public class AlarmView extends ItemViewHolder<Alarm> {
         enabled = new CompoundButtonWrapper(view.findViewById(R.id.enabled));
         enabled.setOncheckedChangeListener((compoundButton, b) -> {
             if (getActivity().getService() != null) {
-                alarm.setEnabled(b);
-                getActivity().getService().alarmEnable(alarm.getId(), b);
+                item.setEnabled(b);
+                getActivity().getService().alarmEnable(item.getId(), b);
             }
         });
         repeat = new CompoundButtonWrapper(view.findViewById(R.id.repeat));
         dowHolder = view.findViewById(R.id.dow);
         repeat.setOncheckedChangeListener((compoundButton, b) -> {
             if (getActivity().getService() != null) {
-                alarm.setRepeat(b);
-                getActivity().getService().alarmRepeat(alarm.getId(), b);
+                item.setRepeat(b);
+                getActivity().getService().alarmRepeat(item.getId(), b);
                 activity.getItemAdapter().notifyItemChanged(getAbsoluteAdapterPosition());
             }
         });
@@ -107,13 +106,13 @@ public class AlarmView extends ItemViewHolder<Alarm> {
             final int finalDay = day;
             dowButton.setOnClickListener(v -> {
                 if (getActivity().getService() != null) {
-                    boolean wasChecked = alarm.isDayActive(finalDay);
+                    boolean wasChecked = item.isDayActive(finalDay);
                     if (wasChecked) {
-                        alarm.clearDay(finalDay);
-                        getActivity().getService().alarmRemoveDay(alarm.getId(), finalDay);
+                        item.clearDay(finalDay);
+                        getActivity().getService().alarmRemoveDay(item.getId(), finalDay);
                     } else {
-                        alarm.setDay(finalDay);
-                        getActivity().getService().alarmAddDay(alarm.getId(), finalDay);
+                        item.setDay(finalDay);
+                        getActivity().getService().alarmAddDay(item.getId(), finalDay);
                     }
                     setDowText(finalDay);
                 }
@@ -121,7 +120,7 @@ public class AlarmView extends ItemViewHolder<Alarm> {
             dowTexts[day] = (TextView) dowButton.getChildAt(0);
         }
         delete.setOnClickListener(v -> {
-            UndoBarController.show(getActivity(), R.string.ALARM_DELETING, new UndoListener(getAbsoluteAdapterPosition(), alarm));
+            UndoBarController.show(getActivity(), R.string.ALARM_DELETING, new UndoListener(getAbsoluteAdapterPosition(), item));
             mActivity.getItemAdapter().removeItem(getAbsoluteAdapterPosition());
         });
         playlist.setOnItemClickListener((adapterView, parent, position, id) -> {
@@ -129,15 +128,16 @@ public class AlarmView extends ItemViewHolder<Alarm> {
             playlist.setText(selectedAlarmPlaylist.getName(), false);
             if (getActivity().getService() != null &&
                     selectedAlarmPlaylist.getId() != null &&
-                    !selectedAlarmPlaylist.getId().equals(alarm.getPlayListId())) {
-                alarm.setPlayListId(selectedAlarmPlaylist.getId());
-                getActivity().getService().alarmSetPlaylist(alarm.getId(), selectedAlarmPlaylist);
+                    !selectedAlarmPlaylist.getId().equals(item.getPlayListId())) {
+                item.setPlayListId(selectedAlarmPlaylist.getId());
+                getActivity().getService().alarmSetPlaylist(item.getId(), selectedAlarmPlaylist);
             }
         });
     }
 
     @Override
     public void bindView(Alarm item) {
+        super.bindView(item);
         long tod = item.getTod();
         int hour = (int) (tod / 3600);
         int minute = (int) ((tod / 60) % 60);
@@ -147,7 +147,6 @@ public class AlarmView extends ItemViewHolder<Alarm> {
             if (displayHour == 0) displayHour = 12;
         }
 
-        alarm = item;
         time.setText(String.format(timeFormat, displayHour, minute));
         BaseListActivity activity = (BaseListActivity) getActivity();
         time.setOnClickListener(view -> showTimePicker(activity, item, is24HourFormat));
@@ -176,7 +175,7 @@ public class AlarmView extends ItemViewHolder<Alarm> {
 
     private void setDowText(int day) {
         SpannableString text = new SpannableString(getAlarmShortDayText(day));
-        if (alarm.isDayActive(day)) {
+        if (item.isDayActive(day)) {
             text.setSpan(new StyleSpan(Typeface.BOLD), 0, text.length(), 0);
             text.setSpan(new ForegroundColorSpan(mColorSelected), 0, text.length(), 0);
             Drawable underline = mResources.getDrawable(R.drawable.underline);

@@ -16,6 +16,10 @@
 
 package uk.org.ngo.squeezer.util;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.app.Activity;
 import android.app.Notification;
 import android.content.Context;
@@ -28,7 +32,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.TransitionDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -141,7 +145,7 @@ public abstract class ImageWorker {
                     imageView.getViewTreeObserver().removeOnPreDrawListener(this);
                     // If the imageView is still assigned to the URL then we can load in to it.
                     if (data.equals(imageView.getTag())) {
-                        loadImage(data, imageView);
+                        loadImage(data, imageView, callback);
                     }
                     return true;
                 }
@@ -590,14 +594,9 @@ public abstract class ImageWorker {
 
                 options.inJustDecodeBounds = false;
 
-                if (! BuildConfig.DEBUG) {
-                    // Not a debug build, just need the scaled bitmap.
-                    scaledBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
-                } else {
-                    // Debug build, need a mutable bitmap to add the debug swatch later.
-                    options.inMutable = true;
-                    scaledBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
-                }
+                // Create a mutable bitmap so it can be post processed.
+                options.inMutable = true;
+                scaledBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
             }
 
             // If the bitmap was processed and the image cache is available, then add the processed
@@ -719,10 +718,7 @@ public abstract class ImageWorker {
                 if (BuildConfig.DEBUG) {
                     Log.d(TAG, "onPostExecute - setting bitmap");
                 }
-                setImageBitmap(imageView, bitmap);
-                if (callback != null) {
-                    callback.onDone();
-                }
+                setImageBitmap(imageView, bitmap, callback);
             }
         }
 
@@ -852,20 +848,36 @@ public abstract class ImageWorker {
      * @param imageView
      * @param bitmap
      */
-    private void setImageBitmap(ImageView imageView, Bitmap bitmap) {
+    private void setImageBitmap(ImageView imageView, Bitmap bitmap, LoadImageCallback callback) {
         if (mFadeInBitmap) {
-            // Transition drawable between the pending image and the final bitmap.
-            final TransitionDrawable td =
-                    new TransitionDrawable(new Drawable[]{
-                            imageView.getDrawable(),
-                            new BitmapDrawable(mResources, bitmap)
-                    });
+            Drawable currentDrawable = imageView.getDrawable();
+            Drawable newDrawable = new BitmapDrawable(mResources, bitmap);
+            LayerDrawable layerDrawable = new LayerDrawable(new Drawable[]{currentDrawable, newDrawable});
+            imageView.setImageDrawable(layerDrawable);
 
-            imageView.setImageDrawable(td);
-            td.setCrossFadeEnabled(true);
-            td.startTransition(FADE_IN_TIME);
+            ObjectAnimator currentDrawableAnimator = ObjectAnimator.ofPropertyValuesHolder(currentDrawable, PropertyValuesHolder.ofInt("alpha", 255, 0));
+            currentDrawableAnimator.setTarget(currentDrawable);
+            currentDrawableAnimator.setDuration(FADE_IN_TIME);
+            currentDrawableAnimator.start();
+
+            newDrawable.setAlpha(0);
+            ObjectAnimator newDrawableAnimator = ObjectAnimator.ofPropertyValuesHolder(newDrawable, PropertyValuesHolder.ofInt("alpha", 0, 255));
+            newDrawableAnimator.setTarget(newDrawable);
+            newDrawableAnimator.setDuration(FADE_IN_TIME);
+            newDrawableAnimator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animator) {
+                    if (callback != null) {
+                        callback.onDone();
+                    }
+                }
+            });
+            newDrawableAnimator.start();
         } else {
             imageView.setImageDrawable(new BitmapDrawable(mResources, bitmap));
+            if (callback != null) {
+                callback.onDone();
+            }
         }
     }
 

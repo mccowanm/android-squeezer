@@ -507,7 +507,12 @@ public abstract class BaseActivity extends AppCompatActivity implements Download
     }
 
     public void randomPlayFolder(JiveItem item) {
-        mService.randomPlayFolder(item);
+        if (!mService.randomPlayFolder(item)) {
+            showDisplayMessage("Unable to start Random Play");
+        } else {
+            showDisplayMessage("Random Play started");
+        }
+        ;
     }
 
     @Override

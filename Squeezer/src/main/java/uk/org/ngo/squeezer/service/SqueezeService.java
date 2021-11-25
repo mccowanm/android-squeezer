@@ -752,7 +752,7 @@ public class SqueezeService extends Service {
     private void handleRandomOnEvent(Player player) {
 
         // TODO: Random Play currently only ends when tracks are otherwise added to the playlist.
-        // TODO: Check serverstatus.lastscan for changes in folder structure
+        //   Or (Bug), if an already played track is chosen in the playlist by the user.
 
         RandomPlay randomPlay = mDelegate.getRandomPlay(player);
         Preferences preferences = new Preferences(SqueezeService.this);
@@ -781,11 +781,7 @@ public class SqueezeService extends Service {
                 } else {
                     unplayed.removeAll(played);
                 }
-                try {
-                    RandomPlayDelegate.fillPlaylist(unplayed, player, next);
-                } catch (Exception e) {
-                    Log.e(TAG, "handleRandomOnEvent: Unable to fill playlist");
-                }
+                RandomPlayDelegate.fillPlaylist(unplayed, player, next);
             }
             else if (number > 1) {
                     // This could be an option to chose in settings.
@@ -1506,29 +1502,24 @@ public class SqueezeService extends Service {
             mDelegate.requestAllItems(callback).params(command.params).cmd(command.cmd()).exec();
         }
 
-        public void randomPlayFolder(JiveItem item) throws HandshakeNotCompleteException {
-
+        public Boolean randomPlayFolder(JiveItem item) {
             SlimCommand command = item.randomPlayFolderCommand();
-            String folderID = "";
-            try {
-                folderID = (String) command.params.get("folder_id");
-            } catch (Exception e) {
-                Log.e(TAG, "randomPlayFolder: Could not cast value of 'folder_id' to String");
+            String folderID = (String) command.params.get("folder_id");
+            if (folderID == null) {
+                Log.e(TAG, "randomPlayFolder: No folder_id");
+                return false;
             }
-
-            // Load played from preferences
             Set<String> played =
                     new Preferences(SqueezeService.this).loadRandomPlayed(folderID);
-
             Player player = mDelegate.getActivePlayer();
             RandomPlay randomPlay = mDelegate.getRandomPlay(player);
             RandomPlay.RandomPlayCallback randomPlayCallback
                     = randomPlay.new RandomPlayCallback(randomPlayDelegate, folderID, played);
-            // Request all items for 'Random play folder', Callback handles first play
             mDelegate.requestAllItems(randomPlayCallback)
                     .params(command.params)
                     .cmd(command.cmd())
                     .exec();
+            return true;
         }
 
         public boolean toggleArchiveItem(JiveItem item) {

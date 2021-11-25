@@ -781,7 +781,7 @@ public class SqueezeService extends Service {
                 } else {
                     unplayed.removeAll(played);
                 }
-                RandomPlayDelegate.fillPlaylist(unplayed, player, next);
+                randomPlayDelegate.fillPlaylist(unplayed, player, next);
             } else if (number > 1) {
                 // TODO This could be an option to chose in settings.
                 Log.v(TAG, "handleRandomOnEvent: End Random Play by not adding more tracks");

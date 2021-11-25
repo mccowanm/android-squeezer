@@ -12,12 +12,12 @@ public class RandomPlayDelegate {
     private static final String TAG = "RandomPlayDelegate";
 
     RandomPlayDelegate(SlimDelegate mDelegate) {
-        if (RandomPlayDelegate.slimDelegate == null) {
-            RandomPlayDelegate.slimDelegate = mDelegate;
+        if (slimDelegate == null) {
+            slimDelegate = mDelegate;
         }
     }
 
-    private static SlimDelegate slimDelegate;
+    private SlimDelegate slimDelegate;
 
     static String pickTrack(Set<String> unplayed, String ignore) {
         Object[] stringArray = unplayed.toArray();
@@ -30,7 +30,7 @@ public class RandomPlayDelegate {
         return track;
     }
 
-    static void fillPlaylist(Set<String> unplayed, Player player, String ignore) {
+    void fillPlaylist(Set<String> unplayed, Player player, String ignore) {
         if (unplayed.size() > 0 ) {
             String next = pickTrack(unplayed, ignore);
             slimDelegate.command(player).cmd("playlistcontrol")
@@ -45,19 +45,19 @@ public class RandomPlayDelegate {
         }
     }
 
-    static void addItems(String folderID, Set<String> folderTracks) {
+    void addItems(String folderID, Set<String> folderTracks) {
         slimDelegate.addItems(folderID, folderTracks);
     }
 
-    static void setActiveFolderID(String folderID) {
+    void setActiveFolderID(String folderID) {
         slimDelegate.setActiveFolderID(folderID);
     }
 
-    static Set<String> getTracks(String folderID) {
+    Set<String> getTracks(String folderID) {
         return slimDelegate.getTracks(folderID);
     }
 
-    static SlimDelegate getSlimDelegate() {
+    SlimDelegate getSlimDelegate() {
         return slimDelegate;
     }
 }

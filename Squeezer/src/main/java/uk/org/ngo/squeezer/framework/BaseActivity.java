@@ -512,7 +512,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Download
         } else {
             showDisplayMessage("Random Play started");
         }
-        ;
     }
 
     @Override

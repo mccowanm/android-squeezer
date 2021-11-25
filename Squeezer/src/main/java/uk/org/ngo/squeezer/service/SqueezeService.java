@@ -782,12 +782,11 @@ public class SqueezeService extends Service {
                     unplayed.removeAll(played);
                 }
                 RandomPlayDelegate.fillPlaylist(unplayed, player, next);
-            }
-            else if (number > 1) {
-                    // This could be an option to chose in settings.
-                    Log.v(TAG, "handleRandomOnEvent: End Random Play by not adding more tracks");
-                    randomPlay.setNextTrack("inactive");
-                    randomPlay.resetFirstFound();
+            } else if (number > 1) {
+                // TODO This could be an option to chose in settings.
+                Log.v(TAG, "handleRandomOnEvent: End Random Play by not adding more tracks");
+                randomPlay.setNextTrack("inactive");
+                randomPlay.resetFirstFound();
             }
         }
     }

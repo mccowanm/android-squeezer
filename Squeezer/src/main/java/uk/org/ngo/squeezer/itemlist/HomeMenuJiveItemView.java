@@ -26,7 +26,7 @@ public class HomeMenuJiveItemView extends JiveItemView {
         mHomeMenuActivity = homeMenuActivity;
         mItemAdapter = adapter;
         if (mCustomJiveItemHandling == null) {
-            mCustomJiveItemHandling = new CustomJiveItemHandling(mActivity);
+            mCustomJiveItemHandling = new CustomJiveItemHandling(getActivity());
         }
     }
 

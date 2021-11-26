@@ -22,7 +22,6 @@ import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.Parcel;
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
@@ -46,9 +45,6 @@ import uk.org.ngo.squeezer.Util;
 
 
 public class JiveItem extends Item {
-
-    private static final String TAG = "JiveItem";
-
     public static final JiveItem HOME = new JiveItem("home", null, R.string.HOME, 1, Window.WindowStyle.HOME_MENU);
     public static final JiveItem CURRENT_PLAYLIST = new JiveItem("status", null, R.string.menu_item_playlist, 1, Window.WindowStyle.PLAY_LIST);
     public static final JiveItem EXTRAS = new JiveItem("extras", "home", R.string.EXTRAS, 50, Window.WindowStyle.HOME_MENU);
@@ -112,6 +108,7 @@ public class JiveItem extends Item {
     public String text2;
     @NonNull private final Uri icon;
     private String iconStyle;
+    private String extid;
 
     private String node;
     private String originalNode;
@@ -269,6 +266,24 @@ public class JiveItem extends Item {
         return result;
     }
 
+    private static final Map<String, Integer> serviceLogos = initializeServiceLogos();
+
+    private static Map<String, Integer> initializeServiceLogos() {
+        Map<String, Integer> result = new HashMap<>();
+
+        result.put("spotify", R.drawable.spotify);
+        result.put("qobuz", R.drawable.qobuz);
+        result.put("wimp", R.drawable.tidal);
+        result.put("deezer", R.drawable.deezer);
+        result.put("bandcamp", R.drawable.bandcamp);
+
+        return result;
+    }
+
+    public Drawable getLogo(Context context) {
+        @DrawableRes Integer logo = (extid != null ? serviceLogos.get(extid.split(":")[0]) : null);
+        return logo != null ? AppCompatResources.getDrawable(context, logo) : null;
+    }
 
     public String getNode() {
         return node;
@@ -310,6 +325,7 @@ public class JiveItem extends Item {
         splitItemText(getStringOrEmpty(record, record.containsKey("name") ? "name" : "text"));
         icon = getImageUrl(record, record.containsKey("icon-id") ? "icon-id" : "icon");
         iconStyle = getString(record, "iconStyle");
+        extid = getString(record, "extid");
         node = originalNode = getString(record, "node");
         weight = getInt(record, "weight");
         type = getString(record, "type");

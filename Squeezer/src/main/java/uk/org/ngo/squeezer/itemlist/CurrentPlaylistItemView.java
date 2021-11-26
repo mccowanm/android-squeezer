@@ -57,12 +57,13 @@ class CurrentPlaylistItemView extends JiveItemView {
     }
 
     @Override
-    protected boolean isSelectable(JiveItem item) {
+    protected boolean isSelectable() {
         return true;
     }
 
     @Override
     public void onIcon() {
+        super.onIcon();
         if (getAdapterPosition() == activity.getSelectedIndex()) {
             Drawable drawable = icon.getDrawable();
             Drawable marker = DrawableCompat.wrap(AppCompatResources.getDrawable(activity, R.drawable.ic_action_nowplaying));
@@ -81,7 +82,7 @@ class CurrentPlaylistItemView extends JiveItemView {
      * Jumps to whichever song the user chose.
      */
     @Override
-    public void onItemSelected(JiveItem item) {
+    public void onItemSelected() {
         ISqueezeService service = getActivity().getService();
         if (service != null) {
             getActivity().getService().playlistIndex(getAdapterPosition());

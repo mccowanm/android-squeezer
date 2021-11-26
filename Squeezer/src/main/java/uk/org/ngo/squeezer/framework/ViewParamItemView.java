@@ -127,10 +127,11 @@ public class ViewParamItemView<T extends Item> extends ItemViewHolder<T> {
      */
     @Override
     public void bindView(T item) {
+        super.bindView(item);
         text1.setText(item.getName());
 
         if (contextMenuButton!= null) {
-            contextMenuButton.setOnClickListener(v -> showContextMenu(item));
+            contextMenuButton.setOnClickListener(v -> showContextMenu());
         }
 
         if (itemViewParams != viewParams) {
@@ -148,6 +149,6 @@ public class ViewParamItemView<T extends Item> extends ItemViewHolder<T> {
      * inflate their context menu and show it.
      *
      */
-    public void showContextMenu(T item) {
+    public void showContextMenu() {
     }
 }

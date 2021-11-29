@@ -174,7 +174,8 @@ public class JiveItemViewLogic implements IServiceItemListCallback<JiveItem>, Po
         }
 
         contextPopup.setOnMenuItemClickListener(menuItem -> {
-            if (menuItem.getItemId() == offset - 1) {
+            if ( (menuItem.getItemId() == offset - 1)
+                    && (contextMenuItem.moreAction.action.cmd.contains("folderinfo"))) {
                 activity.randomPlayFolder(contextMenuItem); //
             }
             else if (menuItem.getItemId() < offset) {

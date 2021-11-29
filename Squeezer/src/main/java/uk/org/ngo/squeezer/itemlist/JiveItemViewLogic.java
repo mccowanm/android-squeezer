@@ -161,10 +161,7 @@ public class JiveItemViewLogic implements IServiceItemListCallback<JiveItem>, Po
         if (preferences.isDownloadEnabled() && contextMenuItem != null && contextMenuItem.canDownload()) {
             menu.add(Menu.NONE, index++, Menu.NONE, R.string.DOWNLOAD);
         }
-        if (contextMenuItem != null && contextMenuItem.moreAction.action.cmd.contains("folderinfo") &&
-                // Ignore the headline item of the folder if Nullobject. It works fine on first level.
-                // TODO: Maybe make this work for all folders. See JiveItem.randomPlayFolderCommand()
-                contextMenuItem.randomPlayFolderCommand() != null) {
+        if (canRandomPlay(contextMenuItem)) {
             menu.add(Menu.NONE, index++, Menu.NONE, R.string.PLAY_RANDOM_FOLDER);
         }
 
@@ -175,7 +172,7 @@ public class JiveItemViewLogic implements IServiceItemListCallback<JiveItem>, Po
 
         contextPopup.setOnMenuItemClickListener(menuItem -> {
             if ( (menuItem.getItemId() == offset - 1)
-                    && (contextMenuItem.moreAction.action.cmd.contains("folderinfo"))) {
+                    && (canRandomPlay(contextMenuItem))) {
                 activity.randomPlayFolder(contextMenuItem); //
             }
             else if (menuItem.getItemId() < offset) {
@@ -187,6 +184,19 @@ public class JiveItemViewLogic implements IServiceItemListCallback<JiveItem>, Po
         });
         contextPopup.setOnDismissListener(this);
         contextPopup.show();
+    }
+
+    private boolean canRandomPlay(JiveItem contextMenuItem) {
+        // Do not set Random Play in the context menu of the headline item of the folder if
+        // Nullobject. It works fine on first level.
+        // TODO: Maybe make this ignore work for all
+        //  folders. See JiveItem.randomPlayFolderCommand()
+        if ((contextMenuItem == null) ||
+                !(contextMenuItem.moreAction.action.cmd.contains("folderinfo")) ||
+                (contextMenuItem.randomPlayFolderCommand() == null)) {
+            return false;
+        }
+        return true;
     }
 
     private void doItemContext(ViewParamItemView<JiveItem> viewHolder, JiveItem item) {

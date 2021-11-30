@@ -366,11 +366,7 @@
         <item name="android:textAppearance">?android:textAppearanceMedium</item>
     </style>
 
-    <style name="CueText">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">#fff</item>
-        <item name="android:textAppearance">?android:textAppearanceMedium</item>
+    <style name="CueText" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
     </style>
 
     <style name="RemoteButton" parent="Widget.AppCompat.ButtonBar">

@@ -746,13 +746,12 @@ public class SqueezeService extends Service {
         if (event.player.equals(mDelegate.getActivePlayer())) {
             updateOngoingNotification();
         }
-        handleRandomOnEvent(event.player);
+        if (event.player.isRandomPlaying()) {
+            handleRandomOnEvent(event.player);
+        }
     }
 
     private void handleRandomOnEvent(Player player) {
-
-        // TODO: Random Play currently only ends when tracks are otherwise added to the playlist.
-        //   Or (Bug), if an already played track is chosen in the playlist by the user.
 
         RandomPlay randomPlay = mDelegate.getRandomPlay(player);
         Preferences preferences = new Preferences(SqueezeService.this);
@@ -760,35 +759,45 @@ public class SqueezeService extends Service {
 
         int number = playerState.getCurrentPlaylistTracksNum();
         int index = playerState.getCurrentPlaylistIndex();
-        if (!randomPlay.getNextTrack().equals("inactive")) {
-            if (number - index == 1) {
-                // pressing 'Random play' sets this ID, should be better
-                String folderID = randomPlay.getActiveFolderID();
-
-                Set<String> tracks = randomPlay.getTracks(folderID);
-                Set<String> played = preferences.loadRandomPlayed(folderID);
-
-                String next = randomPlay.getNext();
-                played.add(next);
-
+        String nextTrack = randomPlay.getNextTrack();
+        if (endRandomPlay(number, index)) {
+            Log.v(TAG, "handleRandomOnEvent: End Random Play by not adding more tracks");
+            randomPlay.reset(player);
+        } else {
+            String folderID = randomPlay.getActiveFolderID();
+            Set<String> tracks = randomPlay.getTracks(folderID);
+            Set<String> played = preferences.loadRandomPlayed(folderID);
+            played.add(nextTrack);
+            preferences.saveRandomPlayed(folderID, played);
+            Set<String> unplayed = new HashSet<>(tracks);
+            if (played.size() == tracks.size()) {
+                Log.v(TAG, "handleRandomOnEvent: All played, clear played");
+                played.clear();
                 preferences.saveRandomPlayed(folderID, played);
-
-                Set<String> unplayed = new HashSet<>(tracks);
-                if (played.size() == tracks.size()) {
-                    Log.v(TAG, "handleRandomOnEvent: All played, clear played");
-                    played.clear();
-                    preferences.saveRandomPlayed(folderID, played);
-                } else {
-                    unplayed.removeAll(played);
-                }
-                randomPlayDelegate.fillPlaylist(unplayed, player, next);
-            } else if (number > 1) {
-                // TODO This could be an option to chose in settings.
-                Log.v(TAG, "handleRandomOnEvent: End Random Play by not adding more tracks");
-                randomPlay.setNextTrack("inactive");
-                randomPlay.resetFirstFound();
+            } else {
+                unplayed.removeAll(played);
             }
+            randomPlayDelegate.fillPlaylist(unplayed, player, nextTrack);
         }
+    }
+
+    private boolean endRandomPlay(int number, int index) {
+        // After a MusicChanged event we have to check if this meant that the last track of random
+        // play is now playing. In this case we load another track. If the track changed but there
+        // are more tracks in the playlist after it, it means that the user might have added tracks
+        // to the end of the playlist. So we deactivate Random Play.
+        // On the other hand the user might have just chosen another track from the already played
+        // random tracks (currently we don't consider this).
+        // TODO endRandomPlay could be better.
+        if ( (number - index == 1) && (number > 1) ) {
+            // last track playing
+            return false;
+        }
+        else if ((number - index == 2) && (number == 1)) {
+            // handle situation after fast initialization
+            return false;
+        }
+        return true;
     }
 
     public void onEvent(PlayersChanged event) {
@@ -1512,6 +1521,7 @@ public class SqueezeService extends Service {
                     new Preferences(SqueezeService.this).loadRandomPlayed(folderID);
             Player player = mDelegate.getActivePlayer();
             RandomPlay randomPlay = mDelegate.getRandomPlay(player);
+            randomPlay.reset(player);
             RandomPlay.RandomPlayCallback randomPlayCallback
                     = randomPlay.new RandomPlayCallback(randomPlayDelegate, folderID, played);
             mDelegate.requestAllItems(randomPlayCallback)

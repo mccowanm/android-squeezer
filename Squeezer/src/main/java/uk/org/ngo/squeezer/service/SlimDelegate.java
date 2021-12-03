@@ -196,7 +196,7 @@ public class SlimDelegate {
         return mClient.getConnectionState().getRandomPlay(player);
     }
 
-    public void setRandomPlayIsActive(Player player, String nextTrack) {
+    public void setNextTrack(Player player, String nextTrack) {
         mClient.getConnectionState().getRandomPlay(player).setNextTrack(nextTrack);
     }
 

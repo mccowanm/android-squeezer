@@ -32,14 +32,14 @@ public class RandomPlayDelegate {
 
     void fillPlaylist(Set<String> unplayed, Player player, String ignore) {
         if (unplayed.size() > 0 ) {
-            String next = pickTrack(unplayed, ignore);
+            String nextTrack = pickTrack(unplayed, ignore);
             slimDelegate.command(player).cmd("playlistcontrol")
-                    .param("cmd", "add").param("track_id", next).exec();
+                    .param("cmd", "add").param("track_id", nextTrack).exec();
 
             // Get the next track and set it for this player's instance.
             // It will be loaded to be added to the played tracks when the next track begins
             // to play (the track info does not contain the ID, so we have to do this).
-            slimDelegate.setRandomPlayIsActive(player, next);
+            slimDelegate.setNextTrack(player, nextTrack);
         } else {
             Log.e(TAG, "fillPlaylist: Could not find track and load it.");
         }

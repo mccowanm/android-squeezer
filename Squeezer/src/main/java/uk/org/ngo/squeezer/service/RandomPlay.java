@@ -24,9 +24,7 @@ public class RandomPlay {
 
     public RandomPlay(Player player) {
         this.player = player;
-        this.firstFound = false;
-        this.nextTrack = "inactive";
-        this.activeFolderID = "";
+        reset(player);
     }
 
     private static final String TAG = "RandomPlay";
@@ -39,37 +37,36 @@ public class RandomPlay {
     private BiFunction<Set<String>, Set<String>, Set<String>> mergeSets = (set1, set2) -> set1 == null ?
             set1 : Stream.concat(set1.stream(), set2.stream()).collect(Collectors.toSet());
 
-    public String getNextTrack() {
+    void reset(Player player) {
+        this.firstFound = false;
+        this.nextTrack = "";
+        this.activeFolderID = "";
+        player.setRandomPlaying(false);
+    }
+
+    String getNextTrack() {
         return this.nextTrack;
     }
 
-    public String getActiveFolderID() {
+    String getActiveFolderID() {
         return this.activeFolderID;
     }
-
-    public String getNext() {
-        return this.nextTrack;
-    }
-
-    public int addItems(String folderID, Set<String> stringSetOfFifty) {
+    
+    int addItems(String folderID, Set<String> stringSetOfFifty) {
         tracks.merge(folderID, stringSetOfFifty, mergeSets);
         return tracks.get(folderID).size();
     }
 
-    public Set<String> getTracks(String folderID) {
+    Set<String> getTracks(String folderID) {
         return this.tracks.get(folderID);
     }
 
-    public void setNextTrack(String nextTrack) {
+    void setNextTrack(String nextTrack) {
         this.nextTrack = nextTrack;
     }
 
-    public void setActiveFolderID(String folderID) {
+    void setActiveFolderID(String folderID) {
         this.activeFolderID = folderID;
-    }
-
-    public void resetFirstFound() {
-        this.firstFound = false;
     }
 
     class RandomPlayCallback implements IServiceItemListCallback<MusicFolderItem> {
@@ -116,6 +113,7 @@ public class RandomPlay {
                 // Generate playlist
                 rDelegate.fillPlaylist(new HashSet<>(rDelegate.getTracks(this.folderID)),
                         player, "no_ignore");
+                player.setRandomPlaying(true);
             }
         }
 
@@ -132,7 +130,6 @@ public class RandomPlay {
         private void playFirst(Set<String> unplayed, String ignore) {
             if (unplayed.size() > 0 ) {
                 String first = rDelegate.pickTrack(unplayed, ignore);
-                rDelegate.getSlimDelegate().activePlayerCommand().cmd("playlist", "clear").exec();
                 rDelegate.getSlimDelegate().command(rDelegate.getSlimDelegate().getActivePlayer())
                         .cmd("playlistcontrol").param("cmd", "load")
                         .param("play_index", "1").param("track_id", first).exec();

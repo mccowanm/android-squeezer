@@ -40,13 +40,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import uk.org.ngo.squeezer.download.DownloadFilenameStructure;
 import uk.org.ngo.squeezer.download.DownloadPathStructure;
 import uk.org.ngo.squeezer.framework.EnumWithText;
 import uk.org.ngo.squeezer.itemlist.dialog.ArtworkListLayout;
-import uk.org.ngo.squeezer.model.CustomJiveItemHandling;
 import uk.org.ngo.squeezer.model.JiveItem;
 import uk.org.ngo.squeezer.model.Player;
 import uk.org.ngo.squeezer.util.ThemeManager;
@@ -189,6 +187,10 @@ public final class Preferences {
 
     // Show total time or remaining time.
     private static final String KEY_SHOW_REMAINING_TIME = "squeezer.show_remaining_Time";
+
+    // Number of seconds for the quick jump backward/forward buttons.
+    private static final String KEY_BACKWARD_SECONDS = "squeezer.backword_jump";
+    private static final String KEY_FORWARD_SECONDS = "squeezer.forword_jump";
 
     private final Context context;
     private final SharedPreferences sharedPreferences;
@@ -675,6 +677,22 @@ public final class Preferences {
 
     public void setShowRemainingTime(boolean showRemainingTime) {
         sharedPreferences.edit().putBoolean(Preferences.KEY_SHOW_REMAINING_TIME, showRemainingTime).apply();
+    }
+
+    public int getBackwardSeconds() {
+        return sharedPreferences.getInt(KEY_BACKWARD_SECONDS, 10);
+    }
+
+    public void setBackwardSeconds(int seconds) {
+        sharedPreferences.edit().putInt(KEY_BACKWARD_SECONDS, seconds).apply();
+    }
+
+    public int getForwardSeconds() {
+        return sharedPreferences.getInt(KEY_FORWARD_SECONDS, 10);
+    }
+
+    public void setForwardSeconds(int seconds) {
+        sharedPreferences.edit().putInt(KEY_FORWARD_SECONDS, seconds).apply();
     }
 
     public enum IncomingCallAction implements EnumWithText {

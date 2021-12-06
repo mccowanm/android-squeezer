@@ -256,4 +256,6 @@ public interface ISqueezeService {
             this.name = name;
         }
     }
+
+    Boolean randomPlayFolder(JiveItem item);
 }

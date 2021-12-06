@@ -16,6 +16,8 @@
 
 package uk.org.ngo.squeezer.service;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import java.util.List;
@@ -179,6 +181,30 @@ public class SlimDelegate {
     public void removeCustomShortcut(JiveItem item) {
         mClient.getConnectionState().getHomeMenuHandling().removeCustomShortcut(item);
     }
+
+    public int addItems(String folderID, Set<String> set) {
+        Player player = mClient.getConnectionState().getActivePlayer();
+        return mClient.getConnectionState().getRandomPlay(player).addItems(folderID, set);
+    }
+
+    public Set<String> getTracks(String folderID) {
+        Player player = mClient.getConnectionState().getActivePlayer();
+        return mClient.getConnectionState().getRandomPlay(player).getTracks(folderID);
+    }
+
+    public RandomPlay getRandomPlay(Player player) {
+        return mClient.getConnectionState().getRandomPlay(player);
+    }
+
+    public void setNextTrack(Player player, String nextTrack) {
+        mClient.getConnectionState().getRandomPlay(player).setNextTrack(nextTrack);
+    }
+
+    public void setActiveFolderID(String folderID) {
+        Player player = mClient.getConnectionState().getActivePlayer();
+        mClient.getConnectionState().getRandomPlay(player).setActiveFolderID(folderID);
+    }
+
 
     static class Command extends SlimCommand {
         final SlimClient slimClient;

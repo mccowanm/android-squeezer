@@ -135,6 +135,7 @@ public class JiveItem extends Item {
     public Slider slider;
 
     private SlimCommand downloadCommand;
+    private SlimCommand randomPlayFolderCommand;
 
     public JiveItem() {
         name = "";
@@ -354,6 +355,7 @@ public class JiveItem extends Item {
         }
 
         downloadCommand = extractDownloadAction(record);
+        randomPlayFolderCommand = downloadCommand;
 
         subItems = extractSubItems((Object[]) record.get("item_loop"));
         showBigArtwork = record.containsKey("showBigArtwork");
@@ -417,6 +419,8 @@ public class JiveItem extends Item {
         radio = (Boolean) source.readValue(getClass().getClassLoader());
         slider = source.readParcelable(getClass().getClassLoader());
         downloadCommand = source.readParcelable(getClass().getClassLoader());
+//      TODO
+//        randomPlayFolderCommand = source.readParcelable(getClass().getClassLoader());
     }
 
     @Override
@@ -488,6 +492,9 @@ public class JiveItem extends Item {
         return downloadCommand;
     }
 
+    public SlimCommand randomPlayFolderCommand() {
+        return randomPlayFolderCommand;
+    }
 
     @Override
     public int describeContents() {

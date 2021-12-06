@@ -29,7 +29,17 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:id="@+id/backward"
-        android:text="⏪ 10"/>
+        android:text="@string/backward"/>
+
+    <Button
+        style="@style/ImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:id="@+id/settings"
+        app:icon="@drawable/ic_settings"/>
 
     <Button
         style="@style/CueText"
@@ -38,6 +48,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:id="@+id/forward"
-        android:text="10 ⏩"/>
+        android:text="@string/forward"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

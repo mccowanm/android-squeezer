@@ -28,9 +28,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
 
+import uk.org.ngo.squeezer.dialog.CuePanelSettings;
 import uk.org.ngo.squeezer.service.ISqueezeService;
 
 
@@ -48,13 +51,19 @@ public class CuePanel extends Handler {
     @NonNull
     private final View parent;
 
-    public CuePanel(@NonNull View parent, @NonNull ISqueezeService service) {
+    public CuePanel(FragmentActivity activity, @NonNull View parent, @NonNull ISqueezeService service) {
         super(Looper.getMainLooper());
         this.parent = parent;
+        Preferences preferences = new Preferences(activity);
+        int backwardSeconds = preferences.getBackwardSeconds();
+        int forwardSeconds = preferences.getForwardSeconds();
 
         final View view = View.inflate(parent.getContext(), R.layout.cue_panel, null);
-        view.findViewById(R.id.backward).setOnClickListener(view1 -> adjustSecondsElapsed(service, -10));
-        view.findViewById(R.id.forward).setOnClickListener(view1 -> adjustSecondsElapsed(service, 10));
+        ((Button)view.findViewById(R.id.backward)).setText(activity.getString(R.string.backward, backwardSeconds));
+        view.findViewById(R.id.backward).setOnClickListener(view1 -> adjustSecondsElapsed(service, -backwardSeconds));
+        ((Button)view.findViewById(R.id.forward)).setText(activity.getString(R.string.forward, forwardSeconds));
+        view.findViewById(R.id.forward).setOnClickListener(view1 -> adjustSecondsElapsed(service, forwardSeconds));
+        view.findViewById(R.id.settings).setOnClickListener(view1 -> new CuePanelSettings().show(activity.getSupportFragmentManager(), CuePanelSettings.class.getName()));
 
         dialog = new Dialog(view.getContext(), R.style.VolumePanel) { //android.R.style.Theme_Panel) {
             @Override

@@ -333,7 +333,7 @@ public class NowPlayingFragment extends Fragment {
 
                 @Override
                 public boolean onSingleTapUp(MotionEvent e) {
-                    if (mService != null) new CuePanel(albumArt, mService);
+                    if (mService != null) new CuePanel(requireActivity(), albumArt, mService);
                     return true;
                 }
             });

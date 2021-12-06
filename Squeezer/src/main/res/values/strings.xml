@@ -415,4 +415,8 @@ of your accepting any such warranty or additional liability.&lt;/p&gt;</string>
         (Changes in folders need renewed shortcuts.)</string>
     <string name="ITEM_CANNOT_BE_SHORTCUT">Item can not be shortcut!</string>
     <string name="PLAY_RANDOM_FOLDER">Play random</string>
+    <string name="backward" translatable="false">⏪ %d</string>
+    <string name="forward" translatable="false">%d ⏩</string>
+    <string name="backward_seconds">Backward seconds</string>
+    <string name="forward_seconds">Forward seconds</string>
 </resources>

@@ -204,5 +204,27 @@
     <string name="remote_preset4Description">Forudindstillet 4</string>
     <string name="remote_preset5Description">Forudindstillet 5</string>
     <string name="remote_preset6Description">Forudindstillet 6</string>
+    <string name="pref_cat_third_party">Tredjepartsintegration</string>
+    <string name="settings_download_use_server_path">Brug serversti og filnavn</string>
+    <string name="ARCHIVE_NODE">Arkiv</string>
+    <string name="MENU_ITEM_MOVED">Menupunktet er flyttet</string>
+    <string name="MENU_IS_SUBMENU_IN_ARCHIVE">Du er allerede i arkivet!</string>
+    <string name="ARCHIVE_CANNOT_BE_ARCHIVED">Arkivet kan ikke arkiveres!</string>
+    <string name="ARCHIVE_NODE_REMOVED">Fjernet tomt arkiv</string>
+    <string name="ITEM_CANNOT_BE_ARCHIVED">Dette element kan ikke arkiveres!</string>
+    <string name="CUSTOM_SHORTCUT_REMOVED">Tilpasset genvej fjernet</string>
+    <string name="ITEM_IS_ALREADY_A_SHORTCUT">Er allerede en genvej!</string>
+    <string name="ITEM_PUT_AS_SHORTCUT_ON_HOME_MENU">Genvej sat på startmenuen</string>
+    <string name="settings_custom_shortcut_enabled">Langt tryk sætter et egnet element på startskærmen</string>
+    <string name="ITEM_CAN_NOT_BE_SHORTCUT_OR_ARCHIVED">Kan ikke være genvej eller arkiveres!</string>
+    <string name="settings_custom_shortcut_disabled">Brugerdefinerede genveje deaktiveret</string>
+    <string name="settings_custom_shortcut_locked">Deaktiver langt tryk, men behold genveje på startskærmen.</string>
+    <string name="settings_customize_customShortcut_mode">Brugerdefinerede genveje</string>
+    <string name="settings_customize_customShortcut_info">Langt tryk sætter genveje på menuen på øverste niveau.
+        (Ændringer i mapper kræver fornyede genveje.)</string>
+    <string name="ITEM_CANNOT_BE_SHORTCUT">Dette element kan ikke være genvej!</string>
+    <string name="PLAY_RANDOM_FOLDER">Spil tilfældigt</string>
+    <string name="backward_seconds">Sekunder tilbage</string>
+    <string name="forward_seconds">Sekunder frem</string>
 
 </resources>

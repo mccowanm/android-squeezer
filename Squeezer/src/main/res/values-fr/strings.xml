@@ -30,7 +30,6 @@
     <string name="activity_settings_name">Paramètres</string>
     <string name="settings_serveraddr_hint">Nom ou adresse IP du serveur</string>
     <string name="settings_server_prompt">Choisissez un serveur</string>
-    <string name="settings_server_rescan">Rescan</string>
     <string name="settings_theme_title">Thème</string>
     <string name="settings_theme_dark">Sombre</string>
     <string name="settings_theme_light_dark">Clair, barre d\'action sombre</string>

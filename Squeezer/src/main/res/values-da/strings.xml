@@ -31,7 +31,6 @@
     <string name="settings_serveraddr_hint">Navn eller IP addresse på server</string>
     <string name="settings_manual_server_addr">Angiv adressen manuelt</string>
     <string name="settings_server_prompt">Vælg en server</string>
-    <string name="settings_server_rescan">Opdatér</string>
     <string name="settings_local_server">Lokal server</string>
     <string name="settings_theme_title">Tema</string>
     <string name="settings_theme_dark">Mørk</string>
@@ -99,7 +98,6 @@
     <string name="save_playlist_hint">Angiv navn på afspilningsliste</string>
     <string name="rename_title">Omdøb %s</string>
     <string name="sync_title">Synkronisér %s med…</string>
-    <string name="browse_items_text">%2$d %1$s</string>
 
     <string name="player_group_header">Gruppe: %s</string>
     <string name="player_group_volume">Gruppe volumen</string>

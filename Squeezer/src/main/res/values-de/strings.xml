@@ -224,5 +224,20 @@
     <string name="ARCHIVE_CANNOT_BE_ARCHIVED">Das Archiv kann nicht archviert werden!</string>
     <string name="ARCHIVE_NODE_REMOVED">Leeres Archiv aus dem Menü entfernt</string>
     <string name="ITEM_CANNOT_BE_ARCHIVED">Kann nicht archiviert werden.</string>
+    <string name="settings_clear_current_playlist_confirmation_on">Beim Löschen der aktuellen Wiedergabeliste nachfragen</string>
+    <string name="CUSTOM_SHORTCUT_REMOVED">Shortcut entfernt</string>
+    <string name="ITEM_IS_ALREADY_A_SHORTCUT">Ist bereits ein Shortcut!</string>
+    <string name="ITEM_PUT_AS_SHORTCUT_ON_HOME_MENU">Shortcut auf Home Menü abgelegt</string>
+    <string name="ITEM_CAN_NOT_BE_SHORTCUT_OR_ARCHIVED">Nicht archivierbar oder shortcutfähig!</string>
+    <string name="settings_custom_shortcut_enabled">Langes Drücken setzt Shortcut in Home Menü</string>
+    <string name="settings_custom_shortcut_disabled">Setzen von Shortcuts deaktiviert</string>
+    <string name="settings_custom_shortcut_locked">Langed Drücken setzt keinen Shortcut, aber bestehende bleiben.</string>
+    <string name="settings_customize_customShortcut_mode">Individuelle Shortcuts</string>
+    <string name="settings_customize_customShortcut_info">Langes Drücken setzt einen Shortcut im Home Menü.
+        (Bei Änderungen der Verzeichnisstruktur Shortcuts erneuern!)</string>
+    <string name="ITEM_CANNOT_BE_SHORTCUT">Menüeintrag ist nicht shortcutfähig!</string>
+    <string name="PLAY_RANDOM_FOLDER">Zufallswiedergabe</string>
+    <string name="backward_seconds">Zurück Sekunden</string>
+    <string name="forward_seconds">Vorwärts Sekunden</string>
 
 </resources>

@@ -376,7 +376,7 @@ of your accepting any such warranty or additional liability.&lt;/p&gt;</string>
     <string name="disable_downloads">Disable downloads</string>
 
     <string name="about_team" translatable="false">Team</string>
-    <string name="about_authors" translatable="false">Kurt Aaholst\nNik Clayton\nBrad Fitzpatrick</string>
+    <string name="about_authors" translatable="false">Benjamin Viertel\nKurt Aaholst\nNik Clayton\nBrad Fitzpatrick</string>
     <string name="about_support" translatable="false">Support</string>
     <string name="about_support_text" translatable="false">https://github.com/kaaholst/android-squeezer</string>
     <string name="mysqueezebox_com" translatable="false">mysqueezebox.com</string>

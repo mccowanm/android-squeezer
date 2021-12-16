@@ -191,12 +191,10 @@ public class JiveItemViewLogic implements IServiceItemListCallback<JiveItem>, Po
         // Nullobject. It works fine on first level.
         // TODO: Maybe make this ignore work for all
         //  folders. See JiveItem.randomPlayFolderCommand()
-        if ((contextMenuItem == null) ||
-                !(contextMenuItem.moreAction.action.cmd.contains("folderinfo")) ||
-                (contextMenuItem.randomPlayFolderCommand() == null)) {
-            return false;
-        }
-        return true;
+        return (contextMenuItem != null) &&
+                (contextMenuItem.moreAction != null) &&
+                contextMenuItem.moreAction.action.cmd.contains("folderinfo") &&
+                (contextMenuItem.randomPlayFolderCommand() != null);
     }
 
     private void doItemContext(ViewParamItemView<JiveItem> viewHolder, JiveItem item) {

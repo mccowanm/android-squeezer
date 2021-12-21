@@ -1,7 +1,5 @@
 package uk.org.ngo.squeezer.model;
 
-import android.util.Log;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,32 +9,30 @@ import uk.org.ngo.squeezer.service.ISqueezeService;
 
 public class CustomJiveItemHandling {
 
-    private static final String TAG = "CustomJiveItemHandling";
-
     public int ADJUSTED_CUSTOM_SHORTCUT_WEIGHT = 2000;
-
-    final ISqueezeService service;
-    final HomeMenuHandling mHomeMenuHandling;
     final JiveItemListActivity mActivity;
 
     public CustomJiveItemHandling(JiveItemListActivity activity) {
         mActivity = activity;
-        service = mActivity.getService();
-        mHomeMenuHandling = service.getDelegate().getHomeMenuHandling();
     }
 
+    private ISqueezeService service() {
+        return mActivity.getService();
+    }
+
+    private HomeMenuHandling homeMenuHandling() {
+        return service().getDelegate().getHomeMenuHandling();
+    }
     /**
      * Send long pressed JiveItem
-     *
-     * @param item
      */
     public boolean triggerCustomShortcut(JiveItem item) {
         item.appendWeight(ADJUSTED_CUSTOM_SHORTCUT_WEIGHT);
-        return mHomeMenuHandling.triggerCustomShortcut(item);
+        return homeMenuHandling().triggerCustomShortcut(item);
     }
 
     public boolean isCustomShortcut(JiveItem item) {
-        return mHomeMenuHandling.customShortcuts.contains(item);
+        return homeMenuHandling().customShortcuts.contains(item);
     }
 
     public boolean isShortcutable(JiveItem item) {
@@ -79,7 +75,7 @@ public class CustomJiveItemHandling {
 
     public Map<String, Object> convertShortcuts() {
         Map<String, Object> map = new HashMap<>();
-        for (JiveItem item : mHomeMenuHandling.customShortcuts) {
+        for (JiveItem item : homeMenuHandling().customShortcuts) {
             map.put(item.getName(), item.getRecord());
         }
         return map;

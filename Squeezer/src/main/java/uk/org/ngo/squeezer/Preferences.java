@@ -24,6 +24,7 @@ import android.net.wifi.WifiManager;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.android.material.timepicker.MaterialTimePicker;
@@ -591,6 +592,7 @@ public final class Preferences {
         return string == null ? CustomizeShortcutsMode.ENABLED : CustomizeShortcutsMode.valueOf(string);
     }
 
+    @NonNull
     public List<String> getArchivedMenuItems(Player player) {
         List<String> list = new ArrayList<>();
         String string = sharedPreferences.getString(String.format(KEY_PLAYER_ARCHIVED_ITEMS_FORMAT, player.getId()), null);

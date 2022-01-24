@@ -35,8 +35,8 @@ import androidx.fragment.app.FragmentManager;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.Map;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 
 import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
@@ -71,7 +71,7 @@ public class ServerAddressView extends LinearLayout implements ScanNetworkTask.S
     private ScanNetworkTask scanNetworkTask;
 
     /** Map server names to IP addresses. */
-    private TreeMap<String, String> discoveredServers;
+    private Map<String, String> discoveredServers;
 
     private ArrayAdapter<String> serversAdapter;
     private boolean isManual;
@@ -230,7 +230,7 @@ public class ServerAddressView extends LinearLayout implements ScanNetworkTask.S
      * Called when server scanning has finished.
      * @param serverMap Discovered servers, key is the server name, value is the IP address.
      */
-    public void onScanFinished(TreeMap<String, String> serverMap) {
+    public void onScanFinished(Map<String, String> serverMap) {
         scanProgress.setVisibility(INVISIBLE);
         serverName_til.setStartIconDrawable(R.drawable.ic_refresh);
         serverName_til.setStartIconOnClickListener(startNetWorkScan);

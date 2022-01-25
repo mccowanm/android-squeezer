@@ -159,7 +159,6 @@ public class ServerAddressView extends LinearLayout implements ScanNetworkTask.S
 
             startNetworkScan(context);
             startNetWorkScan = v -> startNetworkScan(context);
-            serverName_til.setStartIconOnClickListener(startNetWorkScan);
             serversSpinner_til.setStartIconOnClickListener(startNetWorkScan);
         }
     }
@@ -232,8 +231,6 @@ public class ServerAddressView extends LinearLayout implements ScanNetworkTask.S
      */
     public void onScanFinished(Map<String, String> serverMap) {
         scanProgress.setVisibility(INVISIBLE);
-        serverName_til.setStartIconDrawable(R.drawable.ic_refresh);
-        serverName_til.setStartIconOnClickListener(startNetWorkScan);
         serverName.setText(R.string.settings_manual_server_addr);
         serverName_til.setVisibility(GONE);
         serversSpinner_til.setVisibility(GONE);
@@ -252,6 +249,8 @@ public class ServerAddressView extends LinearLayout implements ScanNetworkTask.S
             // Populate the edit text widget with current address stored in preferences.
             setServerAddress(serverAddress.localAddress());
             serverAddressEditText.setEnabled(true);
+            serverName_til.setStartIconDrawable(R.drawable.ic_refresh);
+            serverName_til.setStartIconOnClickListener(startNetWorkScan);
             serverName_til.setVisibility(VISIBLE);
         } else {
             for (Entry<String, String> e : discoveredServers.entrySet()) {

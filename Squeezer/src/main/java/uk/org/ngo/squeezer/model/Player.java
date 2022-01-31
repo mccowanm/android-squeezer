@@ -57,7 +57,8 @@ public class Player extends Item implements Comparable<Player> {
         PLAY_TRACK_ALBUM("playtrackalbum"),
         DEFEAT_DESTRUCTIVE_TTP("defeatDestructiveTouchToPlay"),
         SYNC_VOLUME("syncVolume"),
-        SYNC_POWER("syncPower");
+        SYNC_POWER("syncPower"),
+        DIGITAL_VOLUME_CONTROL("digitalVolumeControl");
 
         private final String prefName;
 
@@ -192,12 +193,6 @@ public class Player extends Item implements Comparable<Player> {
         double remaining = (correction <= 0 ? mPlayerState.getSleep() : mPlayerState.getSleep() - correction);
 
         return (int) remaining;
-    }
-
-    public boolean isSynced(Player otherPlayer) {
-        if (otherPlayer == null) return false;
-        return (getId().equals(otherPlayer.getPlayerState().getSyncMaster()) ||
-                otherPlayer.getId().equals(getPlayerState().getSyncMaster()));
     }
 
     public boolean isSyncVolume() {

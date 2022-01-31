@@ -130,12 +130,16 @@ public class SlimDelegate {
         return mClient.getConnectionState().getPlayers();
     }
 
-    public Set<Player> getVolumeSyncGroup() {
-        return mClient.getConnectionState().getVolumeSyncGroup();
+    public Set<Player> getSyncGroup() {
+        return mClient.getConnectionState().getSyncGroup();
     }
 
-    public @NonNull ISqueezeService.VolumeInfo getVolume() {
-        return mClient.getConnectionState().getVolume();
+    public Set<Player> getVolumeSyncGroup(boolean groupVolume) {
+        return mClient.getConnectionState().getVolumeSyncGroup(groupVolume);
+    }
+
+    public @NonNull ISqueezeService.VolumeInfo getVolume(boolean groupVolume) {
+        return mClient.getConnectionState().getVolume(groupVolume);
     }
 
     void setHomeMenu(List<String> archivedItems,  Map<String, Map<String, Object>> customShortcuts) {

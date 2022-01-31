@@ -152,7 +152,7 @@ public class ConnectionState {
         return mActivePlayer.get();
     }
 
-    private @NonNull Set<Player> getSyncGroup() {
+    @NonNull Set<Player> getSyncGroup() {
         Set<Player> out = new HashSet<>();
 
         Player player = getActivePlayer();
@@ -171,9 +171,9 @@ public class ConnectionState {
         return out;
     }
 
-    public @NonNull Set<Player> getVolumeSyncGroup() {
+    @NonNull Set<Player> getVolumeSyncGroup(boolean groupVolume) {
         Player player = getActivePlayer();
-        if (player != null && player.isSyncVolume()) {
+        if (player != null && (player.isSyncVolume() || !groupVolume)) {
             Set<Player> players = new HashSet<>();
             players.add(player);
             return players;
@@ -182,8 +182,8 @@ public class ConnectionState {
         return getSyncGroup();
     }
 
-    public @NonNull ISqueezeService.VolumeInfo getVolume() {
-        Set<Player> syncGroup = getVolumeSyncGroup();
+    public @NonNull ISqueezeService.VolumeInfo getVolume(boolean groupVolume) {
+        Set<Player> syncGroup = getVolumeSyncGroup(groupVolume);
         int lowestVolume = 100;
         int higestVolume = 0;
         boolean muted = false;

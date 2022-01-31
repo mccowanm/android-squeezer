@@ -49,6 +49,7 @@
         <p>This requires the computer running the Squeezebox Server to be configured to use Wake-on-LAN.</p>]]>
     </string>
     <string name="settings_server_scan_progress">Scanning for servers…</string>
+    <string name="settings_volume_title">Settings for Volume Control </string>
     <string name="settings_background_volume_title">Background Volume Control</string>
     <string name="settings_background_volume_off">Control player volume only when the app is visible.</string>
     <string name="settings_background_volume_on">Allow changing player volume even when the app is not visible.</string>
@@ -101,6 +102,8 @@
 
     <string name="player_group_header">Group: %s</string>
     <string name="player_group_volume">Group volume</string>
+    <string name="player_group_volume_on">Adjust volume for synced players</string>
+    <string name="player_group_volume_off">Adjust volume for selected player only</string>
     <string name="menu_item_player_sync">Synchronize…</string>
     <string name="menu_item_player_unsync">No synchronization</string>
 

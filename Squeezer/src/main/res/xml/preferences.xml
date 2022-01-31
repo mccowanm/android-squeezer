@@ -19,21 +19,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:key="first_preferencescreen">
 
-    <SwitchPreferenceCompat
-        android:key="squeezer.backgroundVolume"
-        android:summaryOff="@string/settings_background_volume_off"
-        android:summaryOn="@string/settings_background_volume_on"
-        android:title="@string/settings_background_volume_title" />
-
-    <SeekBarPreference
-        android:key="squeezer.volumeIncrements"
-        android:title="@string/settings_volume_increment_title"
-        android:summary="@string/settings_volume_increment_summary"
-        app:min="1"
-        android:max="10"
-        android:defaultValue="5"
-        app:showSeekBarValue="true"/>
-
     <uk.org.ngo.squeezer.IntEditTextPreference
         android:key="squeezer.fadeInSecs"
         android:title="@string/settings_fadeinsecs_title"

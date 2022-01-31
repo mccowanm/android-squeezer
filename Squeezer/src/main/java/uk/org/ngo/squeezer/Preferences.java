@@ -113,10 +113,13 @@ public final class Preferences {
     public static final String KEY_ANALYTICS_ENABLED = "squeezer.analytics.enabled";
 
     // Background Volume Control
-    static final String KEY_BACKGROUND_VOLUME = "squeezer.backgroundVolume";
+    private static final String KEY_BACKGROUND_VOLUME = "squeezer.backgroundVolume";
 
     // Volume up/down increments
     private static final String KEY_VOLUME_INCREMENTS = "squeezer.volumeIncrements";
+
+    // Adjust volume for sync group when applicable
+    private static final String KEY_GROUP_VOLUME = "squeezer.groupVolume";
 
     // Fade-in period? (0 = disable fade-in)
     static final String KEY_FADE_IN_SECS = "squeezer.fadeInSecs";
@@ -442,8 +445,24 @@ public final class Preferences {
         return sharedPreferences.getBoolean(KEY_BACKGROUND_VOLUME, true);
     }
 
+    public void setBackgroundVolume(boolean backgroundVolume) {
+        sharedPreferences.edit().putBoolean(Preferences.KEY_BACKGROUND_VOLUME, backgroundVolume).apply();
+    }
+
     public int getVolumeIncrements() {
         return sharedPreferences.getInt(KEY_VOLUME_INCREMENTS, 5);
+    }
+
+    public void setVolumeIncrements(int step) {
+        sharedPreferences.edit().putInt(Preferences.KEY_VOLUME_INCREMENTS, step).apply();
+    }
+
+    public boolean isGroupVolume() {
+        return sharedPreferences.getBoolean(KEY_GROUP_VOLUME, true);
+    }
+
+    public void setGroupVolume(boolean groupVolume) {
+        sharedPreferences.edit().putBoolean(Preferences.KEY_GROUP_VOLUME, groupVolume).apply();
     }
 
     public int getFadeInSecs() {
@@ -455,9 +474,7 @@ public final class Preferences {
     }
 
     public void setTheme(ThemeManager.Theme theme) {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(Preferences.KEY_ON_THEME_SELECT_ACTION, theme.name());
-        editor.apply();
+        sharedPreferences.edit().putString(Preferences.KEY_ON_THEME_SELECT_ACTION, theme.name()).apply();
     }
 
     public boolean isScrobbleEnabled() {
@@ -521,9 +538,7 @@ public final class Preferences {
     }
 
     private void setListLayout(String preference, ArtworkListLayout artworkListLayout) {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(preference, artworkListLayout.name());
-        editor.apply();
+        sharedPreferences.edit().putString(preference, artworkListLayout.name()).apply();
     }
 
     /** Get max lines for the supplied list layout. */
@@ -532,9 +547,7 @@ public final class Preferences {
     }
 
     public void setMaxLines(ArtworkListLayout listLayout, int maxLines) {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt(String.format(KEY_MAX_LINES_FORMAT, listLayout.name()), maxLines);
-        editor.apply();
+        sharedPreferences.edit().putInt(String.format(KEY_MAX_LINES_FORMAT, listLayout.name()), maxLines).apply();
     }
 
     /**
@@ -607,7 +620,6 @@ public final class Preferences {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(String.format(KEY_PLAYER_ARCHIVED_ITEMS_FORMAT, player.getId()), TextUtils.join(";", list));
         editor.apply();
-        return;
     }
 
     public void saveShortcuts(Map<String, Object> map) {

@@ -139,6 +139,7 @@ public class SqueezeService extends Service {
     private boolean scrobblingPreviouslyEnabled;
 
     int mFadeInSecs;
+    boolean mGroupVolume;
 
     private static final String ACTION_NEXT_TRACK = "uk.org.ngo.squeezer.service.ACTION_NEXT_TRACK";
     private static final String ACTION_PREV_TRACK = "uk.org.ngo.squeezer.service.ACTION_PREV_TRACK";
@@ -245,6 +246,7 @@ public class SqueezeService extends Service {
         final Preferences preferences = new Preferences(this);
         scrobblingEnabled = preferences.isScrobbleEnabled();
         mFadeInSecs = preferences.getFadeInSecs();
+        mGroupVolume = preferences.isGroupVolume();
         mVolumeProvider = new MyVolumeProvider(preferences.getVolumeIncrements());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (squeezeService.isConnected()) {
@@ -737,7 +739,7 @@ public class SqueezeService extends Service {
 
     public void onEvent(PlayerVolume event) {
         if (event.player == mDelegate.getActivePlayer()) {
-            mVolumeProvider.setCurrentVolume(mDelegate.getVolume().volume / mVolumeProvider.step);
+            mVolumeProvider.setCurrentVolume(mDelegate.getVolume(mGroupVolume).volume / mVolumeProvider.step);
         }
     }
 
@@ -965,8 +967,13 @@ public class SqueezeService extends Service {
         }
 
         @Override
+        public boolean canAdjustVolumeForSyncGroup() {
+            return mDelegate.getVolumeSyncGroup(true).size() > 1;
+        }
+
+        @Override
         public void setVolumeTo(int percentage) {
-            Set<Player> syncGroup = mDelegate.getVolumeSyncGroup();
+            Set<Player> syncGroup = mDelegate.getVolumeSyncGroup(mGroupVolume);
 
             int lowestVolume = 100;
             int higestVolume = 0;
@@ -985,7 +992,7 @@ public class SqueezeService extends Service {
 
         @Override
         public void adjustVolume(int direction) {
-            Set<Player> syncGroup = mDelegate.getVolumeSyncGroup();
+            Set<Player> syncGroup = mDelegate.getVolumeSyncGroup(mGroupVolume);
             int adjust = direction * mVolumeProvider.step;
             for (Player player : syncGroup) {
                 int currentVolume = player.getPlayerState().getCurrentVolume();
@@ -1333,7 +1340,7 @@ public class SqueezeService extends Service {
 
         @Override
         public @NonNull VolumeInfo getVolume() {
-            return mDelegate.getVolume();
+            return mDelegate.getVolume(mGroupVolume);
         }
 
         /**

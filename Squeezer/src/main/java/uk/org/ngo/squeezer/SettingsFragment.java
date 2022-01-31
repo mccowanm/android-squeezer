@@ -70,9 +70,6 @@ public class SettingsFragment  extends PreferenceFragmentCompat implements
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
         Preferences preferences = new Preferences(getActivity(), sharedPreferences);
 
-        SwitchPreferenceCompat backgroundVolumePref = findPreference(Preferences.KEY_BACKGROUND_VOLUME);
-        backgroundVolumePref.setChecked(preferences.isBackgroundVolume());
-
         fadeInPref = findPreference(Preferences.KEY_FADE_IN_SECS);
         fadeInPref.setOnPreferenceChangeListener(this);
         updateFadeInSecondsSummary(preferences.getFadeInSecs());

@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.List;
+import java.util.Set;
 
 import de.greenrobot.event.EventBus;
 import uk.org.ngo.squeezer.itemlist.IServiceItemListCallback;
@@ -132,6 +133,11 @@ public interface ISqueezeService {
     void toggleMute(Player player);
     void setVolumeTo(int newVolume);
     void adjustVolume(int direction);
+
+    /**
+     * @return  whether the active player is in a sync group where the player's volumes are not synced by LMS
+     */
+    boolean canAdjustVolumeForSyncGroup();
 
     /** Cancel any pending callbacks for client */
     void cancelItemListRequests(Object client);

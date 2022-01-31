@@ -25,10 +25,10 @@ dependencies {
     // Note: these libraries require the "Google Repository" and "Android
     //       Support Repository" to be installed via the SDK manager.
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.appcompat:appcompat:1.4.0'
+    implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'androidx.annotation:annotation:1.3.0'
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'com.google.android.material:material:1.5.0'
     implementation 'androidx.preference:preference:1.1.1'
 
     // EventBus, https://github.com/greenrobot/EventBus.
@@ -194,6 +194,9 @@ slimstrings {
             'SETUP_DEFEAT_DESTRUCTIVE_TTP_2',
             'SETUP_DEFEAT_DESTRUCTIVE_TTP_3',
             'SETUP_DEFEAT_DESTRUCTIVE_TTP_4',
+            'SETUP_DIGITALVOLUMECONTROL',
+            'SETUP_DIGITALVOLUMECONTROL_OFF',
+            'SETUP_DIGITALVOLUMECONTROL_ON',
             'SETUP_SYNCVOLUME',
             'SETUP_SYNCVOLUME_DESC',
             'SETUP_SYNCVOLUME_OFF',

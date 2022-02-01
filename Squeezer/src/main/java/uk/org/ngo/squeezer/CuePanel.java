@@ -111,8 +111,8 @@ public class CuePanel extends Handler {
     public void dismiss() {
         removeMessages(MSG_TIMEOUT);
         if (dialog.isShowing()) {
-            fadeParent(0.4, 1.0);
             dialog.dismiss();
+            fadeParent(0.4, 1.0);
         }
     }
 

@@ -230,19 +230,15 @@ public class ServerAddressView extends LinearLayout implements ScanNetworkTask.S
      * @param serverMap Discovered servers, key is the server name, value is the IP address.
      */
     public void onScanFinished(Map<String, String> serverMap) {
+        scanNetworkTask = null;
+
         scanProgress.setVisibility(INVISIBLE);
         serverName.setText(R.string.settings_manual_server_addr);
         serverName_til.setVisibility(GONE);
         serversSpinner_til.setVisibility(GONE);
         serversAdapter.clear();
 
-        if (scanNetworkTask == null) {
-            return;
-        }
-
         discoveredServers = serverMap;
-
-        scanNetworkTask = null;
 
         if (discoveredServers.size() == 0) {
             // No servers found, manually enter address

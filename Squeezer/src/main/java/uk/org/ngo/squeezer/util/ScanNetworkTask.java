@@ -86,8 +86,6 @@ public class ScanNetworkTask implements Runnable {
         byte[] data = new byte[512];
         System.arraycopy(request, 0, data, 0, request.length);
 
-        // mServerMap.put("Dummy", "127.0.0.1");
-
         try {
             InetAddress broadcastAddress = InetAddress.getByName("255.255.255.255");
             boolean timedOut;
@@ -140,7 +138,7 @@ public class ScanNetworkTask implements Runnable {
 
         // For testing that multiple servers are handled correctly.
         // mServerMap.put("Dummy", "127.0.0.1");
-        uiThreadHandler.post(() -> callback.onScanFinished(new TreeMap<>(mServerMap)));
+        uiThreadHandler.post(() -> callback.onScanFinished(mServerMap));
     }
 
     /**
@@ -190,10 +188,9 @@ public class ScanNetworkTask implements Runnable {
 
     public void cancel() {
         cancelled = true;
-        callback.onScanFinished(new TreeMap<>(mServerMap));
     }
 
     public interface ScanNetworkCallback {
-        void onScanFinished(Map<String, String> mServerMap);
+        void onScanFinished(Map<String, String> servers);
     }
 }

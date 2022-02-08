@@ -247,6 +247,11 @@ public class SettingsFragment  extends PreferenceFragmentCompat implements
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         Log.v(TAG, "Preference changed: " + key);
 
+        // The fragment may no longer be attached to its activity. If so, do nothing.
+        if (!isAdded()) {
+            return;
+        }
+
         if (key.equals(Preferences.KEY_DOWNLOAD_USE_SERVER_PATH) ||
                 key.equals(Preferences.KEY_DOWNLOAD_ENABLED)
         ) {

@@ -101,7 +101,7 @@ public class ScanNetworkTask implements Runnable {
             timedOut = false;
             while (!timedOut) {
                 if (cancelled) {
-                    break;
+                    return;
                 }
                 try {
                     socket.receive(responsePacket);

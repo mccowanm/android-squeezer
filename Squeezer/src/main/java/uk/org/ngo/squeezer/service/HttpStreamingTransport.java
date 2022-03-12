@@ -682,17 +682,14 @@ public class HttpStreamingTransport extends HttpClientTransport implements Messa
                         String unprocessed = "";
                         while (!"0".equals(readLine())) {
                             String data = readLine();
-                            Log.v(TAG, "data = " + data);
                             unprocessed += data;
-                            Log.v(TAG, "unprocessed = " + unprocessed);
                             if (isValidJson(unprocessed)) {
-                                Log.v(TAG, "JSON is valid! Sending data to parser.");
                                 if (status == HttpStatus.OK_200) {
                                     delegate.onData(unprocessed);
                                 }
                                 unprocessed = "";
                             } else {
-                                Log.v(TAG, "JSON is not valid! Appending to next chunk.");
+                                Log.v(TAG, "JSON is not valid! Appending to next chunk: " + data);
                             }
                         }
                         readLine();//Read final/empty chunk
@@ -750,7 +747,12 @@ public class HttpStreamingTransport extends HttpClientTransport implements Messa
 
         private String read(int size) throws IOException {
             char[] buffer = new char[size];
-            int length = reader.read(buffer);
+            int length = 0, bytes;
+            while ((bytes = reader.read(buffer, length, size - length)) > 0) {
+                length += bytes;
+                if (length == size) break;
+                Log.v(TAG, "Partial read " + bytes + ", read so far " + length + ", still needs " + (size - length));
+            }
             if (length != size) {
                 throw new EOFException("Expected " + size + " characters, but got " + length);
             }

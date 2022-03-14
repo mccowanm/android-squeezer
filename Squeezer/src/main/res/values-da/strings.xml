@@ -62,10 +62,10 @@
     <string name="settings_no_action_on_incoming_call">No action</string>
 
     <string name="settings_customize_home_menu_mode">Arkiv</string>
-    <string name="settings_customize_home_menu_info">Startmenuen i din Squeezebox og flere undermenuer kan tilpasses</string>
-    <string name="settings_customize_home_menu_archive">Langt tryk på et emne flytter det til arkiv/fjerner det fra arkiv</string>
-    <string name="settings_customize_home_menu_disabled">Deaktiver arkiv</string>
-    <string name="settings_customize_home_menu_locked">Deaktiver langt tryk, men behold arkiverede emner</string>
+    <string name="settings_customize_home_menu_info">Langt tryk på et passende emne arkiverer det</string>
+    <string name="settings_customize_home_menu_archive">Aktiveret</string>
+    <string name="settings_customize_home_menu_disabled">Deaktiveret</string>
+    <string name="settings_customize_home_menu_locked">Deaktiveret, men behold arkiverede emner</string>
 
     <string name="settings_scrobble_title">Scrobble til Last.fm</string>
     <string name="settings_scrobble_on">Sang information sendes til Last.fm</string>
@@ -211,16 +211,15 @@
     <string name="ARCHIVE_CANNOT_BE_ARCHIVED">Arkivet kan ikke arkiveres!</string>
     <string name="ARCHIVE_NODE_REMOVED">Fjernet tomt arkiv</string>
     <string name="ITEM_CANNOT_BE_ARCHIVED">Dette element kan ikke arkiveres!</string>
-    <string name="CUSTOM_SHORTCUT_REMOVED">Tilpasset genvej fjernet</string>
+    <string name="CUSTOM_SHORTCUT_REMOVED">Brugerdefineret genvej er fjernet</string>
     <string name="ITEM_IS_ALREADY_A_SHORTCUT">Er allerede en genvej!</string>
     <string name="ITEM_PUT_AS_SHORTCUT_ON_HOME_MENU">Genvej sat på startmenuen</string>
-    <string name="settings_custom_shortcut_enabled">Langt tryk sætter et egnet element på startskærmen</string>
     <string name="ITEM_CAN_NOT_BE_SHORTCUT_OR_ARCHIVED">Kan ikke være genvej eller arkiveres!</string>
-    <string name="settings_custom_shortcut_disabled">Brugerdefinerede genveje deaktiveret</string>
-    <string name="settings_custom_shortcut_locked">Deaktiver langt tryk, men behold genveje på startskærmen.</string>
+    <string name="settings_custom_shortcut_enabled">Aktiveret</string>
+    <string name="settings_custom_shortcut_disabled">Deaktiveret</string>
+    <string name="settings_custom_shortcut_locked">Deaktiveret, men vis nuværende genveje</string>
     <string name="settings_customize_customShortcut_mode">Brugerdefinerede genveje</string>
-    <string name="settings_customize_customShortcut_info">Langt tryk sætter genveje på menuen på øverste niveau.
-        (Ændringer i mapper kræver fornyede genveje.)</string>
+    <string name="settings_customize_customShortcut_info">Langt tryk tilføjer genvej på startskærmen</string>
     <string name="ITEM_CANNOT_BE_SHORTCUT">Dette element kan ikke være genvej!</string>
     <string name="PLAY_RANDOM_FOLDER">Spil tilfældigt</string>
     <string name="backward_seconds">Sekunder tilbage</string>

@@ -16,6 +16,7 @@
 
 package uk.org.ngo.squeezer;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -368,6 +369,7 @@ public class NowPlayingFragment extends Fragment {
 
                 // Disable updates when user drags the thumb.
                 @Override
+                @SuppressLint("RestrictedApi")
                 public void onStartTrackingTouch(@NonNull Slider s) {
                     seekingSong = getCurrentSong();
                     updateSeekBar = false;
@@ -377,6 +379,7 @@ public class NowPlayingFragment extends Fragment {
                 // we started seeking then jump to the new point in the track,
                 // otherwise ignore the seek.
                 @Override
+                @SuppressLint("RestrictedApi")
                 public void onStopTrackingTouch(@NonNull Slider s) {
                     CurrentPlaylistItem thisSong = getCurrentSong();
 

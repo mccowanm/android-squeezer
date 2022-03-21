@@ -16,6 +16,7 @@
 
 package uk.org.ngo.squeezer.itemlist;
 
+import android.annotation.SuppressLint;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -71,11 +72,13 @@ public class PlayerView extends PlayerBaseView {
         volumeBar.clearOnSliderTouchListeners();
         volumeBar.addOnSliderTouchListener(new Slider.OnSliderTouchListener() {
             @Override
+            @SuppressLint("RestrictedApi")
             public void onStartTrackingTouch(@NonNull Slider slider) {
                 activity.setTrackingTouch(player);
             }
 
             @Override
+            @SuppressLint("RestrictedApi")
             public void onStopTrackingTouch(@NonNull Slider slider) {
                 activity.setTrackingTouch(null);
                 activity.adapter.notifyGroupChanged(player);

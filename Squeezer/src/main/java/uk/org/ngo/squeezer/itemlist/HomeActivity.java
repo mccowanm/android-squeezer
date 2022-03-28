@@ -24,6 +24,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.MainThread;
 import androidx.preference.PreferenceManager;
@@ -59,8 +60,8 @@ public class HomeActivity extends HomeMenuActivity {
     }
 
     @MainThread
-    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onEventMainThread(HandshakeComplete event) {
+        Log.d("HomeActivity", "Handshake complete");
         super.onEventMainThread(event);
 
         // Show a tip about volume controls, if this is the first time this app

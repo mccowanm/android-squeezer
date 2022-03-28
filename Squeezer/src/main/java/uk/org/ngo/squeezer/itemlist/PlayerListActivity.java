@@ -218,8 +218,8 @@ public class PlayerListActivity extends ItemListActivity implements
         // initially connected to the server.
     }
 
-    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onEventMainThread(HandshakeComplete event) {
+        Log.d("PlayerListActivity", "Handshake complete");
         super.onEventMainThread(event);
         updateAndExpandPlayerList();
     }

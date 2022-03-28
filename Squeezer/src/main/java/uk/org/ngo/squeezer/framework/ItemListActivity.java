@@ -288,6 +288,7 @@ public abstract class ItemListActivity extends BaseActivity {
     @MainThread
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onEventMainThread(HandshakeComplete event) {
+        Log.d("ItemListActivity", "Handshake complete");
         // Order any pages that were requested before the handshake complete.
         while (!mOrderedPagesBeforeHandshake.empty()) {
             maybeOrderPage(mOrderedPagesBeforeHandshake.pop());

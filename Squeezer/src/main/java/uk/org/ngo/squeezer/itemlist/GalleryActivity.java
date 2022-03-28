@@ -20,6 +20,7 @@ package uk.org.ngo.squeezer.itemlist;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,6 +71,7 @@ public class GalleryActivity extends BaseActivity implements IServiceItemListCal
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onEventMainThread(HandshakeComplete event) {
+        Log.d("GalleryActivity", "Handshake complete");
         getService().pluginItems(action, this);
     }
 

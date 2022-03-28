@@ -18,14 +18,12 @@ package uk.org.ngo.squeezer.framework;
 
 
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 import java.util.Map;
@@ -75,8 +73,8 @@ public abstract class BaseListActivity<VH extends ItemViewHolder<T>, T extends I
     }
 
     @MainThread
-    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onEventMainThread(HandshakeComplete event) {
+        Log.d("BaseLitActivity", "Handshake complete");
         super.onEventMainThread(event);
         if (!needPlayer() || getService().getActivePlayer() != null) {
             maybeOrderVisiblePages(getListView());

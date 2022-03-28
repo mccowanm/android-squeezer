@@ -317,7 +317,6 @@ public class SqueezeService extends Service {
      * Updates the Wi-Fi lock and ongoing status notification as necessary.
      */
 
-    //TODO: Added priority to all methods here because this class was registered with prio in Eventbus 2
     @Subscribe(priority = 1)
     public void onEvent(PlayStatusChanged event) {
         if (event.player.equals(mDelegate.getActivePlayer())) {
@@ -775,6 +774,7 @@ public class SqueezeService extends Service {
 
     @Subscribe(sticky = true, priority = 1)
     public void onEvent(HandshakeComplete event) {
+        Log.d("SqueezeService", "Handshake complete");
         mHandshakeComplete = true;
     }
 

@@ -29,9 +29,6 @@ import android.util.Log;
 import androidx.annotation.MainThread;
 import androidx.preference.PreferenceManager;
 
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
 import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.dialog.ChangeLogDialog;

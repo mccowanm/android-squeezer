@@ -50,6 +50,11 @@ public class HomeMenuActivity extends JiveItemListActivity {
     }
 
     @Override
+    public void clearAndReOrderItems() {
+        // Do nothing we get the home menu from the sticky HomeMenuEvent
+    }
+
+    @Override
     public void maybeOrderVisiblePages(RecyclerView listView) {
         // Do nothing we get the home menu from the sticky HomeMenuEvent
     }

@@ -271,17 +271,19 @@ class CometClient extends BaseClient {
                 } else {
                     Map<String, Object> failure = Util.getRecord(message, "failure");
                     Message failedMessage = (failure != null) ? (Message) failure.get("message") : message;
+                    // Advices are handled internally by the bayeux protocol, so skip these here
                     if (getAdviceAction(failedMessage.getAdvice()) == null) {
-                        // Advices are handled internally by the bayeux protocol, so skip these here
                         Object httpCodeValue = (failure != null) ? failure.get("httpCode") : null;
                         int httpCode = (httpCodeValue instanceof Integer) ? (int) httpCodeValue : -1;
+                        Log.w(TAG, "Unsuccessful message on handshake channel: " + message.getJSON());
                         disconnect((httpCode == 401) ? ConnectionError.LOGIN_FALIED : ConnectionError.CONNECTION_ERROR);
                     }
                 }
             });
             mBayeuxClient.getChannel(Channel.META_CONNECT).addListener((ClientSessionChannel.MessageListener) (channel, message) -> {
+                // Advices are handled internally by the bayeux protocol, so skip these here
                 if (!message.isSuccessful() && (getAdviceAction(message.getAdvice()) == null)) {
-                    // Advices are handled internally by the bayeux protocol, so skip these here
+                    Log.w(TAG, "Unsuccessful message on connect channel: " + message.getJSON());
                     disconnect(false);
                 }
             });

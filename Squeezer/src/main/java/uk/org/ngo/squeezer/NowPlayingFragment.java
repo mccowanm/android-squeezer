@@ -66,6 +66,7 @@ import java.util.List;
 import java.util.Map;
 
 import uk.org.ngo.squeezer.dialog.AboutDialog;
+import uk.org.ngo.squeezer.dialog.CallStateDialog;
 import uk.org.ngo.squeezer.framework.BaseActivity;
 import uk.org.ngo.squeezer.framework.ViewParamItemView;
 import uk.org.ngo.squeezer.itemlist.AlarmsActivity;
@@ -96,9 +97,10 @@ import uk.org.ngo.squeezer.service.event.RepeatStatusChanged;
 import uk.org.ngo.squeezer.service.event.ShuffleStatusChanged;
 import uk.org.ngo.squeezer.service.event.SongTimeChanged;
 import uk.org.ngo.squeezer.util.ImageFetcher;
+import uk.org.ngo.squeezer.widget.CallStatePermissionLauncher;
 import uk.org.ngo.squeezer.widget.OnSwipeListener;
 
-public class NowPlayingFragment extends Fragment {
+public class NowPlayingFragment extends Fragment implements CallStateDialog.CallStateDialogHost {
 
     private static final String TAG = "NowPlayingFragment";
 
@@ -877,6 +879,13 @@ public class NowPlayingFragment extends Fragment {
         mService.startConnect(autoConnect);
     }
 
+    private final CallStatePermissionLauncher requestCallStateLauncher = new CallStatePermissionLauncher(this);
+
+    @Override
+    public void requestCallStatePermission() {
+        requestCallStateLauncher.requestCallStatePermission();
+    }
+
 
     @MainThread
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
@@ -951,6 +960,8 @@ public class NowPlayingFragment extends Fragment {
             return;
 
         updateUiFromPlayerState(playerState);
+
+        requestCallStateLauncher.trySetAction(new Preferences(mActivity).getActionOnIncomingCall());
     }
 
     @MainThread

@@ -27,6 +27,7 @@ dependencies {
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'com.google.android.material:material:1.5.0'
     implementation 'androidx.preference:preference:1.2.0'
+    implementation 'androidx.media:media:1.5.0'
 
     // EventBus, https://github.com/greenrobot/EventBus.
     implementation 'org.greenrobot:eventbus:3.1.0'

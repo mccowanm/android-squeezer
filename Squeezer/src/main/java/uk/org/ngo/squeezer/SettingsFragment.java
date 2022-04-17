@@ -28,6 +28,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 
+import uk.org.ngo.squeezer.dialog.CallStateDialog;
 import uk.org.ngo.squeezer.download.DownloadFilenameStructure;
 import uk.org.ngo.squeezer.download.DownloadPathStructure;
 import uk.org.ngo.squeezer.framework.EnumWithText;
@@ -35,11 +36,13 @@ import uk.org.ngo.squeezer.service.ISqueezeService;
 import uk.org.ngo.squeezer.service.SqueezeService;
 import uk.org.ngo.squeezer.util.Scrobble;
 import uk.org.ngo.squeezer.util.ThemeManager;
+import uk.org.ngo.squeezer.widget.CallStatePermissionLauncher;
 
 public class SettingsFragment  extends PreferenceFragmentCompat implements
-        Preference.OnPreferenceChangeListener, SharedPreferences.OnSharedPreferenceChangeListener {
+        Preference.OnPreferenceChangeListener, SharedPreferences.OnSharedPreferenceChangeListener,
+        CallStateDialog.CallStateDialogHost {
 
-    private final String TAG = "SettingsActivity";
+    private final String TAG = "SettingsFragment";
 
     private ISqueezeService service = null;
 
@@ -192,6 +195,7 @@ public class SettingsFragment  extends PreferenceFragmentCompat implements
             values[i] = actionTypes[i].name();
             entries[i] = actionTypes[i].getText(getActivity());
         }
+        listPreference.setSummaryProvider(ListPreference.SimpleSummaryProvider.getInstance());
         listPreference.setEntryValues(values);
         listPreference.setEntries(entries);
         listPreference.setDefaultValue(defaultValue);
@@ -237,7 +241,20 @@ public class SettingsFragment  extends PreferenceFragmentCompat implements
             }
         }
 
+        // If the user has enabled action on call first check for permission
+        if (Preferences.KEY_ACTION_ON_INCOMING_CALL.equals(key)) {
+            requestCallStateLauncher.trySetAction(Preferences.IncomingCallAction.valueOf((String) newValue));
+            return false;
+        }
+
         return true;
+    }
+
+    private final CallStatePermissionLauncher requestCallStateLauncher = new CallStatePermissionLauncher(this);
+
+    @Override
+    public void requestCallStatePermission() {
+        requestCallStateLauncher.requestCallStatePermission();
     }
 
     /**
@@ -256,6 +273,11 @@ public class SettingsFragment  extends PreferenceFragmentCompat implements
                 key.equals(Preferences.KEY_DOWNLOAD_ENABLED)
         ) {
             updateDownloadPreferences(new Preferences(getActivity(), sharedPreferences));
+        }
+
+        if (Preferences.KEY_ACTION_ON_INCOMING_CALL.equals(key)) {
+            ListPreference incomingCallPref = findPreference(Preferences.KEY_ACTION_ON_INCOMING_CALL);
+            incomingCallPref.setValue(sharedPreferences.getString(Preferences.KEY_ACTION_ON_INCOMING_CALL, null));
         }
 
         if (service != null) {

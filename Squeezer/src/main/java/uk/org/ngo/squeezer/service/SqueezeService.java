@@ -16,6 +16,7 @@
 
 package uk.org.ngo.squeezer.service;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -24,6 +25,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
@@ -41,12 +43,14 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 import androidx.media.VolumeProviderCompat;
 
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyCallback;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -85,6 +89,7 @@ import uk.org.ngo.squeezer.service.event.PlayStatusChanged;
 import uk.org.ngo.squeezer.service.event.PlayerVolume;
 import uk.org.ngo.squeezer.service.event.PlayersChanged;
 import uk.org.ngo.squeezer.util.ImageFetcher;
+import uk.org.ngo.squeezer.util.Intents;
 import uk.org.ngo.squeezer.util.NotificationUtil;
 import uk.org.ngo.squeezer.util.Scrobble;
 
@@ -512,7 +517,7 @@ public class SqueezeService extends Service {
 
             Intent showNowPlaying = new Intent(SqueezeService.this, NowPlayingActivity.class)
                     .setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            PendingIntent pIntent = PendingIntent.getActivity(SqueezeService.this, 0, showNowPlaying, 0);
+            PendingIntent pIntent = PendingIntent.getActivity(SqueezeService.this, 0, showNowPlaying, Intents.immutablePendingIntent());
 
 
             NotificationUtil.createNotificationChannel(SqueezeService.this, NOTIFICATION_CHANNEL_ID,
@@ -636,28 +641,8 @@ public class SqueezeService extends Service {
     private PendingIntent getPendingIntent(@NonNull String action){
         Intent intent = new Intent(this, SqueezeService.class);
         intent.setAction(action);
-        return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-    }
 
-    @Subscribe(sticky = true, priority = 1)
-    public void onEvent(ConnectionChanged event) {
-        if (ConnectionState.isConnected(event.connectionState) ||
-                ConnectionState.isConnectInProgress(event.connectionState)) {
-            startForeground();
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-                telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
-            }
-        } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-                telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_NONE);
-            }
-
-            mHandshakeComplete = false;
-            stopForeground();
-        }
+        return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | Intents.immutablePendingIntent());
     }
 
     private void startForeground() {
@@ -728,25 +713,6 @@ public class SqueezeService extends Service {
         }
     }
 
-    PhoneStateListener phoneStateListener = new PhoneStateListener() {
-        @Override
-
-        public void onCallStateChanged(int state, String phoneNumber) {
-            if ((state == TelephonyManager.CALL_STATE_RINGING || state == TelephonyManager.CALL_STATE_OFFHOOK)) {
-                switch (new Preferences(SqueezeService.this).getActionOnIncomingCall()) {
-                    case NONE:
-                        break;
-                    case PAUSE:
-                        squeezeService.pause();
-                        break;
-                    case MUTE:
-                        squeezeService.mute();
-                        break;
-                }
-            }
-        }
-    };
-
     private void stopForeground() {
         Log.i(TAG, "stopForeground");
         foreGround = false;
@@ -763,6 +729,92 @@ public class SqueezeService extends Service {
 
         stopForeground(true);
         stopSelf();
+    }
+
+    private void registerCallStateListener() {
+        if (!callStateListenerRegistered) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+                        Log.d(TAG, "calling registerTelephonyCallback");
+                        telephonyManager.registerTelephonyCallback(getMainExecutor(), callStateListener);
+                        callStateListenerRegistered = true;
+                    }
+                } else {
+                    telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+                    callStateListenerRegistered = true;
+                }
+            }
+        }
+    }
+
+    private void unregisterCallStateListener() {
+        if (callStateListenerRegistered) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    telephonyManager.unregisterTelephonyCallback(callStateListener);
+                } else {
+                    telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_NONE);
+                }
+            }
+            callStateListenerRegistered = false;
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.S)
+    private static abstract class CallStateListener extends TelephonyCallback implements TelephonyCallback.CallStateListener {
+        @Override
+        abstract public void onCallStateChanged(int state);
+    }
+
+    private boolean callStateListenerRegistered = false;
+
+    private CallStateListener callStateListener = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) ?
+            new CallStateListener() {
+                @Override
+                public void onCallStateChanged(int state) {
+                    SqueezeService.this.onCallStateChanged(state);
+                }
+            }
+            : null;
+
+    private PhoneStateListener phoneStateListener = (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) ?
+            new PhoneStateListener() {
+                @Override
+                public void onCallStateChanged(int state, String phoneNumber) {
+                    SqueezeService.this.onCallStateChanged(state);
+                }
+            }
+            : null;
+
+    private void onCallStateChanged(int state) {
+        if ((state == TelephonyManager.CALL_STATE_RINGING || state == TelephonyManager.CALL_STATE_OFFHOOK)) {
+            switch (new Preferences(SqueezeService.this).getActionOnIncomingCall()) {
+                case NONE:
+                    break;
+                case PAUSE:
+                    squeezeService.pause();
+                    break;
+                case MUTE:
+                    squeezeService.mute();
+                    break;
+            }
+        }
+    }
+
+    @Subscribe(sticky = true, priority = 1)
+    public void onEvent(ConnectionChanged event) {
+        if (ConnectionState.isConnected(event.connectionState) ||
+                ConnectionState.isConnectInProgress(event.connectionState)) {
+            startForeground();
+            registerCallStateListener();
+        } else {
+            unregisterCallStateListener();
+            mHandshakeComplete = false;
+            stopForeground();
+        }
     }
 
     @Subscribe(sticky = true, priority = 1)
@@ -1425,12 +1477,15 @@ public class SqueezeService extends Service {
                 }
                 Map<String, Map<String, Object>> customShortcuts = preferences.restoreCustomShortcuts();
                 mDelegate.setHomeMenu(archivedMenuItems, customShortcuts);
-            }
-            else if (Preferences.KEY_CUSTOMIZE_SHORTCUT_MODE.equals(key)) {
+            } else if (Preferences.KEY_CUSTOMIZE_SHORTCUT_MODE.equals(key)) {
                 Preferences preferences = new Preferences(SqueezeService.this);
                 if (preferences.getCustomizeShortcutsMode() == Preferences.CustomizeShortcutsMode.DISABLED) {
                     mDelegate.getHomeMenuHandling().removeAllShortcuts();
                     preferences.saveShortcuts(preferences.convertShortcuts(mDelegate.getHomeMenuHandling().customShortcuts)); // TODO check for simplification
+                }
+            } else if (Preferences.KEY_ACTION_ON_INCOMING_CALL.equals(key)) {
+                if (new Preferences(SqueezeService.this).getActionOnIncomingCall() != Preferences.IncomingCallAction.NONE) {
+                    registerCallStateListener();
                 }
             } else {
                 cachePreferences();

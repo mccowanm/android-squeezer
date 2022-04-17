@@ -497,6 +497,10 @@ public final class Preferences {
         return IncomingCallAction.valueOf(string);
     }
 
+    public void setActionOnIncomingCall(IncomingCallAction action) {
+        sharedPreferences.edit().putString(KEY_ACTION_ON_INCOMING_CALL, action.name()).apply();
+    }
+
     public boolean controlSqueezePlayer(ServerAddress serverAddress) {
         return  (!serverAddress.squeezeNetwork && sharedPreferences.getBoolean(KEY_SQUEEZEPLAYER_ENABLED, true));
     }

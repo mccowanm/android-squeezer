@@ -61,6 +61,10 @@
     </string>
     <string name="settings_action_on_incoming_call_title">Action when you receive or make a call</string>
     <string name="settings_no_action_on_incoming_call">No action</string>
+    <string name="call_state_permission_title">Call state permission required</string>
+    <string name="call_state_permission_message">Squeezer can pause music when you receive or make a call.
+        This requires that Squeezer is allowed to be notified when call state changes.</string>
+    <string name="request_permission">Request permission</string>
 
     <string name="settings_scrobble_title">Scrobble to Last.fm</string>
     <string name="settings_scrobble_on">Song information is sent to Last.fm</string>

@@ -503,12 +503,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Download
         if (new Preferences(this).isDownloadConfirmation()) {
             DownloadDialog.show(item, this);
         } else {
-            if (Build.VERSION_CODES.M <= Build.VERSION.SDK_INT && Build.VERSION.SDK_INT < Build.VERSION_CODES.Q &&
-                    checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                currentDownloadItem = item;
-                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-            } else
-                mService.downloadItem(item);
+            doDownload(item);
         }
     }
 

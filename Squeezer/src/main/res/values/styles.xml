@@ -129,6 +129,11 @@
         <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
     </style>
 
+    <!-- Text on the screensaver -->
+    <style name="SqueezerTextAppearance.Screensaver" parent="@android:style/TextAppearance.Large">
+        <item name="android:textSize">64sp</item>
+    </style>
+
     <!-- Widget appearance. Apply these using the "style" attribute. -->
     <style name="SqueezerWidget"/>
 

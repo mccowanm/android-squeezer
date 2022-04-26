@@ -148,6 +148,9 @@ public final class Preferences {
     // Preferred UI theme.
     static final String KEY_ON_THEME_SELECT_ACTION = "squeezer.theme";
 
+    // Screensaver
+    public static final String KEY_SCREENSAVER = "squeezer.screensaver";
+
     // Download confirmation
     static final String KEY_CLEAR_PLAYLIST_CONFIRMATION = "squeezer.clear.current_playlist.confirmation";
 
@@ -477,6 +480,11 @@ public final class Preferences {
         sharedPreferences.edit().putString(Preferences.KEY_ON_THEME_SELECT_ACTION, theme.name()).apply();
     }
 
+    public ScreensaverMode getScreensaverMode() {
+        String string = sharedPreferences.getString(KEY_SCREENSAVER, null);
+        return string == null ? ScreensaverMode.OFF : ScreensaverMode.valueOf(string);
+    }
+
     public boolean isScrobbleEnabled() {
         return sharedPreferences.getBoolean(KEY_SCROBBLE_ENABLED, false);
     }
@@ -743,6 +751,23 @@ public final class Preferences {
         private final int labelId;
 
         IncomingCallAction(int labelId) {
+            this.labelId = labelId;
+        }
+
+        @Override
+        public String getText(Context context) {
+            return context.getString(labelId);
+        }
+    }
+
+    public enum ScreensaverMode implements EnumWithText {
+        OFF(R.string.settings_screensaver_off),
+        ON(R.string.settings_screensaver_on),
+        CLOCK(R.string.settings_screensaver_clock);
+
+        private final int labelId;
+
+        ScreensaverMode(int labelId) {
             this.labelId = labelId;
         }
 

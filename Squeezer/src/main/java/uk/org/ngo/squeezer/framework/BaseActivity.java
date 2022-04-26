@@ -26,6 +26,7 @@ import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.text.TextUtils;
 import android.util.Log;
@@ -33,6 +34,7 @@ import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,13 +49,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NavUtils;
 import androidx.core.app.TaskStackBuilder;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
@@ -64,8 +63,7 @@ import uk.org.ngo.squeezer.itemlist.HomeActivity;
 import uk.org.ngo.squeezer.model.Action;
 import uk.org.ngo.squeezer.model.DisplayMessage;
 import uk.org.ngo.squeezer.model.JiveItem;
-import uk.org.ngo.squeezer.model.Player;
-import uk.org.ngo.squeezer.model.PlayerState;
+import uk.org.ngo.squeezer.screensaver.Screensaver;
 import uk.org.ngo.squeezer.service.ISqueezeService;
 import uk.org.ngo.squeezer.service.SqueezeService;
 import uk.org.ngo.squeezer.service.event.AlertEvent;
@@ -85,7 +83,6 @@ import org.greenrobot.eventbus.ThreadMode;
  */
 public abstract class BaseActivity extends AppCompatActivity implements DownloadDialog.DownloadDialogListener {
     private static final String CURRENT_DOWNLOAD_ITEM = "CURRENT_DOWNLOAD_ITEM";
-
 
     private static final String TAG = BaseActivity.class.getName();
 
@@ -146,7 +143,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Download
 
     @Override
     @CallSuper
-    protected void onCreate(android.os.Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         mTheme.onCreate(this);
         super.onCreate(savedInstanceState);
 
@@ -156,8 +153,17 @@ public abstract class BaseActivity extends AppCompatActivity implements Download
                 Context.BIND_AUTO_CREATE);
         Log.d(TAG, "did bindService; serviceStub = " + getService());
 
-        if (savedInstanceState != null)
+        if (savedInstanceState != null) {
             currentDownloadItem = savedInstanceState.getParcelable(CURRENT_DOWNLOAD_ITEM);
+        }
+
+        if (new Preferences(this).getScreensaverMode() != Preferences.ScreensaverMode.OFF) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            if (new Preferences(this).getScreensaverMode() == Preferences.ScreensaverMode.CLOCK) {
+                inactivityHandler = new Handler();
+                inactivityAction = () -> startActivity(new Intent(this, Screensaver.class));
+            }
+        }
     }
 
     @Override
@@ -184,6 +190,10 @@ public abstract class BaseActivity extends AppCompatActivity implements Download
 
         mVolumePanel = new VolumePanel(this);
 
+        if (inactivityHandler != null) {
+            inactivityHandler.postDelayed(inactivityAction, INACTIVITY_TIME);
+        }
+
         // If SqueezePlayer is installed, start it
         squeezePlayer = SqueezePlayer.maybeStartControllingSqueezePlayer(this);
 
@@ -200,6 +210,10 @@ public abstract class BaseActivity extends AppCompatActivity implements Download
         if (mVolumePanel != null) {
             mVolumePanel.dismiss();
             mVolumePanel = null;
+        }
+
+        if (inactivityHandler != null) {
+            inactivityHandler.removeCallbacks(inactivityAction);
         }
 
         if (squeezePlayer != null) {
@@ -386,6 +400,20 @@ public abstract class BaseActivity extends AppCompatActivity implements Download
 
     public void setIgnoreVolumeChange(boolean ignoreVolumeChange) {
         mIgnoreVolumeChange = ignoreVolumeChange;
+    }
+
+    private static final int INACTIVITY_TIME = 5 * 60 * 1000;
+    Handler inactivityHandler;
+    Runnable inactivityAction;
+
+    @Override
+    public void onUserInteraction() {
+        super.onUserInteraction();
+
+        if (inactivityHandler != null) {
+            inactivityHandler.removeCallbacks(inactivityAction);
+            inactivityHandler.postDelayed(inactivityAction, INACTIVITY_TIME);
+        }
     }
 
     public void showDisplayMessage(@StringRes int resId) {

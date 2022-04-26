@@ -79,10 +79,13 @@ public class SettingsFragment  extends PreferenceFragmentCompat implements
 
         fillIncomingCallPreferences(preferences);
 
+        fillDisplayPreferences(preferences);
+
+        fillUserInterfacePreferences(preferences);
+
         fillScrobblePreferences(sharedPreferences);
 
         fillDownloadPreferences(preferences);
-        fillDisplayPreferences(preferences);
 
         SwitchPreferenceCompat startSqueezePlayerPref = findPreference(
                 Preferences.KEY_SQUEEZEPLAYER_ENABLED);
@@ -174,6 +177,11 @@ public class SettingsFragment  extends PreferenceFragmentCompat implements
         }
         onSelectThemePref.setOnPreferenceChangeListener(this);
 
+        ListPreference screensaverPref = findPreference(Preferences.KEY_SCREENSAVER);
+        fillEnumPreference(screensaverPref, Preferences.ScreensaverMode.class, preferences.getScreensaverMode());
+    }
+
+    private void fillUserInterfacePreferences(Preferences preferences) {
         final SwitchPreferenceCompat clearPlaylistConfirmation = findPreference(Preferences.KEY_CLEAR_PLAYLIST_CONFIRMATION);
         clearPlaylistConfirmation.setChecked(preferences.isClearPlaylistConfirmation());
 

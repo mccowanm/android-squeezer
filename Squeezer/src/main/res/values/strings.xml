@@ -35,6 +35,10 @@
     <string name="settings_theme_title">Theme</string>
     <string name="settings_theme_dark">Dark</string>
     <string name="settings_theme_light_dark">Light, dark action bar</string>
+    <string name="settings_screensaver_title">Keep screen on</string>
+    <string name="settings_screensaver_off">No</string>
+    <string name="settings_screensaver_on">Yes</string>
+    <string name="settings_screensaver_clock">Show clock when idle</string>
     <string name="settings_clear_current_playlist_confirmation">When clearing a playlist</string>
     <string name="settings_clear_current_playlist_confirmation_off">do not ask for confirmation</string>
     <string name="settings_clear_current_playlist_confirmation_on">ask for confirmation</string>
@@ -75,7 +79,8 @@
     <string name="settings_squeezeplayer_title">Start SqueezePlayer</string>
     <string name="settings_squeezeplayer_summary">Check this option to make sure SqueezePlayer is running, when using Squeezer</string>
 
-    <string name="settings_category_ui">Shortcuts, Theme, etc.</string>
+    <string name="settings_category_display">Display</string>
+    <string name="settings_category_ui">Shortcuts, etc.</string>
     <string name="settings_customize_home_menu_mode">Archive</string>
     <string name="settings_customize_home_menu_info">Long press on suitable menu item puts it into an archive</string>
     <string name="settings_customize_home_menu_archive">Enabled</string>

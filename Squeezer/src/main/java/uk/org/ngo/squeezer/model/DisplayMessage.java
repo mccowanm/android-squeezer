@@ -118,7 +118,7 @@ public class DisplayMessage {
         result.put("sleep_cancel", R.drawable.ic_sleep_off);
 
         result.put("shuffle0", R.drawable.ic_shuffle_off);
-        result.put("shuffle1", R.drawable.ic_shuffle_white);
+        result.put("shuffle1", R.drawable.ic_shuffle_song);
         result.put("shuffle2", R.drawable.ic_shuffle_album);
 
         result.put("repeat0", R.drawable.ic_repeat_off);

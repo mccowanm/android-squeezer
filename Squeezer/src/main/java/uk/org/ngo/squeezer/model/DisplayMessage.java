@@ -133,7 +133,7 @@ public class DisplayMessage {
 
         result.put("add", R.drawable.ic_add);
         result.put("favorite", R.drawable.icon_popup_favorite);
-        result.put("lineIn", R.drawable.icon_line_in);
+        result.put("lineIn", R.drawable.icon_line_in_white);
 
         return result;
     }

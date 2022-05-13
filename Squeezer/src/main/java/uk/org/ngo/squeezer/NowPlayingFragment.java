@@ -670,8 +670,8 @@ public class NowPlayingFragment extends Fragment implements CallStateDialog.Call
             }
         }
 
-        if (!song.hasIconUri()) {
-            albumArt.setImageDrawable(song.getIconDrawable(mActivity, R.drawable.icon_album_noart_fullscreen));
+        if (!song.useIcon()) {
+            albumArt.setImageDrawable(song.getIconDrawable(mActivity, R.drawable.icon_album));
         } else {
             ImageFetcher.getInstance(mActivity).loadImage(song.getIcon(), albumArt);
         }

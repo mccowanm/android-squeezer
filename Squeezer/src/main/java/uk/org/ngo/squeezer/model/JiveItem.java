@@ -18,7 +18,6 @@ package uk.org.ngo.squeezer.model;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.Parcel;
 import android.text.TextUtils;
@@ -163,15 +162,22 @@ public class JiveItem extends Item {
     /**
      * @return Whether the song has downloadable artwork associated with it.
      */
-    public boolean hasIconUri() {
+    private boolean hasIconUri() {
         return !getIcon().equals(Uri.EMPTY);
+    }
+
+    /**
+     * @return Whether we should download icon or use embedded drawable
+     */
+    public boolean useIcon() {
+        return hasIconUri() && (getItemIcon() == null);
     }
 
     /**
      * @return Whether the song has an icon associated with it.
      */
     public boolean hasIcon() {
-        return !(!hasIconUri() && getItemIcon() == null && getSlimIcon() == null);
+        return hasIconUri() || (getItemIcon() != null);
     }
 
     /**
@@ -185,14 +191,7 @@ public class JiveItem extends Item {
      * @return Icon resource for this item if it is embedded in the Squeezer app, or the supplied default icon.
      */
     public Drawable getIconDrawable(Context context, @DrawableRes int defaultIcon) {
-        @DrawableRes Integer foreground = getItemIcon();
-        if (foreground != null) {
-            Drawable background = AppCompatResources.getDrawable(context, R.drawable.icon_background);
-            Drawable icon = AppCompatResources.getDrawable(context, foreground);
-            return new LayerDrawable(new Drawable[]{background, icon});
-        }
-
-        Integer slimIcon = getSlimIcon();
+        Integer slimIcon = getItemIcon();
         return AppCompatResources.getDrawable(context, slimIcon != null ? slimIcon : defaultIcon);
     }
 
@@ -200,33 +199,10 @@ public class JiveItem extends Item {
         return TextUtils.isEmpty(iconStyle) ? "hm_" + getId() : iconStyle;
     }
 
-    @DrawableRes private Integer getSlimIcon() {
-        if ((id != null) && (this.id.contains("customShortcut"))) {
-            return R.drawable.icon_mymusic;
-        }
-        return slimIcons.get(iconStyle());
-    }
-
-    private static final Map<String, Integer> slimIcons = initializeSlimIcons();
-
-    private static Map<String, Integer> initializeSlimIcons() {
-        Map<String, Integer> result = new HashMap<>();
-
-        result.put("hm_myMusic", R.drawable.icon_mymusic);
-        result.put("hm_myMusicArtists", R.drawable.icon_ml_artists);
-        result.put("hm_myMusicGenres", R.drawable.icon_ml_genres);
-        result.put("hm_myMusicYears", R.drawable.icon_ml_years);
-        result.put("hm_extras", R.drawable.icon_settings_adv);
-        result.put("hm_settings", R.drawable.icon_settings);
-        result.put("hm_settingsAlarm", R.drawable.icon_alarm);
-        result.put("hm_appletCustomizeHome", R.drawable.icon_settings_home);
-        result.put("hm_settingsPlayerNameChange", R.drawable.icon_settings_name);
-        result.put("hm_advancedSettings", R.drawable.icon_settings_adv);
-
-        return result;
-    }
-
     @DrawableRes private Integer getItemIcon() {
+        if ((id != null) && (this.id.contains("customShortcut"))) {
+            return R.drawable.my_mysic;
+        }
         return itemIcons.get(iconStyle());
     }
 
@@ -234,6 +210,16 @@ public class JiveItem extends Item {
 
     private static Map<String, Integer> initializeItemIcons() {
         Map<String, Integer> result = new HashMap<>();
+
+        result.put("hm_myMusic", R.drawable.my_mysic);
+        result.put("hm_extras", R.drawable.settings_advanced);
+        result.put("hm_settings", R.drawable.settings);
+        result.put("hm_opmlmyapps", R.drawable.apps);
+        result.put("hm_opmlappgallery", R.drawable.apps_settings);
+        result.put("hm_settingsAlarm", R.drawable.alarm_clock);
+        result.put("hm_appletCustomizeHome", R.drawable.settings_home);
+        result.put("hm_settingsPlayerNameChange", R.drawable.rename);
+        result.put("hm_advancedSettings", R.drawable.settings_advanced);
 
         result.put("hm_archiveNode", R.drawable.ic_archive);
         result.put("hm_radio", R.drawable.internet_radio);
@@ -248,11 +234,20 @@ public class JiveItem extends Item {
         result.put("hm_myMusicSearchSongs", R.drawable.search);
         result.put("hm_myMusicSearchPlaylists", R.drawable.search);
         result.put("hm_myMusicSearchRecent", R.drawable.search);
+        result.put("hm_myMusicArtists", R.drawable.ml_artists);
+        result.put("hm_myMusicArtistsAlbumArtists", R.drawable.ml_artists_album);
+        result.put("hm_myMusicArtistsAllArtists", R.drawable.ml_artists);
+        result.put("hm_myMusicArtistsComposers", R.drawable.ml_artists_composer);
         result.put("hm_myMusicAlbums", R.drawable.ml_albums);
+        result.put("hm_myMusicAlbumsVariousArtists", R.drawable.ml_albums);
+        result.put("hm_myMusicGenres", R.drawable.ml_genres);
+        result.put("hm_myMusicYears", R.drawable.ml_years);
         result.put("hm_myMusicMusicFolder", R.drawable.ml_folder);
         result.put("hm_myMusicPlaylists", R.drawable.ml_playlist);
         result.put("hm_myMusicNewMusic", R.drawable.ml_new_music);
         result.put("hm_randomplay", R.drawable.ml_random);
+        result.put("hm_opmlselectVirtualLibrary", R.drawable.ml_library_views);
+        result.put("hm_opmlselectRemoteLibrary", R.drawable.my_mysic);
         result.put("hm_settingsShuffle", R.drawable.shuffle);
         result.put("hm_settingsRepeat", R.drawable.settings_repeat);
         result.put("hm_settingsAudio", R.drawable.settings_audio);
@@ -261,6 +256,7 @@ public class JiveItem extends Item {
         result.put("hm_settingsBrightness", R.drawable.settings_brightness);
         result.put("hm_settingsLineInLevel", R.drawable.icon_line_in);
         result.put("hm_settingsLineInAlwaysOn", R.drawable.icon_line_in);
+        result.put("hm_settingsDontStopTheMusic", R.drawable.setting_dont_stop_the_music);
 //      TODO: Make unique icon for custom shortcut, or load icon from original slim item or its parents
 
         return result;

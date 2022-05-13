@@ -242,7 +242,7 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
 
         if (parent.hasIcon() && window.windowStyle == Window.WindowStyle.TEXT_ONLY) {
             parentViewHolder.icon.setVisibility(View.VISIBLE);
-            if (parent.hasIconUri()) {
+            if (parent.useIcon()) {
                 ImageFetcher.getInstance(this).loadImage(parent.getIcon(), parentViewHolder.icon);
             } else {
                 parentViewHolder.icon.setImageDrawable(parent.getIconDrawable(this));

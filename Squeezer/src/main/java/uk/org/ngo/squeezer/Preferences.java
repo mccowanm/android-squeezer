@@ -93,6 +93,9 @@ public final class Preferences {
     // Action on incoming call
     public static final String KEY_ACTION_ON_INCOMING_CALL = "squeezer.action_on_incoming_call";
 
+    // Restore music on end call if we performed action on incoming call
+    public static final String KEY_RESTORE_MUSIC_AFTER_CALL = "squeezer.restore_after_call";
+
     // Are we disconnected via the options menu?
     private static final String KEY_MANUAL_DISCONNECT = "squeezer.manual.disconnect";
 
@@ -507,6 +510,10 @@ public final class Preferences {
 
     public void setActionOnIncomingCall(IncomingCallAction action) {
         sharedPreferences.edit().putString(KEY_ACTION_ON_INCOMING_CALL, action.name()).apply();
+    }
+
+    public boolean restoreMusicAfterCall() {
+        return sharedPreferences.getBoolean(KEY_RESTORE_MUSIC_AFTER_CALL, false);
     }
 
     public boolean controlSqueezePlayer(ServerAddress serverAddress) {

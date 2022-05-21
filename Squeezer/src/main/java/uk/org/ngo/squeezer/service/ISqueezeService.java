@@ -128,6 +128,7 @@ public interface ISqueezeService {
      * interval [0, 100].
      */
     void mute();
+    void unmute();
     void toggleMute();
     void setVolumeTo(Player player, int newVolume);
     void toggleMute(Player player);

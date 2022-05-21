@@ -65,6 +65,7 @@
     </string>
     <string name="settings_action_on_incoming_call_title">Action when you receive or make a call</string>
     <string name="settings_no_action_on_incoming_call">No action</string>
+    <string name="settings_restore_after_call">Automatically return to music after a phone call</string>
     <string name="call_state_permission_title">Call state permission required</string>
     <string name="call_state_permission_message">Squeezer can pause music when you receive or make a call.
         This requires that Squeezer is allowed to be notified when call state changes.</string>

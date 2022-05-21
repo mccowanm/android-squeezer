@@ -330,6 +330,7 @@ public class SqueezeService extends Service {
                 mMediaSession.setPlaybackState(new PlaybackStateCompat.Builder().setState(state, 0, 0).build());
             }
             updateOngoingNotification();
+            if (PlayerState.PLAY_STATE_PLAY.equals(event.playStatus)) musicPaused = false;
         }
     }
 
@@ -733,31 +734,26 @@ public class SqueezeService extends Service {
 
     private void registerCallStateListener() {
         if (!callStateListenerRegistered) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
-                        Log.d(TAG, "calling registerTelephonyCallback");
-                        telephonyManager.registerTelephonyCallback(getMainExecutor(), callStateListener);
-                        callStateListenerRegistered = true;
-                    }
-                } else {
-                    telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
-                    callStateListenerRegistered = true;
+            TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "calling registerTelephonyCallback");
+                    telephonyManager.registerTelephonyCallback(getMainExecutor(), callStateListener);
                 }
+            } else {
+                telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
             }
+            callStateListenerRegistered = true;
         }
     }
 
     private void unregisterCallStateListener() {
         if (callStateListenerRegistered) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    telephonyManager.unregisterTelephonyCallback(callStateListener);
-                } else {
-                    telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_NONE);
-                }
+            TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                telephonyManager.unregisterTelephonyCallback(callStateListener);
+            } else {
+                telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_NONE);
             }
             callStateListenerRegistered = false;
         }
@@ -770,6 +766,7 @@ public class SqueezeService extends Service {
     }
 
     private boolean callStateListenerRegistered = false;
+    private boolean musicPaused = false;
 
     private CallStateListener callStateListener = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) ?
             new CallStateListener() {
@@ -790,18 +787,28 @@ public class SqueezeService extends Service {
             : null;
 
     private void onCallStateChanged(int state) {
-        if ((state == TelephonyManager.CALL_STATE_RINGING || state == TelephonyManager.CALL_STATE_OFFHOOK)) {
-            switch (new Preferences(SqueezeService.this).getActionOnIncomingCall()) {
-                case NONE:
-                    break;
-                case PAUSE:
-                    squeezeService.pause();
-                    break;
-                case MUTE:
-                    squeezeService.mute();
-                    break;
+        Preferences preferences = new Preferences(SqueezeService.this);
+        Preferences.IncomingCallAction incomingCallAction = preferences.getActionOnIncomingCall();
+        if (incomingCallAction != Preferences.IncomingCallAction.NONE) {
+            PerformAction action = null;
+            boolean isPlaying = (getActivePlayerState() != null && getActivePlayerState().isPlaying());
+            if (state == TelephonyManager.CALL_STATE_RINGING || state == TelephonyManager.CALL_STATE_OFFHOOK) {
+                if (isPlaying) {
+                    action = incomingCallAction != Preferences.IncomingCallAction.PAUSE ? squeezeService::pause : squeezeService::mute;
+                    musicPaused = true;
+                }
+            } else {
+                if (musicPaused && preferences.restoreMusicAfterCall()) {
+                    action = incomingCallAction != Preferences.IncomingCallAction.PAUSE ? squeezeService::play : squeezeService::unmute;
+                }
+                musicPaused = false;
             }
+            if (action != null) action.exec();
         }
+    }
+
+    private interface PerformAction {
+        void exec();
     }
 
     @Subscribe(sticky = true, priority = 1)
@@ -815,6 +822,7 @@ public class SqueezeService extends Service {
             mHandshakeComplete = false;
             stopForeground();
         }
+        musicPaused = false;
     }
 
     @Subscribe(sticky = true, priority = 1)
@@ -1036,10 +1044,12 @@ public class SqueezeService extends Service {
 
         @Override
         public void mute() {
-            Player player = getActivePlayer();
-            if (player != null) {
-                mDelegate.command(player).cmd("mixer", "muting", "1").exec();
-            }
+            mute(getActivePlayer(), false);
+        }
+
+        @Override
+        public void unmute() {
+            mute(getActivePlayer(), true);
         }
 
         @Override
@@ -1050,7 +1060,13 @@ public class SqueezeService extends Service {
         @Override
         public void toggleMute(Player player) {
             if (player != null) {
-                mDelegate.command(player).cmd("mixer", "muting", player.getPlayerState().isMuted() ? "0" : "1").exec();
+                mute(player, !player.getPlayerState().isMuted());
+            }
+        }
+
+        private void mute(Player player, boolean mute) {
+            if (player != null) {
+                mDelegate.command(player).cmd("mixer", "muting", mute ? "1" : "0").exec();
             }
         }
 

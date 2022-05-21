@@ -59,7 +59,8 @@
         at deaktivere indtoning.
     </string>
     <string name="settings_action_on_incoming_call_title">Handling når du modtager eller foretager et opkald</string>
-    <string name="settings_no_action_on_incoming_call">No action</string>
+    <string name="settings_no_action_on_incoming_call">Gør intet</string>
+    <string name="settings_restore_after_call">Vend automatisk tilbage til musik efter et telefon opkald</string>
 
     <string name="settings_customize_home_menu_mode">Arkiv</string>
     <string name="settings_customize_home_menu_info">Langt tryk på et passende emne arkiverer det</string>

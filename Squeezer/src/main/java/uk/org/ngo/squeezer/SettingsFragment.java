@@ -151,6 +151,12 @@ public class SettingsFragment  extends PreferenceFragmentCompat implements
     private void fillIncomingCallPreferences(Preferences preferences) {
         ListPreference incomingCallPref = findPreference(Preferences.KEY_ACTION_ON_INCOMING_CALL);
         fillEnumPreference(incomingCallPref, Preferences.IncomingCallAction.class, preferences.getActionOnIncomingCall());
+        updateIncomingCallPreferences(preferences);
+    }
+
+    private void updateIncomingCallPreferences(Preferences preferences) {
+        final CheckBoxPreference restoreMusicPreference = findPreference(Preferences.KEY_RESTORE_MUSIC_AFTER_CALL);
+        restoreMusicPreference.setEnabled(preferences.getActionOnIncomingCall() != Preferences.IncomingCallAction.NONE);
     }
 
     private void fillDisplayPreferences(Preferences preferences) {
@@ -286,6 +292,7 @@ public class SettingsFragment  extends PreferenceFragmentCompat implements
         if (Preferences.KEY_ACTION_ON_INCOMING_CALL.equals(key)) {
             ListPreference incomingCallPref = findPreference(Preferences.KEY_ACTION_ON_INCOMING_CALL);
             incomingCallPref.setValue(sharedPreferences.getString(Preferences.KEY_ACTION_ON_INCOMING_CALL, null));
+            updateIncomingCallPreferences(new Preferences(getActivity(), sharedPreferences));
         }
 
         if (service != null) {

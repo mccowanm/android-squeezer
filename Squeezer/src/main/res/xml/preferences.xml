@@ -28,6 +28,10 @@
         android:title="@string/settings_action_on_incoming_call_title"
         android:summary="%s"/>
 
+    <CheckBoxPreference
+        android:key="squeezer.restore_after_call"
+        android:summary="@string/settings_restore_after_call"/>
+
     <PreferenceCategory
         android:title="@string/settings_category_display">
 

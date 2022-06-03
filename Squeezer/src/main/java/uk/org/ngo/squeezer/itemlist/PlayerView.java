@@ -144,7 +144,7 @@ public class PlayerView extends PlayerBaseView {
             return true;
         }
 
-        if (PlayerViewLogic.doPlayerAction(service, menuItem, selectedItem)) {
+        if (PlayerViewLogic.doPlayerAction(activity.getSupportFragmentManager(), service, menuItem, selectedItem)) {
             return  true;
         }
 

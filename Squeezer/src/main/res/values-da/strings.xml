@@ -23,6 +23,7 @@
     <string name="disabled">Deaktiveret</string>
     <string name="pause">Pause</string>
     <string name="mute">Mute</string>
+    <string name="minutes">minutter</string>
     <string name="menu_item_players">Afspillere</string>
     <string name="menu_item_settings_label">Indstillinger</string>
     <string name="menu_item_about_label">Om</string>
@@ -105,6 +106,7 @@
     <string name="menu_item_player_unsync">Ingen synkronisering</string>
     <string name="menu_item_power_off">Sluk</string>
     <string name="menu_item_power_on">Tænd</string>
+    <string name="set_sleep_timer">Sæt slumretid</string>
 
     <string name="no_players_connected">Der er ingen afspillere tilsluttet</string>
     <string name="player_list_changed">Tilsluttede spillere ændret, mens genvejsmenuen var åben,

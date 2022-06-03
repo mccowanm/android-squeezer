@@ -824,7 +824,7 @@ public class NowPlayingFragment extends Fragment implements CallStateDialog.Call
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (PlayerViewLogic.doPlayerAction(mService, item, getActivePlayer())) {
+        if (PlayerViewLogic.doPlayerAction(getParentFragmentManager(), mService, item, getActivePlayer())) {
             return true;
         }
 

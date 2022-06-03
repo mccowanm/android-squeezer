@@ -23,6 +23,7 @@
     <string name="disabled">Disabled</string>
     <string name="pause">Pause</string>
     <string name="mute">Mute</string>
+    <string name="minutes">minutes</string>
     <string name="menu_item_players">Players</string>
     <string name="menu_item_settings_label">Settings</string>
     <string name="menu_item_about_label">About</string>
@@ -162,6 +163,7 @@
 
     <string name="menu_item_power_off">Turn off</string>
     <string name="menu_item_power_on">Turn on</string>
+    <string name="set_sleep_timer">Set sleep timer</string>
 
     <!-- Dialog buttons -->
     <string name="dialog_license">License</string>

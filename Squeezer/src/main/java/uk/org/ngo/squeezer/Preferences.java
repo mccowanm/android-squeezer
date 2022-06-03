@@ -207,6 +207,9 @@ public final class Preferences {
     private static final String KEY_BACKWARD_SECONDS = "squeezer.backword_jump";
     private static final String KEY_FORWARD_SECONDS = "squeezer.forword_jump";
 
+    // Number of minutes for the custom sleep duration.
+    private static final String KEY_SLEEP_MINUTES = "squeezer.sleep_minutes";
+
     private final Context context;
     private final SharedPreferences sharedPreferences;
     private final int defaultCliPort;
@@ -748,6 +751,14 @@ public final class Preferences {
 
     public void setForwardSeconds(int seconds) {
         sharedPreferences.edit().putInt(KEY_FORWARD_SECONDS, seconds).apply();
+    }
+
+    public int getSleepMinutes() {
+        return sharedPreferences.getInt(KEY_SLEEP_MINUTES, 120);
+    }
+
+    public void setSleepMinutes(int minutes) {
+        sharedPreferences.edit().putInt(KEY_SLEEP_MINUTES, minutes).apply();
     }
 
     public enum IncomingCallAction implements EnumWithText {

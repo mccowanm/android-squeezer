@@ -87,7 +87,7 @@ public class PlayerListActivity extends ItemListActivity implements
         return false;
     }
 
-
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onEventMainThread(PlayerVolume event) {
         if (mTrackingTouch != event.player) {
             adapter.notifyItemChanged(event.player);

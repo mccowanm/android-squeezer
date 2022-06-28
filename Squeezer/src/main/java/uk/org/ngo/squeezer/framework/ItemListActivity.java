@@ -40,6 +40,7 @@ import java.util.Stack;
 
 import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
+import uk.org.ngo.squeezer.itemlist.HomeActivity;
 import uk.org.ngo.squeezer.itemlist.dialog.ArtworkListLayout;
 import uk.org.ngo.squeezer.model.Item;
 import uk.org.ngo.squeezer.service.ISqueezeService;
@@ -271,15 +272,7 @@ public abstract class ItemListActivity extends BaseActivity {
     @MainThread
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onEventMainThread(ActivePlayerChanged event) {
-        Log.i(TAG, "ActivePlayerChanged: " + event.player);
-        supportInvalidateOptionsMenu();
-        if (needPlayer()) {
-            if (event.player == null) {
-                showEmptyView();
-            } else {
-                clearAndReOrderItems();
-            }
-        }
+        HomeActivity.show(this);
     }
 
     /**

@@ -79,18 +79,18 @@ public class ServerAddressView extends LinearLayout implements ScanNetworkTask.S
 
     public ServerAddressView(final Context context) {
         super(context);
-        initialize(context);
+        initialize();
     }
 
     public ServerAddressView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        initialize(context);
+        initialize();
     }
 
-    private void initialize(final Context context) {
-        inflate(context, R.layout.server_address_view, this);
+    private void initialize() {
+        inflate(getContext(), R.layout.server_address_view, this);
         if (!isInEditMode()) {
-            preferences = new Preferences(context);
+            preferences = new Preferences(getContext());
             serverAddress = preferences.getServerAddress();
             if (serverAddress.localAddress() == null) {
                 Preferences.ServerAddress cliServerAddress = preferences.getCliServerAddress();
@@ -111,11 +111,11 @@ public class ServerAddressView extends LinearLayout implements ScanNetworkTask.S
             macLayout = findViewById(R.id.mac_til);
             macEditText = findViewById(R.id.mac);
             macLayout.setEndIconOnClickListener(view -> {
-                FragmentManager fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
+                FragmentManager fragmentManager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
                 InfoDialog.show(fragmentManager, R.string.settings_MAC_label, R.string.settings_MAC_info);
             });
             macLayout.setErrorIconOnClickListener(view -> {
-                FragmentManager fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
+                FragmentManager fragmentManager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
                 InfoDialog.show(fragmentManager, R.string.settings_MAC_label, R.string.settings_MAC_info);
             });
             macEditText.setOnFocusChangeListener((view, b) -> {
@@ -149,7 +149,7 @@ public class ServerAddressView extends LinearLayout implements ScanNetworkTask.S
             serverName = findViewById(R.id.server_name);
 
             // Set up the servers spinner.
-            serversAdapter = new ArrayAdapter<>(context, R.layout.dropdown_item);
+            serversAdapter = new ArrayAdapter<>(getContext(), R.layout.dropdown_item);
             serversSpinner_til = findViewById(R.id.found_servers_til);
             serversSpinner = findViewById(R.id.found_servers);
             serversSpinner.setAdapter(serversAdapter);
@@ -157,8 +157,8 @@ public class ServerAddressView extends LinearLayout implements ScanNetworkTask.S
             setSqueezeNetwork(serverAddress.squeezeNetwork);
             setServerAddress(serverAddress.localAddress());
 
-            startNetworkScan(context);
-            startNetWorkScan = v -> startNetworkScan(context);
+            startNetworkScan();
+            startNetWorkScan = v -> startNetworkScan();
             serversSpinner_til.setStartIconOnClickListener(startNetWorkScan);
         }
     }
@@ -202,14 +202,14 @@ public class ServerAddressView extends LinearLayout implements ScanNetworkTask.S
     /**
      * Starts scanning for servers.
      */
-    void startNetworkScan(Context context) {
+    private void startNetworkScan() {
         scanProgress.setVisibility(VISIBLE);
         serverName_til.setStartIconDrawable(android.R.color.transparent);
         serverName_til.setStartIconOnClickListener(null);
         serverName.setText(R.string.settings_server_scan_progress);
         serverName_til.setVisibility(VISIBLE);
         serversSpinner_til.setVisibility(GONE);
-        scanNetworkTask = new ScanNetworkTask(context, this);
+        scanNetworkTask = new ScanNetworkTask(getContext(), this);
         new Thread(scanNetworkTask).start();
 
         scanProgress.setProgress(0);
@@ -249,13 +249,11 @@ public class ServerAddressView extends LinearLayout implements ScanNetworkTask.S
             serverName_til.setStartIconOnClickListener(startNetWorkScan);
             serverName_til.setVisibility(VISIBLE);
         } else {
-            for (Entry<String, String> e : discoveredServers.entrySet()) {
-                serversAdapter.add(e.getKey());
-            }
+            serversAdapter.addAll(discoveredServers.keySet());
             serversAdapter.add(getContext().getString(R.string.settings_manual_server_addr));
             serversAdapter.notifyDataSetChanged();
 
-            // First look the stored server name in the list of found servers
+            // First look for the stored server name in the list of found servers
             String addressOfStoredServerName = discoveredServers.get(serverAddress.serverName());
             int position = getServerPosition(addressOfStoredServerName);
 

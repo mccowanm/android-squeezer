@@ -158,7 +158,7 @@ public class ConnectActivity extends BaseActivity {
     /**
      * Act on the user requesting a server connection through the activity's UI.
      */
-    public void onUserInitiatesConnect() {
+    private void onUserInitiatesConnect() {
         if (serverAddressView.savePreferences()) {
             NowPlayingFragment fragment = (NowPlayingFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.now_playing_fragment);

@@ -64,8 +64,8 @@ android {
 
         buildConfigField "String", "GIT_DESCRIPTION", "\"${gitDescription}\""
 
-        versionCode 115
-        versionName "2.2.10-beta-0"
+        versionCode 117
+        versionName "2.3.0"
 
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true

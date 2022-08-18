@@ -36,9 +36,13 @@
     <string name="settings_theme_title">Tema</string>
     <string name="settings_theme_dark">Mørk</string>
     <string name="settings_theme_light_dark">Lys, mørk handlingslinie</string>
-    <string name="settings_clear_current_playlist_confirmation">Bekræft før ryd afspilningsliste</string>
-    <string name="settings_clear_current_playlist_confirmation_off">Ingen bekræftelse ved anvendelse af \"Ryd afspilningsliste\" knappen</string>
-    <string name="settings_clear_current_playlist_confirmation_on">Der skal bekræftes ved anvendelse af \"Ryd afspilningsliste\" knappen</string>
+    <string name="settings_screensaver_title">Hold skærmen tændt</string>
+    <string name="settings_screensaver_off">Nej</string>
+    <string name="settings_screensaver_on">Ja</string>
+    <string name="settings_screensaver_clock">Vis ur ved inaktivitet</string>
+    <string name="settings_clear_current_playlist_confirmation">Når afspilningslisten ryddes</string>
+    <string name="settings_clear_current_playlist_confirmation_off">bed ikke om bekræftelse</string>
+    <string name="settings_clear_current_playlist_confirmation_on">bed om bekræftelse</string>
     <string name="settings_username_hint">Eventuelt SqueezeBox Server brugernavn.</string>
     <string name="settings_password_hint">Eventuel SqueezeBox Server adgangskode.</string>
     <string name="settings_use_wake_on_lan">Væk server (Wake-on-LAN)</string>
@@ -62,7 +66,13 @@
     <string name="settings_action_on_incoming_call_title">Handling når du modtager eller foretager et opkald</string>
     <string name="settings_no_action_on_incoming_call">Gør intet</string>
     <string name="settings_restore_after_call">Vend automatisk tilbage til musik efter et telefon opkald</string>
+    <string name="call_state_permission_title">Adgang til telefon er påkrævet</string>
+    <string name="call_state_permission_message">Squeezer kan sætte musikken på pause, når du modtager eller foretager
+        et opkald. Dette kræver, at Squeezer bliver underrettet, når opkaldstilstanden ændres.</string>
+    <string name="request_permission">Anmod om tilladelse</string>
 
+    <string name="settings_category_display">Skærm</string>
+    <string name="settings_category_ui">Genveje, mv.</string>
     <string name="settings_customize_home_menu_mode">Arkiv</string>
     <string name="settings_customize_home_menu_info">Langt tryk på et passende emne arkiverer det</string>
     <string name="settings_customize_home_menu_archive">Aktiveret</string>
@@ -214,7 +224,7 @@
     <string name="ARCHIVE_CANNOT_BE_ARCHIVED">Arkivet kan ikke arkiveres!</string>
     <string name="ARCHIVE_NODE_REMOVED">Fjernet tomt arkiv</string>
     <string name="ITEM_CANNOT_BE_ARCHIVED">Dette element kan ikke arkiveres!</string>
-    <string name="CUSTOM_SHORTCUT_REMOVED">Brugerdefineret genvej er fjernet</string>
+    <string name="CUSTOM_SHORTCUT_REMOVED">Genvej er fjernet fra startskærmen</string>
     <string name="ITEM_IS_ALREADY_A_SHORTCUT">Er allerede en genvej!</string>
     <string name="ITEM_PUT_AS_SHORTCUT_ON_HOME_MENU">Genvej sat på startmenuen</string>
     <string name="ITEM_CAN_NOT_BE_SHORTCUT_OR_ARCHIVED">Kan ikke være genvej eller arkiveres!</string>
@@ -227,5 +237,7 @@
     <string name="PLAY_RANDOM_FOLDER">Spil tilfældigt</string>
     <string name="backward_seconds">Sekunder tilbage</string>
     <string name="forward_seconds">Sekunder frem</string>
+    <string name="RANDOM_PLAY_UNABLE">Fejl ved start af tilfældig afspilning</string>
+    <string name="RANDOM_PLAY_STARTED">Tilfældig afspilning er start</string>
 
 </resources>

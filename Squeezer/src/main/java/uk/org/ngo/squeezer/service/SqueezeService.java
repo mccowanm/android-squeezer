@@ -1099,6 +1099,13 @@ public class SqueezeService extends Service {
             }
         }
 
+        private void setPlayerVolume(Player player, int percentage) {
+            int volume = Math.min(100, Math.max(0, percentage));
+            mDelegate.command(player).cmd("mixer", "volume", String.valueOf(volume)).exec();
+            player.getPlayerState().setCurrentVolume(volume);
+            mEventBus.post(new PlayerVolume(player));
+        }
+
         @Override
         public void adjustVolume(int direction) {
             Set<Player> syncGroup = mDelegate.getVolumeSyncGroup(mGroupVolume);
@@ -1118,16 +1125,15 @@ public class SqueezeService extends Service {
                             e.printStackTrace();
                         }
                     }
-                    int currentVolume = player.getPlayerState().getCurrentVolume();
-                    setPlayerVolume(player, currentVolume + adjust);
+                    adjustPlayerVolume(player, adjust);
                 }
             }
         }
 
-        private void setPlayerVolume(Player player, int percentage) {
-            int volume = Math.min(100, Math.max(0, percentage));
-            mDelegate.command(player).cmd("mixer", "volume", String.valueOf(volume)).exec();
-            player.getPlayerState().setCurrentVolume(volume);
+        private void adjustPlayerVolume(Player player, int adjust) {
+            mDelegate.command(player).cmd("mixer", "volume", (adjust > 0 ? "+" : "") + adjust).exec();
+            int currentVolume = player.getPlayerState().getCurrentVolume();
+            player.getPlayerState().setCurrentVolume(currentVolume + adjust);
             mEventBus.post(new PlayerVolume(player));
         }
 

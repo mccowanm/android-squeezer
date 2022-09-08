@@ -83,7 +83,6 @@ public class HomeActivity extends HomeMenuActivity {
     }
 
     public static void show(Context context) {
-        Log.i(TAG, "show()");
         Intent intent = new Intent(context, HomeActivity.class)
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);

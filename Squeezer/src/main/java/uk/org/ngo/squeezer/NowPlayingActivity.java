@@ -22,15 +22,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
-import androidx.annotation.MainThread;
 import androidx.appcompat.app.ActionBar;
 
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
 import uk.org.ngo.squeezer.framework.BaseActivity;
-import uk.org.ngo.squeezer.itemlist.HomeActivity;
-import uk.org.ngo.squeezer.service.event.ActivePlayerChanged;
 
 public class NowPlayingActivity extends BaseActivity {
 
@@ -77,11 +71,5 @@ public class NowPlayingActivity extends BaseActivity {
             overridePendingTransition(android.R.anim.fade_in, R.anim.slide_out_down);
         }
         super.onPause();
-    }
-
-    @MainThread
-    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
-    public void onEventMainThread(ActivePlayerChanged event) {
-        HomeActivity.show(this);
     }
 }

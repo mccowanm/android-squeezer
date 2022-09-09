@@ -45,6 +45,7 @@ import uk.org.ngo.squeezer.model.Alarm;
 import uk.org.ngo.squeezer.model.AlarmPlaylist;
 import uk.org.ngo.squeezer.model.Player;
 import uk.org.ngo.squeezer.service.ISqueezeService;
+import uk.org.ngo.squeezer.service.event.ActivePlayerChanged;
 import uk.org.ngo.squeezer.util.CompoundButtonWrapper;
 import uk.org.ngo.squeezer.widget.UndoBarController;
 
@@ -199,6 +200,12 @@ public class AlarmsActivity extends BaseListActivity<AlarmView, Alarm> implement
         boolean alarmsEnabled = "1".equals(prefs.get(Player.Pref.ALARMS_ENABLED));
         mAlarmsEnabledButton.setChecked(alarmsEnabled);
         mAllAlarmsHintView.setText(alarmsEnabled ? R.string.all_alarms_on_hint : R.string.all_alarms_off_hint);
+    }
+
+    @MainThread
+    public void onEventMainThread(ActivePlayerChanged event) {
+        super.onEventMainThread(event);
+        mActivePlayer = event.player;
     }
 
     @Override

@@ -18,7 +18,6 @@ package uk.org.ngo.squeezer.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.text.InputType;
 
 import androidx.annotation.NonNull;
 
@@ -32,9 +31,6 @@ import uk.org.ngo.squeezer.Util;
  * http://wiki.slimdevices.com/index.php/SqueezeCenterSqueezePlayInterface#.3Cactions_fields.3E
  */
 public class Action implements Parcelable {
-
-    private static final String TAG = "Action";
-
     private static final String INPUT_PLACEHOLDER = "__INPUT__";
     private static final String TAGGEDINPUT_PLACEHOLDER = "__TAGGEDINPUT__";
 
@@ -45,7 +41,7 @@ public class Action implements Parcelable {
     public Action() {
     }
 
-    public static final Creator<Action> CREATOR = new Creator<Action>() {
+    public static final Creator<Action> CREATOR = new Creator<>() {
         @Override
         public Action[] newArray(int size) {
             return new Action[size];
@@ -138,7 +134,7 @@ public class Action implements Parcelable {
      */
     public static class JsonAction extends SlimCommand {
         /** If a nextWindow param is given at the json command level, it takes precedence over a nextWindow param at the item level,
-         * which in turn takes precendence over a nextWindow param at the base level.
+         * which in turn takes precedence over a nextWindow param at the base level.
          * See <item_fields> section for more detail on this parameter. */
         public NextWindow nextWindow;
 
@@ -148,7 +144,7 @@ public class Action implements Parcelable {
         public JsonAction() {
         }
 
-        public static final Creator<JsonAction> CREATOR = new Creator<JsonAction>() {
+        public static final Creator<JsonAction> CREATOR = new Creator<>() {
             @Override
             public JsonAction[] newArray(int size) {
                 return new JsonAction[size];

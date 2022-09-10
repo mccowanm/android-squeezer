@@ -22,8 +22,6 @@ import android.text.InputType;
 
 import androidx.annotation.NonNull;
 
-import org.json.JSONObject;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -132,11 +130,6 @@ public class Action implements Parcelable {
                 '}';
     }
 
-    public String toJSONString() {
-        return "{\"Action\": {\"urlCommand\":\"null\"," + action.toJSONString() +
-                "}}";
-    }
-
 
     /**
      * Action which can be sent to the server.
@@ -209,12 +202,6 @@ public class Action implements Parcelable {
                     ", params=" + params +
                     ", nextWindow=" + nextWindow +
                     '}';
-        }
-
-        public String toJSONString() {
-            return "\"JsonAction\": {\"cmd\": " + cmd + ", \"params\": "
-                    + (new JSONObject(params)).toString() + // TODO toJSONString - ok bis auf isContextMenu:1 ??
-                    ", \"nextWindow\":  \"null\"}";
         }
     }
 

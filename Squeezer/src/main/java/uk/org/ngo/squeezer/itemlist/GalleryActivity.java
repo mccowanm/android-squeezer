@@ -72,7 +72,7 @@ public class GalleryActivity extends BaseActivity implements IServiceItemListCal
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onEventMainThread(HandshakeComplete event) {
         Log.d("GalleryActivity", "Handshake complete");
-        getService().pluginItems(action, this);
+        requireService().pluginItems(action, this);
     }
 
     private class ImageAdapter extends RecyclerView.Adapter<ImageViewHolder> {

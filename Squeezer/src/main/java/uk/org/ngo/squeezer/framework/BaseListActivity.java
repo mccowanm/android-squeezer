@@ -49,8 +49,6 @@ import uk.org.ngo.squeezer.util.ImageFetcher;
  * @author Kurt Aaholst
  */
 public abstract class BaseListActivity<VH extends ItemViewHolder<T>, T extends Item> extends ItemListActivity implements IServiceItemListCallback<T> {
-
-    private static final String TAG = "BaseListActivity";
     /**
      * Tag for first visible position in mRetainFragment.
      */
@@ -76,7 +74,7 @@ public abstract class BaseListActivity<VH extends ItemViewHolder<T>, T extends I
     public void onEventMainThread(HandshakeComplete event) {
         Log.d("BaseLitActivity", "Handshake complete");
         super.onEventMainThread(event);
-        if (!needPlayer() || getService().getActivePlayer() != null) {
+        if (!needPlayer() || requireService().getActivePlayer() != null) {
             maybeOrderVisiblePages(getListView());
         } else {
             showEmptyView();

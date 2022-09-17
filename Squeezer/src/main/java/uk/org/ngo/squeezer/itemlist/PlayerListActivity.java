@@ -142,7 +142,7 @@ public class PlayerListActivity extends ItemListActivity implements
      */
     @Override
     public void syncPlayerToPlayer(@NonNull Player slave, @NonNull String masterId) {
-        getService().syncPlayerToPlayer(slave, masterId);
+        requireService().syncPlayerToPlayer(slave, masterId);
     }
 
     /**
@@ -152,7 +152,7 @@ public class PlayerListActivity extends ItemListActivity implements
      */
     @Override
     public void unsyncPlayer(@NonNull Player player) {
-        getService().unsyncPlayer(player);
+        requireService().unsyncPlayer(player);
     }
 
     @Override
@@ -162,7 +162,7 @@ public class PlayerListActivity extends ItemListActivity implements
 
     @Override
     public void setPlayTrackAlbum(@NonNull String option) {
-        getService().playerPref(currentPlayer, Player.Pref.PLAY_TRACK_ALBUM, option);
+        requireService().playerPref(currentPlayer, Player.Pref.PLAY_TRACK_ALBUM, option);
     }
 
     @Override
@@ -172,7 +172,7 @@ public class PlayerListActivity extends ItemListActivity implements
 
     @Override
     public void setDefeatDestructiveTTP(@NonNull String option) {
-        getService().playerPref(currentPlayer, Player.Pref.DEFEAT_DESTRUCTIVE_TTP, option);
+        requireService().playerPref(currentPlayer, Player.Pref.DEFEAT_DESTRUCTIVE_TTP, option);
     }
 
     @Override
@@ -183,7 +183,7 @@ public class PlayerListActivity extends ItemListActivity implements
     @Override
     public void setSyncVolume(@NonNull String option) {
         for (int i = 0; i < currentSyncGroup.getItemCount(); i++) {
-            getService().playerPref(currentSyncGroup.getItem(i), Player.Pref.SYNC_VOLUME, option);
+            requireService().playerPref(currentSyncGroup.getItem(i), Player.Pref.SYNC_VOLUME, option);
         }
     }
 
@@ -195,7 +195,7 @@ public class PlayerListActivity extends ItemListActivity implements
     @Override
     public void setSyncPower(@NonNull String option) {
         for (int i = 0; i < currentSyncGroup.getItemCount(); i++) {
-            getService().playerPref(currentSyncGroup.getItem(i), Player.Pref.SYNC_POWER, option);
+            requireService().playerPref(currentSyncGroup.getItem(i), Player.Pref.SYNC_POWER, option);
         }
     }
 
@@ -208,7 +208,7 @@ public class PlayerListActivity extends ItemListActivity implements
      * expanded.
      */
     protected void updateAndExpandPlayerList() {
-        updateSyncGroups(getService().getPlayers());
+        updateSyncGroups(requireService().getPlayers());
         adapter.setSyncGroups(mPlayerSyncGroups);
     }
 

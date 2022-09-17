@@ -108,11 +108,26 @@ public abstract class BaseActivity extends AppCompatActivity implements Download
     private VolumePanel mVolumePanel;
 
     /**
-     * @return The squeezeservice, or null if not bound
+     * @return The {@link ISqueezeService}, or null if not bound
      */
     @Nullable
     public ISqueezeService getService() {
         return mService;
+    }
+
+    /**
+     * Return the {@link ISqueezeService} this activity is currently bound to.
+     *
+     * @throws IllegalStateException if service is not bound.
+     * @see #getService()
+     */
+    @NonNull
+    public final ISqueezeService requireService() {
+        ISqueezeService service = getService();
+        if (service == null) {
+            throw new IllegalStateException(this + " service is not bound");
+        }
+        return service;
     }
 
     public int getThemeId() {
@@ -446,7 +461,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Download
         text.setText(display.text);
 
         if (display.isIcon() || display.isMixed() || display.isPopupAlbum()) {
-            if (display.isIcon() && new HashSet<String>(Arrays.asList("play", "pause", "stop", "fwd", "rew")).contains(display.style)) {
+            if (display.isIcon() && new HashSet<>(Arrays.asList("play", "pause", "stop", "fwd", "rew")).contains(display.style)) {
                 // Play status is updated in the NowPlayingFragment (either full-screen or mini)
                 showMe = false;
             } else {
@@ -536,7 +551,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Download
     }
 
     public void randomPlayFolder(JiveItem item) {
-        if (!mService.randomPlayFolder(item)) {
+        if (!requireService().randomPlayFolder(item)) {
             showDisplayMessage(R.string.RANDOM_PLAY_UNABLE);
         } else {
             showDisplayMessage(R.string.RANDOM_PLAY_STARTED);
@@ -550,7 +565,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Download
             currentDownloadItem = item;
             requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
         } else
-            mService.downloadItem(item);
+            requireService().downloadItem(item);
     }
 
     private JiveItem currentDownloadItem;
@@ -562,7 +577,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Download
             case 1:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     if (currentDownloadItem != null) {
-                        mService.downloadItem(currentDownloadItem);
+                        requireService().downloadItem(currentDownloadItem);
                         currentDownloadItem = null;
                     } else
                         Toast.makeText(this, "Please select download again now that we have permission to save it", Toast.LENGTH_LONG).show();

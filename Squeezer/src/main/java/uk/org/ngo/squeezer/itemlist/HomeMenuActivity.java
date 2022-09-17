@@ -20,7 +20,6 @@ package uk.org.ngo.squeezer.itemlist;
 import android.app.Activity;
 import android.content.Intent;
 import android.view.View;
-import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -86,7 +85,7 @@ public class HomeMenuActivity extends JiveItemListActivity {
                     // Turn off the home icon.
                     actionBar.setDisplayHomeAsUpEnabled(false);
                 } else {
-                    boolean inArchive = JiveItem.ARCHIVE.equals(parent) || getService().isInArchive(parent);
+                    boolean inArchive = JiveItem.ARCHIVE.equals(parent) || requireService().isInArchive(parent);
                     actionBar.setHomeAsUpIndicator(inArchive ? R.drawable.ic_action_archive : R.drawable.ic_action_home);
                 }
             }

@@ -167,6 +167,7 @@ public abstract class ItemListActivity extends BaseActivity {
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected <T> T getRetainedValue(String key) {
         return (T) mRetainFragment.get(key);
     }
@@ -296,7 +297,7 @@ public abstract class ItemListActivity extends BaseActivity {
     public void onEventMainThread(HandshakeComplete event) {
         Log.d(TAG, "Handshake complete");
         String oldPlayerId = getRetainedValue(TAG_PLAYER_ID);
-        Player activePlayer = getService().getActivePlayer();
+        Player activePlayer = requireService().getActivePlayer();
         String activePlayerId = (activePlayer != null ? activePlayer.getId() : "");
         putRetainedValue(TAG_PLAYER_ID, activePlayerId);
         if (oldPlayerId != null && !oldPlayerId.equals(activePlayerId)) {
@@ -372,7 +373,7 @@ public abstract class ItemListActivity extends BaseActivity {
      * Empties the variables that track which pages have been requested, and orders page 0.
      */
     public void clearAndReOrderItems() {
-        if (!(needPlayer() && getService().getActivePlayer() == null)) {
+        if (!(needPlayer() && requireService().getActivePlayer() == null)) {
             showLoading();
             clearItems();
             maybeOrderPage(0);

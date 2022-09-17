@@ -303,11 +303,11 @@ public class NowPlayingFragment extends Fragment implements CallStateDialog.Call
         // Marquee effect on TextViews only works if they're focused.
         trackText.requestFocus();
 
-        playPauseButton.setOnClickListener(view -> mService.togglePausePlay());
+        playPauseButton.setOnClickListener(view -> requireService().togglePausePlay());
 
         volumeButton.setOnClickListener(view -> mActivity.showVolumePanel());
-        nextButton.setOnClickListener(view -> mService.nextTrack());
-        prevButton.setOnClickListener(view -> mService.previousTrack());
+        nextButton.setOnClickListener(view -> requireService().nextTrack());
+        prevButton.setOnClickListener(view -> requireService().previousTrack());
 
         if (mFullHeightLayout) {
             artistText.setOnClickListener(v1 -> {
@@ -347,9 +347,9 @@ public class NowPlayingFragment extends Fragment implements CallStateDialog.Call
                 return detector.onTouchEvent(event);
             });
 
-            shuffleButton.setOnClickListener(view -> mService.toggleShuffle());
+            shuffleButton.setOnClickListener(view -> requireService().toggleShuffle());
 
-            repeatButton.setOnClickListener(view -> mService.toggleRepeat());
+            repeatButton.setOnClickListener(view -> requireService().toggleRepeat());
 
             playlistButton.setOnClickListener(view -> CurrentPlaylistActivity.show(mActivity));
 
@@ -506,7 +506,7 @@ public class NowPlayingFragment extends Fragment implements CallStateDialog.Call
             final ArrayAdapter<Player> playerAdapter = new ArrayAdapter<>(actionBarContext, R.layout.dropdown_item, connectedPlayers) {
                 @Override
                 public @NonNull View getView(int position, View convertView, @NonNull ViewGroup parent) {
-                    TextView view = (TextView) getActivity().getLayoutInflater().inflate(R.layout.dropdown_item, parent, false);
+                    TextView view = (TextView) requireActivity().getLayoutInflater().inflate(R.layout.dropdown_item, parent, false);
                     view.setText(getItem(position).getName());
                     return view;
                 }
@@ -518,8 +518,8 @@ public class NowPlayingFragment extends Fragment implements CallStateDialog.Call
                 Player selectedItem = playerAdapter.getItem(position);
                 spinner.setText(selectedItem.getName(), false);
                 if (getActivePlayer() != selectedItem) {
-                    mService.setActivePlayer(selectedItem);
-                    updateUiFromPlayerState(mService.getActivePlayerState());
+                    requireService().setActivePlayer(selectedItem);
+                    updateUiFromPlayerState(requireService().getActivePlayerState());
                 }
             });
         } else {
@@ -546,6 +546,19 @@ public class NowPlayingFragment extends Fragment implements CallStateDialog.Call
         if (canAutoConnect()) {
             startVisibleConnection(true);
         }
+    }
+
+    /**
+     * Return the {@link ISqueezeService} this activity is currently bound to.
+     *
+     * @throws IllegalStateException if service is not bound.
+     */
+    @NonNull
+    private ISqueezeService requireService() {
+        if (mService == null) {
+            throw new IllegalStateException(this + " service is not bound");
+        }
+        return mService;
     }
 
     @Override
@@ -644,7 +657,7 @@ public class NowPlayingFragment extends Fragment implements CallStateDialog.Call
                 artistText.setText(song.getArtist());
                 albumText.setText(song.getAlbum());
 
-                mService.pluginItems(song.moreAction, new IServiceItemListCallback<>() {
+                requireService().pluginItems(song.moreAction, new IServiceItemListCallback<>() {
                     @Override
                     public void onItemsReceived(int count, int start, Map<String, Object> parameters, List<JiveItem> items, Class<JiveItem> dataType) {
                         albumItem = findBrowseAction(items, "album_id");
@@ -736,7 +749,7 @@ public class NowPlayingFragment extends Fragment implements CallStateDialog.Call
         mActivity.unregisterReceiver(broadcastReceiver);
 
         if (mRegisteredCallbacks) {
-            mService.getEventBus().unregister(this);
+            requireService().getEventBus().unregister(this);
             mRegisteredCallbacks = false;
         }
 
@@ -974,7 +987,7 @@ public class NowPlayingFragment extends Fragment implements CallStateDialog.Call
     @MainThread
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onEventMainThread(MusicChanged event) {
-        if (event.player.equals(mService.getActivePlayer())) {
+        if (event.player.equals(requireService().getActivePlayer())) {
             updateSongInfo(event.playerState);
         }
     }
@@ -982,13 +995,13 @@ public class NowPlayingFragment extends Fragment implements CallStateDialog.Call
     @MainThread
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onEventMainThread(PlayersChanged event) {
-        updatePlayerDropDown(mService.getPlayers(), mService.getActivePlayer());
+        updatePlayerDropDown(requireService().getPlayers(), requireService().getActivePlayer());
     }
 
     @MainThread
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onEventMainThread(PlayStatusChanged event) {
-        if (event.player.equals(mService.getActivePlayer())) {
+        if (event.player.equals(requireService().getActivePlayer())) {
             updatePlayPauseIcon(event.playStatus);
         }
     }
@@ -996,7 +1009,7 @@ public class NowPlayingFragment extends Fragment implements CallStateDialog.Call
     @MainThread
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onEventMainThread(PowerStatusChanged event) {
-        if (event.player.equals(mService.getActivePlayer())) {
+        if (event.player.equals(requireService().getActivePlayer())) {
             updatePlayerMenuItems();
         }
     }
@@ -1019,7 +1032,7 @@ public class NowPlayingFragment extends Fragment implements CallStateDialog.Call
     @MainThread
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onEventMainThread(RepeatStatusChanged event) {
-        if (event.player.equals(mService.getActivePlayer())) {
+        if (event.player.equals(requireService().getActivePlayer())) {
             updateRepeatStatus(event.repeatStatus);
         }
     }
@@ -1027,7 +1040,7 @@ public class NowPlayingFragment extends Fragment implements CallStateDialog.Call
     @MainThread
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onEventMainThread(ShuffleStatusChanged event) {
-        if (event.player.equals(mService.getActivePlayer())) {
+        if (event.player.equals(requireService().getActivePlayer())) {
             updateShuffleStatus(event.shuffleStatus);
         }
     }
@@ -1035,7 +1048,7 @@ public class NowPlayingFragment extends Fragment implements CallStateDialog.Call
     @MainThread
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onEventMainThread(SongTimeChanged event) {
-        if (event.player.equals(mService.getActivePlayer())) {
+        if (event.player.equals(requireService().getActivePlayer())) {
             updateTimeDisplayTo(event.currentPosition, event.duration);
         }
     }

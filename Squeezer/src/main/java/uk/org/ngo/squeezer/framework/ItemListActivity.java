@@ -42,6 +42,7 @@ import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.itemlist.dialog.ArtworkListLayout;
 import uk.org.ngo.squeezer.model.Item;
+import uk.org.ngo.squeezer.model.Player;
 import uk.org.ngo.squeezer.service.ISqueezeService;
 import uk.org.ngo.squeezer.service.SqueezeService;
 import uk.org.ngo.squeezer.service.event.ActivePlayerChanged;
@@ -109,6 +110,11 @@ public abstract class ItemListActivity extends BaseActivity {
      * Tag for mReceivedPages in mRetainFragment.
      */
     private static final String TAG_RECEIVED_PAGES = "mReceivedPages";
+
+    /**
+     * Tag for player id in mRetainFragment.
+     */
+    private static final String TAG_PLAYER_ID = "PlayerId";
 
     /**
      * Fragment to retain information across the activity lifecycle.
@@ -288,10 +294,18 @@ public abstract class ItemListActivity extends BaseActivity {
     @MainThread
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onEventMainThread(HandshakeComplete event) {
-        Log.d("ItemListActivity", "Handshake complete");
-        // Order any pages that were requested before the handshake complete.
-        while (!mOrderedPagesBeforeHandshake.empty()) {
-            maybeOrderPage(mOrderedPagesBeforeHandshake.pop());
+        Log.d(TAG, "Handshake complete");
+        String oldPlayerId = getRetainedValue(TAG_PLAYER_ID);
+        Player activePlayer = getService().getActivePlayer();
+        String activePlayerId = (activePlayer != null ? activePlayer.getId() : "");
+        putRetainedValue(TAG_PLAYER_ID, activePlayerId);
+        if (oldPlayerId != null && !oldPlayerId.equals(activePlayerId)) {
+            onEventMainThread(new ActivePlayerChanged(activePlayer));
+        } else {
+            // Order any pages that were requested before the handshake complete.
+            while (!mOrderedPagesBeforeHandshake.empty()) {
+                maybeOrderPage(mOrderedPagesBeforeHandshake.pop());
+            }
         }
     }
 

@@ -642,6 +642,7 @@ public class JiveItem extends Item {
     private Action.JsonAction extractJsonAction(Map<String, Object> baseRecord, Map<String, Object> actionRecord, Map<String, Object> itemParams) {
         Action.JsonAction action = new Action.JsonAction();
 
+        action.players = "0".equals(getString(actionRecord, "player")) ? new String[0] : Util.getStringArray(actionRecord, "player");
         action.nextWindow = Action.NextWindow.fromString(getString(actionRecord, "nextWindow"));
         if (action.nextWindow == null) action.nextWindow = nextWindow;
         if (action.nextWindow == null && baseRecord != null)

@@ -37,6 +37,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.LayoutRes;
+import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.view.MenuCompat;
@@ -47,6 +48,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -63,8 +65,10 @@ import uk.org.ngo.squeezer.framework.ViewParamItemView;
 import uk.org.ngo.squeezer.itemlist.dialog.ArtworkListLayout;
 import uk.org.ngo.squeezer.model.Action;
 import uk.org.ngo.squeezer.model.JiveItem;
+import uk.org.ngo.squeezer.model.Player;
 import uk.org.ngo.squeezer.model.Window;
 import uk.org.ngo.squeezer.service.ISqueezeService;
+import uk.org.ngo.squeezer.service.event.ActivePlayerChanged;
 import uk.org.ngo.squeezer.service.event.HandshakeComplete;
 import uk.org.ngo.squeezer.util.ImageFetcher;
 import uk.org.ngo.squeezer.util.ThemeManager;
@@ -329,6 +333,21 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
             updateHeader(parent);
             getItemAdapter().update(parent.subItems.size(), 0, parent.subItems);
         }
+    }
+
+    @MainThread
+    public void onEventMainThread(ActivePlayerChanged event) {
+        if (action != null && !forActivePlayer(action)) {
+            finish();
+            return;
+        }
+        super.onEventMainThread(event);
+    }
+
+    protected boolean forActivePlayer(Action action) {
+        Player activePlayer = requireService().getActivePlayer();
+        String playerId = (activePlayer != null ? activePlayer.getId() : null);
+        return !action.isPlayerSpecific() || Arrays.asList(action.action.players).contains(playerId);
     }
 
     @Override
@@ -670,6 +689,12 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
      * @see #orderPage(ISqueezeService, int)
      */
     public static void show(Activity activity, JiveItem parent, Action action) {
+        if (activity instanceof JiveItemListActivity) {
+            Action parentAction = ((JiveItemListActivity) activity).action;
+            if (parentAction != null && parentAction.isPlayerSpecific() && !action.isPlayerSpecific()) {
+                action.action.players = parentAction.action.players;
+            }
+        }
         final Intent intent = getPluginListIntent(activity);
         intent.putExtra(JiveItem.class.getName(), parent);
         intent.putExtra(Action.class.getName(), action);

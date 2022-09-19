@@ -94,10 +94,14 @@ public class HomeMenuActivity extends JiveItemListActivity {
         onItemsReceived(menu.size(), 0, menu, JiveItem.class);
     }
 
+    /**
+     * Return a list of menu items filtered by the given node and player specific items, and ordered
+     * by weight, name.
+     */
     private List<JiveItem> getMenuNode(String node, List<JiveItem> homeMenu) {
         ArrayList<JiveItem> menu = new ArrayList<>();
         for (JiveItem item : homeMenu) {
-            if (node.equals(item.getNode())) {
+            if (node.equals(item.getNode()) && (item.goAction == null || forActivePlayer(item.goAction))) {
                 menu.add(item);
             }
         }

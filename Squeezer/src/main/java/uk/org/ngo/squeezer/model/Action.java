@@ -21,6 +21,7 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -117,6 +118,10 @@ public class Action implements Parcelable {
         return (action != null && "slideshow".equals(action.params.get("type")));
     }
 
+    public boolean isPlayerSpecific() {
+        return (action != null && action.players.length > 0);
+    }
+
     @NonNull
     @Override
     public String toString() {
@@ -133,6 +138,9 @@ public class Action implements Parcelable {
      * It is either received from the server or constructed from the CLI specification
      */
     public static class JsonAction extends SlimCommand {
+        /** Player if the command requires it. The actual value is replaced by Jive. */
+        public String[] players;
+
         /** If a nextWindow param is given at the json command level, it takes precedence over a nextWindow param at the item level,
          * which in turn takes precedence over a nextWindow param at the base level.
          * See <item_fields> section for more detail on this parameter. */
@@ -158,6 +166,7 @@ public class Action implements Parcelable {
 
         protected JsonAction(Parcel in) {
             super(in);
+            players = in.createStringArray();
             nextWindow = NextWindow.fromString(in.readString());
             window = ActionWindow.fromString(in.readString());
         }
@@ -165,6 +174,7 @@ public class Action implements Parcelable {
         @Override
         public void writeToParcel(Parcel dest, int flags) {
             super.writeToParcel(dest, flags);
+            dest.writeStringArray(players);
             dest.writeString(nextWindow == null ? null : nextWindow.toString());
             dest.writeString(window == null ? null : window.isContextMenu ? "1" : "0");
         }
@@ -194,7 +204,8 @@ public class Action implements Parcelable {
         @Override
         public String toString() {
             return "JsonAction{" +
-                    "cmd=" + cmd +
+                    "player=" + Arrays.toString(players) +
+                    ", cmd=" + cmd +
                     ", params=" + params +
                     ", nextWindow=" + nextWindow +
                     '}';

@@ -690,9 +690,11 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
      */
     public static void show(Activity activity, JiveItem parent, Action action) {
         if (activity instanceof JiveItemListActivity) {
-            Action parentAction = ((JiveItemListActivity) activity).action;
+            JiveItemListActivity jiveItemListActivity = (JiveItemListActivity) activity;
+            Action parentAction = jiveItemListActivity.action;
             if (parentAction != null && parentAction.isPlayerSpecific() && !action.isPlayerSpecific()) {
-                action.action.players = parentAction.action.players;
+                Player player = jiveItemListActivity.requireService().getActivePlayer();
+                action.action.players = (player != null ? new String[]{player.getId()} : parentAction.action.players);
             }
         }
         final Intent intent = getPluginListIntent(activity);

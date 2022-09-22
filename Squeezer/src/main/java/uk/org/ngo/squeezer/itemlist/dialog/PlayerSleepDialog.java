@@ -10,11 +10,17 @@ import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.Util;
 import uk.org.ngo.squeezer.framework.BaseActivity;
+import uk.org.ngo.squeezer.model.Player;
 import uk.org.ngo.squeezer.service.ISqueezeService;
 
 public class PlayerSleepDialog extends BaseEditTextDialog {
 
     private BaseActivity activity;
+    private Player player;
+
+    public PlayerSleepDialog(Player player) {
+        this.player = player;
+    }
 
     @NonNull
     @Override
@@ -38,7 +44,7 @@ public class PlayerSleepDialog extends BaseEditTextDialog {
         int minutes = (int) Util.parseDecimalInt(sleep, -1);
         if (minutes <= 0) return false;
 
-        service.sleep(service.getActivePlayer(), minutes*60);
+        service.sleep(player, minutes*60);
         new Preferences(activity).setSleepMinutes(minutes);
         return true;
     }

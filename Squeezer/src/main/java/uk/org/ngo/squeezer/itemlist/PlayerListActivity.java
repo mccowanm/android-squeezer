@@ -55,7 +55,6 @@ public class PlayerListActivity extends ItemListActivity implements
         SyncPowerDialog.SyncPowerDialogHost {
     private static final String CURRENT_PLAYER = "currentPlayer";
     private static final String CURRENT_SYNC_GROUP = "currentSyncGroup";
-    private static final String TAG = PlayerListActivity.class.getName();
     /**
      * Map from player IDs to Players synced to that player ID.
      */
@@ -258,7 +257,6 @@ public class PlayerListActivity extends ItemListActivity implements
             PlayerState playerState = player.getPlayerState();
             String syncMaster = playerState.getSyncMaster();
 
-            Log.d(TAG, "player discovered: id=" + playerId + ", syncMaster=" + syncMaster + ", name=" + name);
             if (syncMaster == null || playerId.equals(syncMaster)) {
                 // If a player doesn't have a sync master or the master is this player then add it as a
                 // slave with itself as master.

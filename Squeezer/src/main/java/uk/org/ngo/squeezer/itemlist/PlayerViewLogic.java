@@ -81,7 +81,7 @@ public class PlayerViewLogic {
                 service.sleep(selectedItem, 90*60);
                 return true;
             case R.id.in_x_minutes:
-                new PlayerSleepDialog().show(fragmentManager, PlayerSleepDialog.class.getName());
+                new PlayerSleepDialog(selectedItem).show(fragmentManager, PlayerSleepDialog.class.getName());
                 return true;
             case R.id.cancel_sleep:
                 service.sleep(selectedItem, 0);

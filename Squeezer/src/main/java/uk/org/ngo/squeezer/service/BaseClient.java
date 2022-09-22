@@ -169,7 +169,9 @@ abstract class BaseClient implements SlimClient {
     }
 
     protected void postPlayerStateChanged(Player player) {
-        mEventBus.post(new PlayerStateChanged(player));
+        if (mEventBus.hasSubscriberForEvent(PlayerStateChanged.class)) {
+            mEventBus.post(new PlayerStateChanged(player));
+        }
     }
 
     private boolean updatePlayStatus(PlayerState playerState, String playStatus) {

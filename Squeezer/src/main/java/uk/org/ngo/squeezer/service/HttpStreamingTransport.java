@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 
 import org.cometd.bayeux.Channel;
 import org.cometd.bayeux.Message;
+import org.cometd.bayeux.client.ClientSessionChannel;
 import org.cometd.client.transport.HttpClientTransport;
 import org.cometd.client.transport.MessageClientTransport;
 import org.cometd.client.transport.TransportListener;
@@ -599,6 +600,13 @@ public class HttpStreamingTransport extends HttpClientTransport implements Messa
 
                     Exchange exchange = deregisterMessage(message);
                     if (exchange != null) {
+                        // The cometd library expects the subscription field to be echoed by the server.
+                        // LMS doesn't always do that. E.g. seen for failing messages.
+                        // In this case we take if from the request.
+                        if (Channel.META_SUBSCRIBE.equals(message.getChannel()) && message.get(Message.SUBSCRIPTION_FIELD) == null) {
+                            message.put(Message.SUBSCRIPTION_FIELD, exchange.message.get(Message.SUBSCRIPTION_FIELD));
+                        }
+
                         exchange.listener.onMessages(Collections.singletonList(message));
                     } else if (message.containsKey("error")) {
                         fail(null, "Received error: " +  message);

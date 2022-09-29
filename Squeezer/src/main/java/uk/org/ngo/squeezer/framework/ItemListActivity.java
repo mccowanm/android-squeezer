@@ -279,6 +279,8 @@ public abstract class ItemListActivity extends BaseActivity {
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onEventMainThread(ActivePlayerChanged event) {
         Log.i(TAG, "ActivePlayerChanged: " + event.player);
+        String activePlayerId = (event.player != null ? event.player.getId() : "");
+        putRetainedValue(TAG_PLAYER_ID, activePlayerId);
         supportInvalidateOptionsMenu();
         if (needPlayer()) {
             if (event.player == null) {

@@ -28,4 +28,5 @@
 
     <!-- Fast scroller -->
     <attr name="thumb_drawable" format="reference"/>
+    <attr name="popup_drawable" format="reference"/>
 </resources>

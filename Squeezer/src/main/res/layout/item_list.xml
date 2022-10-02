@@ -23,6 +23,8 @@
     app:handleDrawable="?attr/thumb_drawable"
     app:handleHeight="32dp"
     app:handleVisibilityDuration="1000"
+    app:popupDrawable="?attr/popup_drawable"
+    app:popupTextStyle="@style/SqueezerTextAppearance.ItemList.Popup"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 

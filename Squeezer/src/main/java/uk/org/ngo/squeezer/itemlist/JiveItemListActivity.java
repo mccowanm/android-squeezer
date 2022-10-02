@@ -47,6 +47,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
+import com.qtalk.recyclerviewfastscroller.RecyclerViewFastScroller;
 
 import java.util.Arrays;
 import java.util.List;
@@ -106,6 +107,7 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
 
     private ViewParamItemView<JiveItem> parentViewHolder;
     private DividerItemDecoration dividerItemDecoration;
+    private RecyclerViewFastScroller fastScroller;
 
     @Override
     protected ItemAdapter<ItemViewHolder<JiveItem>, JiveItem> createItemListAdapter() {
@@ -210,6 +212,7 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
     public void setContentView(@LayoutRes int layoutResID) {
         super.setContentView(layoutResID);
         getListView().addItemDecoration(dividerItemDecoration);
+        fastScroller = findViewById(R.id.fastscroller);
 
         setupListView();
     }
@@ -407,6 +410,9 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
         }
 
         super.onItemsReceived(count, start, parameters, items, dataType);
+
+        boolean hasTextKey = items.stream().anyMatch(item -> !TextUtils.isEmpty(item.textkey));
+        fastScroller.popupTextView.setVisibility(hasTextKey ? View.VISIBLE : View.GONE);
     }
 
     @Override

@@ -251,31 +251,25 @@ public class SqueezeService extends Service {
         mFadeInSecs = preferences.getFadeInSecs();
         mGroupVolume = preferences.isGroupVolume();
         mVolumeProvider = new MyVolumeProvider(preferences.getVolumeIncrements());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if (squeezeService.isConnected()) {
-                if (preferences.isBackgroundVolume()) {
-                    mMediaSession.setPlaybackToRemote(mVolumeProvider);
-                } else {
-                    mMediaSession.setPlaybackToLocal(AudioManager.STREAM_MUSIC);
-                }
+        if (squeezeService.isConnected()) {
+            if (preferences.isBackgroundVolume()) {
+                mMediaSession.setPlaybackToRemote(mVolumeProvider);
+            } else {
+                mMediaSession.setPlaybackToLocal(AudioManager.STREAM_MUSIC);
             }
         }
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mMediaSession = new MediaSessionCompat(getApplicationContext(), "squeezer");
-        }
+        mMediaSession = new MediaSessionCompat(getApplicationContext(), "squeezer");
         return (IBinder) squeezeService;
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if (mMediaSession != null) {
-                mMediaSession.release();
-            }
+        if (mMediaSession != null) {
+            mMediaSession.release();
         }
         return super.onUnbind(intent);
     }
@@ -321,10 +315,8 @@ public class SqueezeService extends Service {
     @Subscribe(priority = 1)
     public void onEvent(PlayStatusChanged event) {
         if (event.player.equals(mDelegate.getActivePlayer())) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                int state = PlayerState.PLAY_STATE_PLAY.equals(event.playStatus) ? PlaybackStateCompat.STATE_PLAYING : PlaybackStateCompat.STATE_STOPPED;
-                mMediaSession.setPlaybackState(new PlaybackStateCompat.Builder().setState(state, 0, 0).build());
-            }
+            int state = PlayerState.PLAY_STATE_PLAY.equals(event.playStatus) ? PlaybackStateCompat.STATE_PLAYING : PlaybackStateCompat.STATE_STOPPED;
+            mMediaSession.setPlaybackState(new PlaybackStateCompat.Builder().setState(state, 0, 0).build());
             updateOngoingNotification();
             if (PlayerState.PLAY_STATE_PLAY.equals(event.playStatus)) musicPaused = false;
         }

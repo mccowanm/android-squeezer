@@ -30,8 +30,6 @@
 
         <item name="volume_panel_back_circle_color">@color/volume_panel_back_circle_color</item>
         <item name="currentTrackBackground">@drawable/current_track_background_dark</item>
-        <item name="thumb_drawable">@drawable/thumb_drawable_dark</item>
-        <item name="popup_drawable">@drawable/popup_drawable_dark</item>
     </style>
 
     <style name="AppTheme.Light.DarkActionBar" parent="Theme.MaterialComponents.Light.DarkActionBar">
@@ -46,8 +44,6 @@
 
         <item name="volume_panel_back_circle_color">@color/volume_panel_back_circle_color_light</item>
         <item name="currentTrackBackground">@drawable/current_track_background_light</item>
-        <item name="thumb_drawable">@drawable/thumb_drawable_light</item>
-        <item name="popup_drawable">@drawable/popup_drawable_light</item>
     </style>
 
     <style name="OverflowMenu" parent="Widget.AppCompat.Light.PopupMenu.Overflow">

@@ -56,7 +56,6 @@ import uk.org.ngo.squeezer.widget.UndoBarController;
  */
 public class CurrentPlaylistActivity extends JiveItemListActivity implements PlaylistClearDialog.PlaylistClearDialogListener {
     private int skipPlaylistChanged = 0;
-    private int draggedIndex = -1;
 
     /**
      * Called when the activity is first created.
@@ -224,15 +223,6 @@ public class CurrentPlaylistActivity extends JiveItemListActivity implements Pla
 
     public void skipPlaylistChanged() {
         skipPlaylistChanged++;
-    }
-
-    public int getDraggedIndex() {
-        return draggedIndex;
-    }
-
-    public void setDraggedIndex(int draggedIndex) {
-        this.draggedIndex = draggedIndex;
-        getItemAdapter().notifyDataSetChanged();
     }
 
     @Override

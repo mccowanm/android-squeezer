@@ -29,7 +29,7 @@ dependencies {
     implementation 'androidx.media:media:1.5.0'
 
     // EventBus, https://github.com/greenrobot/EventBus.
-    implementation 'org.greenrobot:eventbus:3.1.0'
+    implementation 'org.greenrobot:eventbus:3.2.0'
 
     // Changelogs, see https://github.com/cketti/ckChangeLog.
     implementation 'de.cketti.library.changelog:ckchangelog:1.2.0'

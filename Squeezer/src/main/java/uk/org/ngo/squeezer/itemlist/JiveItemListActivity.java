@@ -116,7 +116,6 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        dividerItemDecoration = new DividerItemDecoration(this, LinearLayoutManager.VERTICAL);
         super.onCreate(savedInstanceState);
 
         Bundle extras = Objects.requireNonNull(getIntent().getExtras(), "intent did not contain extras");
@@ -211,6 +210,7 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
         super.setContentView(layoutResID);
+        dividerItemDecoration = new DividerItemDecoration(this, LinearLayoutManager.VERTICAL);
         getListView().addItemDecoration(dividerItemDecoration);
         fastScroller = findViewById(R.id.fastscroller);
 

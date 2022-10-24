@@ -224,7 +224,7 @@ public class JiveItem extends Item {
 
     @DrawableRes private Integer getItemIcon() {
         if ((id != null) && (this.id.contains("customShortcut"))) {
-            return R.drawable.my_mysic;
+            return R.drawable.library_music;
         }
         return itemIcons.get(iconStyle());
     }
@@ -234,7 +234,7 @@ public class JiveItem extends Item {
     private static Map<String, Integer> initializeItemIcons() {
         Map<String, Integer> result = new HashMap<>();
 
-        result.put("hm_myMusic", R.drawable.my_mysic);
+        result.put("hm_myMusic", R.drawable.library_music);
         result.put("hm_extras", R.drawable.settings_advanced);
         result.put("hm_settings", R.drawable.settings);
         result.put("hm_opmlmyapps", R.drawable.apps);
@@ -270,7 +270,7 @@ public class JiveItem extends Item {
         result.put("hm_myMusicNewMusic", R.drawable.ml_new_music);
         result.put("hm_randomplay", R.drawable.ml_random);
         result.put("hm_opmlselectVirtualLibrary", R.drawable.ml_library_views);
-        result.put("hm_opmlselectRemoteLibrary", R.drawable.my_mysic);
+        result.put("hm_opmlselectRemoteLibrary", R.drawable.library_music);
         result.put("hm_settingsShuffle", R.drawable.shuffle);
         result.put("hm_settingsRepeat", R.drawable.settings_repeat);
         result.put("hm_settingsAudio", R.drawable.settings_audio);

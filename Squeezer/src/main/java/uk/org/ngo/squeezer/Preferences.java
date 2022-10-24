@@ -142,6 +142,9 @@ public final class Preferences {
     // Preferred maximum info per item for a given list layout
     public static final String KEY_MAX_LINES_FORMAT = "squeezer.%s.maxLines";
 
+    // Use flat icons or legacy LMS icons
+    public static final String KEY_FLAT_ICONS = "squeezer.use_flat_icons";
+
     // Preferred song list layout.
     private static final String KEY_SONG_LIST_LAYOUT = "squeezer.song.list.layout";
 
@@ -570,6 +573,14 @@ public final class Preferences {
 
     public void setMaxLines(ArtworkListLayout listLayout, int maxLines) {
         sharedPreferences.edit().putInt(String.format(KEY_MAX_LINES_FORMAT, listLayout.name()), maxLines).apply();
+    }
+
+    public boolean useFlatIcons() {
+        return sharedPreferences.getBoolean(KEY_FLAT_ICONS, true);
+    }
+
+    public void useFlatIcons(boolean b) {
+        sharedPreferences.edit().putBoolean(Preferences.KEY_FLAT_ICONS, b).apply();
     }
 
     /**

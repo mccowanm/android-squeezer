@@ -40,6 +40,7 @@
     <string name="settings_screensaver_off">Nej</string>
     <string name="settings_screensaver_on">Ja</string>
     <string name="settings_screensaver_clock">Vis ur ved inaktivitet</string>
+    <string name="settings_use_flat_icons">Flade ikoner</string>
     <string name="settings_clear_current_playlist_confirmation">Når afspilningslisten ryddes</string>
     <string name="settings_clear_current_playlist_confirmation_off">bed ikke om bekræftelse</string>
     <string name="settings_clear_current_playlist_confirmation_on">bed om bekræftelse</string>

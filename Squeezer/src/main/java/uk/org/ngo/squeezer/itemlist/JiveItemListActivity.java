@@ -102,6 +102,7 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
     private MenuItem menuItemOneLine;
     private MenuItem menuItemTwoLines;
     private MenuItem menuItemAllInfo;
+    private MenuItem menuItemFlatIcons;
 
     private ViewParamItemView<JiveItem> parentViewHolder;
     private DividerItemDecoration dividerItemDecoration;
@@ -568,6 +569,7 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
         menuItemOneLine = viewMenu.findItem(R.id.menu_item_one_line);
         menuItemTwoLines = viewMenu.findItem(R.id.menu_item_two_lines);
         menuItemAllInfo = viewMenu.findItem(R.id.menu_item_all_lines);
+        menuItemFlatIcons = viewMenu.findItem(R.id.menu_item_flat_icons);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -639,6 +641,10 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
         } else if (itemId == R.id.menu_item_all_lines) {
             setMaxLines(0);
             return true;
+        } else if (itemId == R.id.menu_item_flat_icons) {
+            new Preferences(this).useFlatIcons(!menuItemFlatIcons.isChecked());
+            getItemAdapter().notifyItemRangeChanged(0, getItemAdapter().getItemCount());
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -651,13 +657,15 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
 
     private void updateViewMenuItems(ArtworkListLayout listLayout, Window.WindowStyle windowStyle) {
         if (menuItemList != null) {
+            Preferences preferences = new Preferences(this);
+
             (getThemeId() ==  R.style.AppTheme ? menuItemDark : menuItemLight).setChecked(true);
 
             boolean canChangeListLayout = JiveItemView.canChangeListLayout(windowStyle);
             viewMenu.setGroupVisible(R.id.menu_group_artwork, canChangeListLayout);
             (listLayout == ArtworkListLayout.list ? menuItemList : menuItemGrid).setChecked(true);
 
-            switch (new Preferences(this).getMaxLines(listLayout)) {
+            switch (preferences.getMaxLines(listLayout)) {
                 case 1:
                     menuItemOneLine.setChecked(true);
                     break;
@@ -668,6 +676,8 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
                     menuItemAllInfo.setChecked(true);
                     break;
             }
+
+            menuItemFlatIcons.setChecked(preferences.useFlatIcons());
         }
     }
 

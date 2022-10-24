@@ -17,15 +17,20 @@
 package uk.org.ngo.squeezer.model;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Parcel;
 import android.text.TextUtils;
+import android.view.Gravity;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.graphics.drawable.DrawableCompat;
 
 import org.eclipse.jetty.util.ajax.JSON;
 
@@ -38,6 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.Squeezer;
 import uk.org.ngo.squeezer.Util;
@@ -191,8 +197,25 @@ public class JiveItem extends Item {
      * @return Icon resource for this item if it is embedded in the Squeezer app, or the supplied default icon.
      */
     public Drawable getIconDrawable(Context context, @DrawableRes int defaultIcon) {
-        Integer slimIcon = getItemIcon();
-        return AppCompatResources.getDrawable(context, slimIcon != null ? slimIcon : defaultIcon);
+        @DrawableRes Integer itemIcon = getItemIcon();
+        Drawable icon = AppCompatResources.getDrawable(context, itemIcon != null ? itemIcon : defaultIcon);
+
+        if (new Preferences(context).useFlatIcons()) {
+            return icon;
+        }
+
+        // If the preference is to use legacy icons, add a background the item icon
+        int inset = context.getResources().getDimensionPixelSize(R.dimen.album_art_inset);
+        Drawable background = AppCompatResources.getDrawable(context, R.drawable.icon_background);
+        Drawable wrappedIcon = DrawableCompat.wrap(icon.mutate());
+        DrawableCompat.setTint(wrappedIcon, context.getResources().getColor(R.color.black));
+        LayerDrawable layerDrawable = new LayerDrawable(new Drawable[]{background, wrappedIcon});
+        layerDrawable.setLayerInset(1, inset, inset, inset, inset);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            layerDrawable.setLayerGravity(1, Gravity.CENTER);
+        }
+        return layerDrawable;
     }
 
     private String iconStyle() {

@@ -39,12 +39,9 @@ public class Screensaver extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        mTheme.onCreate(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.clock);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-        setTitle("");
 
         time = findViewById(R.id.time);
         amPm = findViewById(R.id.am_pm);

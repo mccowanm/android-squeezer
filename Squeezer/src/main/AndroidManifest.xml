@@ -120,7 +120,8 @@
         </activity>
 
         <activity
-            android:name=".screensaver.Screensaver">
+            android:name=".screensaver.Screensaver"
+            android:theme="@style/Theme.MaterialComponents.NoActionBar">
         </activity>
 
         <service android:exported="false" android:label="Squeezer Service"

@@ -35,6 +35,8 @@ import androidx.fragment.app.FragmentManager;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -73,7 +75,6 @@ public class ServerAddressView extends LinearLayout implements ScanNetworkTask.S
     /** Map server names to IP addresses. */
     private Map<String, String> discoveredServers;
 
-    private ArrayAdapter<String> serversAdapter;
     private boolean isManual;
     private OnClickListener startNetWorkScan;
 
@@ -149,10 +150,9 @@ public class ServerAddressView extends LinearLayout implements ScanNetworkTask.S
             serverName = findViewById(R.id.server_name);
 
             // Set up the servers spinner.
-            serversAdapter = new ArrayAdapter<>(getContext(), R.layout.dropdown_item);
             serversSpinner_til = findViewById(R.id.found_servers_til);
             serversSpinner = findViewById(R.id.found_servers);
-            serversSpinner.setAdapter(serversAdapter);
+            serversSpinner.setAdapter(new ArrayAdapter<>(getContext(), R.layout.dropdown_item));
 
             setSqueezeNetwork(serverAddress.squeezeNetwork);
             setServerAddress(serverAddress.localAddress());
@@ -236,7 +236,6 @@ public class ServerAddressView extends LinearLayout implements ScanNetworkTask.S
         serverName.setText(R.string.settings_manual_server_addr);
         serverName_til.setVisibility(GONE);
         serversSpinner_til.setVisibility(GONE);
-        serversAdapter.clear();
 
         discoveredServers = serverMap;
 
@@ -249,9 +248,9 @@ public class ServerAddressView extends LinearLayout implements ScanNetworkTask.S
             serverName_til.setStartIconOnClickListener(startNetWorkScan);
             serverName_til.setVisibility(VISIBLE);
         } else {
-            serversAdapter.addAll(discoveredServers.keySet());
-            serversAdapter.add(getContext().getString(R.string.settings_manual_server_addr));
-            serversAdapter.notifyDataSetChanged();
+            List<String> keys = new ArrayList<>(discoveredServers.keySet());
+            keys.add(getContext().getString(R.string.settings_manual_server_addr));
+            serversSpinner.setAdapter(new ArrayAdapter<>(getContext(), R.layout.dropdown_item, keys));
 
             // First look for the stored server name in the list of found servers
             String addressOfStoredServerName = discoveredServers.get(serverAddress.serverName());
@@ -262,13 +261,16 @@ public class ServerAddressView extends LinearLayout implements ScanNetworkTask.S
                 position = getServerPosition(serverAddress.localAddress());
             }
 
-            serversSpinner.setText(serversAdapter.getItem(position < 0 ? serversAdapter.getCount() - 1 : position), false);
+            // This shouldn't happen, but crash reports say that it does
+            if (keys.size() > 0) {
+                serversSpinner.setText(keys.get(position < 0 ? keys.size() - 1 : position), false);
+            }
             isManual = (position < 0);
             setEditServerAddressAvailability(serverAddress.squeezeNetwork);
 
-            serversSpinner.setOnItemClickListener((adapterView, parent, pos, id) -> {
-                String serverAddress = discoveredServers.get(serversAdapter.getItem(pos));
-                isManual = (pos == serversAdapter.getCount() - 1);
+            serversSpinner.setOnItemClickListener((parent, view, pos, id) -> {
+                String serverAddress = discoveredServers.get((String) ((TextView)view).getText());
+                isManual = (pos == parent.getCount() - 1);
                 setSqueezeNetwork(false);
                 setServerAddress(serverAddress);
             });
@@ -300,7 +302,7 @@ public class ServerAddressView extends LinearLayout implements ScanNetworkTask.S
     private void setEditServerAddressAvailability(boolean isSqueezeNetwork) {
         if (isSqueezeNetwork) {
             serverAddressEditText.setEnabled(false);
-        } else if (serversAdapter.getCount() == 0) {
+        } else if (discoveredServers == null || discoveredServers.isEmpty()) {
             serverAddressEditText.setEnabled(true);
         } else {
             serverAddressEditText.setEnabled(isManual);

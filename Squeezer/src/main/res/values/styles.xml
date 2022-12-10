@@ -27,6 +27,7 @@
         <item name="colorSecondaryVariant">@color/colorSecondaryVariantDark</item>
         <item name="actionOverflowMenuStyle">@style/OverflowMenu</item>
         <item name="sliderStyle">@style/Widget.App.Slider</item>
+        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.Squeezer.BottomSheetDialog</item>
 
         <item name="volume_panel_back_circle_color">@color/volume_panel_back_circle_color</item>
         <item name="currentTrackBackground">@drawable/current_track_background_dark</item>
@@ -41,6 +42,7 @@
         <item name="colorSecondaryVariant">@color/colorSecondaryVariantLight</item>
         <item name="actionOverflowMenuStyle">@style/OverflowMenu</item>
         <item name="sliderStyle">@style/Widget.App.Slider</item>
+        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.Squeezer.BottomSheetDialog</item>
 
         <item name="volume_panel_back_circle_color">@color/volume_panel_back_circle_color_light</item>
         <item name="currentTrackBackground">@drawable/current_track_background_light</item>
@@ -67,6 +69,10 @@
         <item name="colorPrimary">?attr/colorSecondary</item>
         <item name="colorOnPrimary">?attr/colorSecondary</item>
         <item name="colorOnSurface">?attr/colorSecondary</item>
+    </style>
+
+    <style name="ThemeOverlay.Squeezer.BottomSheetDialog" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/ModalBottomSheetDialog</item>
     </style>
 
     <!-- Text Styles. Apply these to the android:textAppearance attribute of the views. -->
@@ -381,4 +387,12 @@
         <item name="android:layout_height">48dp</item>
     </style>
 
+    <style name="ModalBottomSheetDialog" parent="Widget.MaterialComponents.BottomSheet.Modal">
+        <item name="shapeAppearance">@style/ShapeAppearance.Squeezer.LargeComponent</item>
+        <item name="android:elevation">0dp</item>
+    </style>
+
+    <style name="ShapeAppearance.Squeezer.LargeComponent" parent="ShapeAppearance.MaterialComponents.LargeComponent">
+        <item name="cornerSize">8dp</item>
+    </style>
 </resources>

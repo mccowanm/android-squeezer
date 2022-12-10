@@ -66,10 +66,10 @@ import uk.org.ngo.squeezer.service.ISqueezeService;
 import uk.org.ngo.squeezer.service.SqueezeService;
 import uk.org.ngo.squeezer.service.event.AlertEvent;
 import uk.org.ngo.squeezer.service.event.DisplayEvent;
-import uk.org.ngo.squeezer.service.event.PlayerVolume;
 import uk.org.ngo.squeezer.util.ImageFetcher;
 import uk.org.ngo.squeezer.util.SqueezePlayer;
 import uk.org.ngo.squeezer.util.ThemeManager;
+import uk.org.ngo.squeezer.widget.VolumeKeysDelegate;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -95,15 +95,15 @@ public abstract class BaseActivity extends AppCompatActivity implements Download
 
     private SqueezePlayer squeezePlayer;
 
-    /** Whether volume changes should be ignored. */
-    private boolean mIgnoreVolumeChange;
+    /** Whether volume keys shall be handled. */
+    private boolean handleVolumeKeys = true;
 
     /** True if bindService() completed. */
     private boolean boundService = false;
 
     /** Volume control panel. */
     @Nullable
-    private VolumePanel mVolumePanel;
+    private VolumePanel volumePanel;
 
     /**
      * @return The {@link ISqueezeService}, or null if not bound
@@ -166,6 +166,8 @@ public abstract class BaseActivity extends AppCompatActivity implements Download
                 Context.BIND_AUTO_CREATE);
         Log.d(TAG, "did bindService; serviceStub = " + getService());
 
+        volumePanel = new VolumePanel(this);
+
         if (savedInstanceState != null) {
             currentDownloadItem = savedInstanceState.getParcelable(CURRENT_DOWNLOAD_ITEM);
         }
@@ -201,8 +203,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Download
             maybeRegisterOnEventBus(mService);
         }
 
-        mVolumePanel = new VolumePanel(this);
-
         if (inactivityHandler != null) {
             inactivityHandler.postDelayed(inactivityAction, INACTIVITY_TIME);
         }
@@ -217,14 +217,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Download
     @Override
     @CallSuper
     public void onPause() {
-        // At least some Samsung devices call onPause without ensuring that onResume is called
-        // first, per https://code.google.com/p/android/issues/detail?id=74464, so mVolumePanel
-        // may be null on those devices.
-        if (mVolumePanel != null) {
-            mVolumePanel.dismiss();
-            mVolumePanel = null;
-        }
-
         if (inactivityHandler != null) {
             inactivityHandler.removeCallbacks(inactivityAction);
         }
@@ -328,66 +320,27 @@ public abstract class BaseActivity extends AppCompatActivity implements Download
     }
 
 
-    /*
-     * Intercept hardware volume control keys to control Squeezeserver
-     * volume.
-     *
-     * Change the volume when the key is depressed.  Suppress the keyUp
-     * event, otherwise you get a notification beep as well as the volume
-     * changing.
-     */
     @Override
     @CallSuper
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_VOLUME_UP:
-                return adjustVolume(1);
-            case KeyEvent.KEYCODE_VOLUME_DOWN:
-                return adjustVolume(-1);
-        }
+        if (handleVolumeKeys && VolumeKeysDelegate.onKeyDown(keyCode, getService())) {
+            ISqueezeService.VolumeInfo volume = requireService().getVolume();
+            volumePanel.postVolumeChanged(volume.muted, volume.volume, volume.name);
 
+            return true;
+        }
         return super.onKeyDown(keyCode, event);
     }
 
     @Override
     @CallSuper
     public boolean onKeyUp(int keyCode, @NonNull KeyEvent event) {
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_VOLUME_UP:
-            case KeyEvent.KEYCODE_VOLUME_DOWN:
-                return true;
-        }
-
+        if (handleVolumeKeys && VolumeKeysDelegate.onKeyUp(keyCode)) return true;
         return super.onKeyUp(keyCode, event);
     }
 
-    private boolean adjustVolume(int direction) {
-        ISqueezeService service = getService();
-        if (service == null) {
-            return false;
-        }
-        service.adjustVolume(direction);
-        return true;
-    }
-
-    @Subscribe(sticky = true)
-    public void onEvent(PlayerVolume event) {
-        if (!mIgnoreVolumeChange && mService != null && event.player == mService.getActivePlayer()) {
-            showVolumePanel();
-        }
-    }
-
-    // Show the volume dialog.
-    public void showVolumePanel() {
-        if (mService != null && mVolumePanel != null) {
-            ISqueezeService.VolumeInfo volumeInfo = mService.getVolume();
-            mVolumePanel.postVolumeChanged(volumeInfo.muted, volumeInfo.volume, volumeInfo.name);
-        }
-    }
-
-
-    public void setIgnoreVolumeChange(boolean ignoreVolumeChange) {
-        mIgnoreVolumeChange = ignoreVolumeChange;
+    public void setHandleVolumeKeys(boolean handleVolumeKeys) {
+        this.handleVolumeKeys = handleVolumeKeys;
     }
 
     private static final int INACTIVITY_TIME = 5 * 60 * 1000;

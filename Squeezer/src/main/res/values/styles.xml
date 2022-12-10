@@ -186,6 +186,7 @@
     <!-- Media controller styles -->
     <style name="ImageButton" parent="Widget.MaterialComponents.Button.TextButton">
         <item name="iconGravity">textStart</item>
+        <item name="iconPadding">0dp</item>
     </style>
 
     <!-- Media controller styles -->

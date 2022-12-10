@@ -91,6 +91,9 @@ public class VolumeController extends BottomSheetDialogFragment implements OnCro
         mute = view.findViewById(R.id.mute);
         mute.setOnClickListener(v -> requireService().toggleMute());
 
+        view.findViewById(R.id.volume_down).setOnClickListener(v -> service.adjustVolume(-1));
+        view.findViewById(R.id.volume_up).setOnClickListener(v -> service.adjustVolume(1));
+
         requireDialog().setOnKeyListener((dialogInterface, keyCode, event) -> {
             switch (event.getAction()) {
                 case KeyEvent.ACTION_DOWN:

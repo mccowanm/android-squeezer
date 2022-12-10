@@ -131,6 +131,7 @@ public class VolumeController extends BottomSheetDialogFragment implements OnCro
         mute.setChecked(volumeInfo.muted);
         currentProgress = volumeInfo.volume;
         seekbar.setProgress(volumeInfo.volume);
+        seekbar.setLabel(String.valueOf(volumeInfo.volume));
         label.setText(volumeInfo.name);
 
         seekbar.setIndicatorColor(ColorUtils.setAlphaComponent(seekbar.getIndicatorColor(), volumeInfo.muted ? 63 : 255));
@@ -144,6 +145,7 @@ public class VolumeController extends BottomSheetDialogFragment implements OnCro
     public void onProgressChanged(Croller croller, int progress) {
         if (currentProgress != progress) {
             currentProgress = progress;
+            seekbar.setLabel(String.valueOf(progress));
             requireService().setVolumeTo(progress);
         }
     }

@@ -699,19 +699,19 @@ public class SqueezeService extends Service {
             : null;
 
     private void onCallStateChanged(int state) {
-        Preferences preferences = new Preferences(SqueezeService.this);
+        Preferences preferences = new Preferences(this);
         Preferences.IncomingCallAction incomingCallAction = preferences.getActionOnIncomingCall();
         if (incomingCallAction != Preferences.IncomingCallAction.NONE) {
             PerformAction action = null;
             boolean isPlaying = (getActivePlayerState() != null && getActivePlayerState().isPlaying());
             if (state == TelephonyManager.CALL_STATE_RINGING || state == TelephonyManager.CALL_STATE_OFFHOOK) {
                 if (isPlaying) {
-                    action = incomingCallAction != Preferences.IncomingCallAction.PAUSE ? squeezeService::pause : squeezeService::mute;
+                    action = incomingCallAction == Preferences.IncomingCallAction.PAUSE ? squeezeService::pause : squeezeService::mute;
                     musicPaused = true;
                 }
             } else {
                 if (musicPaused && preferences.restoreMusicAfterCall()) {
-                    action = incomingCallAction != Preferences.IncomingCallAction.PAUSE ? squeezeService::play : squeezeService::unmute;
+                    action = incomingCallAction == Preferences.IncomingCallAction.PAUSE ? squeezeService::play : squeezeService::unmute;
                 }
                 musicPaused = false;
             }
@@ -956,12 +956,12 @@ public class SqueezeService extends Service {
 
         @Override
         public void mute() {
-            mute(getActivePlayer(), false);
+            mute(getActivePlayer(), true);
         }
 
         @Override
         public void unmute() {
-            mute(getActivePlayer(), true);
+            mute(getActivePlayer(), false);
         }
 
         @Override

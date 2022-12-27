@@ -256,6 +256,9 @@ public abstract class BaseActivity extends AppCompatActivity implements Download
     @CallSuper
     public void onDestroy() {
         super.onDestroy();
+
+        volumePanel.dismiss();
+
         if (boundService) {
             unbindService(serviceConnection);
         }

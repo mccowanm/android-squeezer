@@ -81,8 +81,10 @@ public class VolumeController extends BottomSheetDialogFragment implements OnCro
         label = view.findViewById(R.id.label);
 
         view.findViewById(R.id.settings).setOnClickListener(view1 -> {
-            FragmentManager fragmentManager = getParentFragmentManager();
-            new VolumeSettings().show(fragmentManager, VolumeSettings.class.getName());
+            if (service.getActivePlayer() != null) {
+                FragmentManager fragmentManager = getParentFragmentManager();
+                new VolumeSettings().show(fragmentManager, VolumeSettings.class.getName());
+            }
         });
 
         seekbar = view.findViewById(R.id.level);

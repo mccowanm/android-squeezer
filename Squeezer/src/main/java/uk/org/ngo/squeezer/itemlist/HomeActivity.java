@@ -20,17 +20,15 @@ package uk.org.ngo.squeezer.itemlist;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.MainThread;
-import androidx.preference.PreferenceManager;
 
 import uk.org.ngo.squeezer.Preferences;
-import uk.org.ngo.squeezer.R;
+import uk.org.ngo.squeezer.Squeezer;
 import uk.org.ngo.squeezer.dialog.ChangeLogDialog;
 import uk.org.ngo.squeezer.dialog.TipsDialog;
 import uk.org.ngo.squeezer.model.JiveItem;
@@ -44,17 +42,17 @@ public class HomeActivity extends HomeMenuActivity {
         getIntent().putExtra(JiveItem.class.getName(), JiveItem.HOME);
         super.onCreate(savedInstanceState);
 
-        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
-
         // Show the change log if necessary.
-        ChangeLogDialog changeLog = new ChangeLogDialog(this);
-        if (changeLog.isFirstRun()) {
-            if (changeLog.isFirstRunEver()) {
-                changeLog.skipLogDialog();
-            } else {
-                changeLog.getThemedLogDialog().show();
+        Squeezer.getPreferences(preferences -> {
+            ChangeLogDialog changeLog = new ChangeLogDialog(this, preferences.getSharedPreferences());
+            if (changeLog.isFirstRun()) {
+                if (changeLog.isFirstRunEver()) {
+                    Squeezer.getInstance().doInBackground(changeLog::skipLogDialog);
+                } else {
+                    changeLog.getThemedLogDialog().show();
+                }
             }
-        }
+        });
     }
 
     @MainThread
@@ -66,16 +64,12 @@ public class HomeActivity extends HomeMenuActivity {
         // has run. TODO: Add more robust and general 'tips' functionality.
         PackageInfo pInfo;
         try {
-            final SharedPreferences preferences = getSharedPreferences(Preferences.NAME,
-                    0);
+            final Preferences preferences = Squeezer.getPreferences();
 
-            pInfo = getPackageManager().getPackageInfo(getPackageName(),
-                    PackageManager.GET_META_DATA);
-            if (preferences.getLong("lastRunVersionCode", 0) == 0) {
+            pInfo = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_META_DATA);
+            if (preferences.getLastRunVersionCode() == 0) {
                 new TipsDialog().show(getSupportFragmentManager(), "TipsDialog");
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putLong("lastRunVersionCode", pInfo.versionCode);
-                editor.apply();
+                preferences.setLastRunVersionCode(pInfo.versionCode);
             }
         } catch (PackageManager.NameNotFoundException e) {
             // Nothing to do, don't crash.

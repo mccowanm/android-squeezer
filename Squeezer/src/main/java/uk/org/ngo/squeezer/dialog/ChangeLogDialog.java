@@ -14,16 +14,8 @@ import uk.org.ngo.squeezer.R;
  * Extends ChangeLog to use the v7 support AlertDialog which follows the application theme.
  */
 public class ChangeLogDialog extends de.cketti.library.changelog.ChangeLog {
-    public ChangeLogDialog(final Context context) {
-        super(context);
-    }
-
-    public ChangeLogDialog(final Context context, final String css) {
-        super(context, css);
-    }
-
-    public ChangeLogDialog(final Context context, final SharedPreferences preferences, final String css) {
-        super(context, preferences, css);
+    public ChangeLogDialog(final Context context, SharedPreferences sharedPreferences) {
+        super(context, sharedPreferences, DEFAULT_CSS);
     }
 
     /**

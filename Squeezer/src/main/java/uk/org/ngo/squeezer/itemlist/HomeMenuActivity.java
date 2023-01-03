@@ -33,6 +33,7 @@ import java.util.List;
 
 import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
+import uk.org.ngo.squeezer.Squeezer;
 import uk.org.ngo.squeezer.framework.ItemAdapter;
 import uk.org.ngo.squeezer.framework.ItemViewHolder;
 import uk.org.ngo.squeezer.itemlist.dialog.ArtworkListLayout;
@@ -60,12 +61,12 @@ public class HomeMenuActivity extends JiveItemListActivity {
 
     @Override
     public ArtworkListLayout getPreferredListLayout() {
-        return new Preferences(this).getHomeMenuLayout();
+        return Squeezer.getPreferences().getHomeMenuLayout();
     }
 
     @Override
     protected void saveListLayout(ArtworkListLayout listLayout) {
-        new Preferences(this).setHomeMenuLayout(listLayout);
+        Squeezer.getPreferences().setHomeMenuLayout(listLayout);
     }
 
     @Subscribe(sticky = true)

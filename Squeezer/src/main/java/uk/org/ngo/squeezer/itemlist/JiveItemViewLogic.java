@@ -27,6 +27,7 @@ import java.util.Map;
 
 import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
+import uk.org.ngo.squeezer.Squeezer;
 import uk.org.ngo.squeezer.framework.ViewParamItemView;
 import uk.org.ngo.squeezer.model.Action;
 import uk.org.ngo.squeezer.framework.BaseActivity;
@@ -149,7 +150,7 @@ public class JiveItemViewLogic implements IServiceItemListCallback<JiveItem>, Po
     }
 
     private void showContextMenu(final ViewParamItemView<JiveItem> viewHolder, final List<JiveItem> items) {
-        Preferences preferences = new Preferences(activity);
+        Preferences preferences = Squeezer.getPreferences();
         contextPopup = new PopupMenu(activity, viewHolder.contextMenuButtonHolder);
         Menu menu = contextPopup.getMenu();
 

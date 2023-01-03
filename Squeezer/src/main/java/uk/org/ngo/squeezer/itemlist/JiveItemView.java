@@ -31,6 +31,7 @@ import java.util.EnumSet;
 
 import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
+import uk.org.ngo.squeezer.Squeezer;
 import uk.org.ngo.squeezer.Util;
 import uk.org.ngo.squeezer.framework.ItemAdapter;
 import uk.org.ngo.squeezer.framework.ItemListActivity;
@@ -48,7 +49,7 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
     private final JiveItemViewLogic logicDelegate;
     private Window.WindowStyle windowStyle;
 
-    Preferences mPreferences = new Preferences(itemView.getContext());
+    Preferences mPreferences = Squeezer.getPreferences();
     final boolean isShortcutActive = mPreferences.getCustomizeShortcutsMode() == Preferences.CustomizeShortcutsMode.ENABLED;
     final boolean isArchiveActive = mPreferences.getCustomizeHomeMenuMode() == Preferences.CustomizeHomeMenuMode.ARCHIVE;
 
@@ -76,7 +77,7 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
     }
 
     private int getMaxLines() {
-        return new Preferences(getActivity()).getMaxLines(listLayout());
+        return Squeezer.getPreferences().getMaxLines(listLayout());
     }
 
     private void setMaxLines(TextView view, int maxLines) {

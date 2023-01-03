@@ -54,6 +54,7 @@ import java.util.Map;
 
 import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
+import uk.org.ngo.squeezer.Squeezer;
 import uk.org.ngo.squeezer.VolumePanel;
 import uk.org.ngo.squeezer.dialog.AlertEventDialog;
 import uk.org.ngo.squeezer.dialog.DownloadDialog;
@@ -172,13 +173,15 @@ public abstract class BaseActivity extends AppCompatActivity implements Download
             currentDownloadItem = savedInstanceState.getParcelable(CURRENT_DOWNLOAD_ITEM);
         }
 
-        if (new Preferences(this).getScreensaverMode() != Preferences.ScreensaverMode.OFF) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-            if (new Preferences(this).getScreensaverMode() == Preferences.ScreensaverMode.CLOCK) {
-                inactivityHandler = new Handler();
-                inactivityAction = () -> startActivity(new Intent(this, Screensaver.class));
+        Squeezer.getPreferences(preferences -> {
+            if (preferences.getScreensaverMode() != Preferences.ScreensaverMode.OFF) {
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                if (preferences.getScreensaverMode() == Preferences.ScreensaverMode.CLOCK) {
+                    inactivityHandler = new Handler();
+                    inactivityAction = () -> startActivity(new Intent(this, Screensaver.class));
+                }
             }
-        }
+        });
     }
 
     @Override
@@ -472,7 +475,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Download
      * @see ISqueezeService#downloadItem(JiveItem)
      */
     public void downloadItem(JiveItem item) {
-        if (new Preferences(this).isDownloadConfirmation()) {
+        if (Squeezer.getPreferences().isDownloadConfirmation()) {
             DownloadDialog.show(item, this);
         } else {
             doDownload(item);

@@ -85,7 +85,7 @@ public class JiveItem extends Item {
     };
 
     private JiveItem(String id, String node, @StringRes int text, int weight, Window.WindowStyle windowStyle) {
-        this(record(id, node, Squeezer.getContext().getString(text), weight));
+        this(record(id, node, Squeezer.getInstance().getString(text), weight));
         window = new Window();
         window.windowStyle = windowStyle;
     }
@@ -199,7 +199,7 @@ public class JiveItem extends Item {
         @DrawableRes Integer itemIcon = getItemIcon();
         Drawable icon = AppCompatResources.getDrawable(context, itemIcon != null ? itemIcon : defaultIcon);
 
-        if (new Preferences(context).useFlatIcons()) {
+        if (Squeezer.getPreferences().useFlatIcons()) {
             return icon;
         }
 

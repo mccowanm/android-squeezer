@@ -202,17 +202,18 @@ public class NowPlayingFragment extends Fragment implements CallStateDialog.Call
     @UiThread
     private void showConnectingDialog() {
         if (connectingDialog == null || !connectingDialog.isShowing()) {
-            Preferences preferences = new Preferences(mActivity);
-            Preferences.ServerAddress serverAddress = preferences.getServerAddress();
+            Squeezer.getPreferences(preferences -> {
+                Preferences.ServerAddress serverAddress = preferences.getServerAddress();
 
-            final View view = LayoutInflater.from(mActivity).inflate(R.layout.connecting, null);
-            final TextView connectingTo = view.findViewById(R.id.connecting_to);
-            connectingTo.setText(getString(R.string.connecting_to_text, serverAddress.serverName()));
+                final View view = LayoutInflater.from(mActivity).inflate(R.layout.connecting, null);
+                final TextView connectingTo = view.findViewById(R.id.connecting_to);
+                connectingTo.setText(getString(R.string.connecting_to_text, serverAddress.serverName()));
 
-            connectingDialog = new MaterialAlertDialogBuilder(mActivity)
-                    .setView(view)
-                    .setCancelable(false)
-                    .show();
+                connectingDialog = new MaterialAlertDialogBuilder(mActivity)
+                        .setView(view)
+                        .setCancelable(false)
+                        .show();
+            });
         }
     }
 
@@ -273,7 +274,7 @@ public class NowPlayingFragment extends Fragment implements CallStateDialog.Call
             repeatButton = v.findViewById(R.id.repeat);
             currentTime = v.findViewById(R.id.currenttime);
             totalTime = v.findViewById(R.id.totaltime);
-            showRemainingTime = new Preferences(mActivity).isShowRemainingTime();
+            showRemainingTime = Squeezer.getPreferences().isShowRemainingTime();
             slider = v.findViewById(R.id.seekbar);
             playlistButton = v.findViewById(R.id.playlist);
 
@@ -363,7 +364,7 @@ public class NowPlayingFragment extends Fragment implements CallStateDialog.Call
 
             totalTime.setOnClickListener(view -> {
                 showRemainingTime = !showRemainingTime;
-                new Preferences(mActivity).setShowRemainingTime(showRemainingTime);
+                Squeezer.getPreferences().setShowRemainingTime(showRemainingTime);
                 PlayerState playerState = getPlayerState();
                 if (playerState != null) {
                     updateTimeDisplayTo(playerState.getTrackElapsed(), playerState.getCurrentSongDuration());
@@ -878,19 +879,19 @@ public class NowPlayingFragment extends Fragment implements CallStateDialog.Call
             return;
         }
 
-        Preferences preferences = new Preferences(mActivity);
+        Squeezer.getPreferences(preferences -> {
+            if (!preferences.hasServerConfig()) {
+                // Set up a server connection, if it is not present
+                ConnectActivity.show(mActivity);
+                return;
+            }
 
-        if (!preferences.hasServerConfig()) {
-            // Set up a server connection, if it is not present
-            ConnectActivity.show(mActivity);
-            return;
-        }
-
-        if (isConnectInProgress()) {
-            Log.v(TAG, "Connection is already in progress, connecting aborted");
-            return;
-        }
-        mService.startConnect(autoConnect);
+            if (isConnectInProgress()) {
+                Log.v(TAG, "Connection is already in progress, connecting aborted");
+                return;
+            }
+            mService.startConnect(autoConnect);
+        });
     }
 
     private final CallStatePermissionLauncher requestCallStateLauncher = new CallStatePermissionLauncher(this);
@@ -975,7 +976,7 @@ public class NowPlayingFragment extends Fragment implements CallStateDialog.Call
 
         updateUiFromPlayerState(playerState);
 
-        requestCallStateLauncher.trySetAction(new Preferences(mActivity).getActionOnIncomingCall());
+        requestCallStateLauncher.trySetAction(Squeezer.getPreferences().getActionOnIncomingCall());
     }
 
     @MainThread

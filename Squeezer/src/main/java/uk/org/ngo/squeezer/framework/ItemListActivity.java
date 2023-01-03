@@ -40,6 +40,7 @@ import java.util.Stack;
 
 import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
+import uk.org.ngo.squeezer.Squeezer;
 import uk.org.ngo.squeezer.itemlist.dialog.ArtworkListLayout;
 import uk.org.ngo.squeezer.model.Item;
 import uk.org.ngo.squeezer.model.Player;
@@ -220,7 +221,7 @@ public abstract class ItemListActivity extends BaseActivity {
     protected abstract void orderPage(@NonNull ISqueezeService service, int start);
 
     public ArtworkListLayout getPreferredListLayout() {
-        return new Preferences(this).getAlbumListLayout();
+        return Squeezer.getPreferences().getAlbumListLayout();
     }
 
     /**

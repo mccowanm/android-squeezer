@@ -57,6 +57,7 @@ import java.util.Objects;
 import uk.org.ngo.squeezer.NowPlayingActivity;
 import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
+import uk.org.ngo.squeezer.Squeezer;
 import uk.org.ngo.squeezer.Util;
 import uk.org.ngo.squeezer.dialog.NetworkErrorDialogFragment;
 import uk.org.ngo.squeezer.framework.BaseListActivity;
@@ -521,7 +522,7 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
      */
     private void setTheme(ThemeManager.Theme theme) {
         if (getThemeId() != theme.mThemeId) {
-            new Preferences(this).setTheme(theme);
+            Squeezer.getPreferences().setTheme(theme);
 
             Intent intent = getIntent();
             finish();
@@ -542,7 +543,7 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
     }
 
     protected void saveListLayout(ArtworkListLayout listLayout) {
-        new Preferences(this).setAlbumListLayout(listLayout);
+        Squeezer.getPreferences().setAlbumListLayout(listLayout);
     }
 
     public int getSelectedIndex() {
@@ -648,7 +649,7 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
             setMaxLines(0);
             return true;
         } else if (itemId == R.id.menu_item_flat_icons) {
-            new Preferences(this).useFlatIcons(!menuItemFlatIcons.isChecked());
+            Squeezer.getPreferences().useFlatIcons(!menuItemFlatIcons.isChecked());
             getItemAdapter().notifyItemRangeChanged(0, getItemAdapter().getItemCount());
             return true;
         }
@@ -656,14 +657,14 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
     }
 
     private void setMaxLines(int maxLines) {
-        new Preferences(this).setMaxLines(getListLayout(), maxLines);
+        Squeezer.getPreferences().setMaxLines(getListLayout(), maxLines);
         updateViewMenuItems(getListLayout(), window.windowStyle);
         getListView().setAdapter(getListView().getAdapter());
     }
 
     private void updateViewMenuItems(ArtworkListLayout listLayout, Window.WindowStyle windowStyle) {
         if (menuItemList != null) {
-            Preferences preferences = new Preferences(this);
+            Preferences preferences = Squeezer.getPreferences();
 
             (getThemeId() ==  R.style.AppTheme ? menuItemDark : menuItemLight).setChecked(true);
 

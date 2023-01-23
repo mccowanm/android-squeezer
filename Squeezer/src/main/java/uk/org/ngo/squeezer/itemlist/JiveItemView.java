@@ -34,7 +34,6 @@ import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.Squeezer;
 import uk.org.ngo.squeezer.Util;
 import uk.org.ngo.squeezer.framework.ItemAdapter;
-import uk.org.ngo.squeezer.framework.ItemListActivity;
 import uk.org.ngo.squeezer.framework.ItemViewHolder;
 import uk.org.ngo.squeezer.framework.ViewParamItemView;
 import uk.org.ngo.squeezer.itemlist.dialog.ArtworkListLayout;
@@ -47,7 +46,8 @@ import uk.org.ngo.squeezer.util.ImageFetcher;
 public class JiveItemView extends ViewParamItemView<JiveItem> {
 
     private final JiveItemViewLogic logicDelegate;
-    private Window.WindowStyle windowStyle;
+    private final Window.WindowStyle windowStyle;
+    private final ArtworkListLayout listLayout;
 
     Preferences mPreferences = Squeezer.getPreferences();
     final boolean isShortcutActive = mPreferences.getCustomizeShortcutsMode() == Preferences.CustomizeShortcutsMode.ENABLED;
@@ -59,25 +59,26 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
     CustomJiveItemHandling mCustomJiveItemHandling = null;
 
     JiveItemView(@NonNull JiveItemListActivity activity, @NonNull View view) {
+        this(activity, activity.window.windowStyle, activity.getPreferredListLayout(), view);
+    }
+
+    JiveItemView(@NonNull JiveItemListActivity activity, Window.WindowStyle windowStyle, ArtworkListLayout preferredListLayout, @NonNull View view) {
         super(activity, view);
         if (mCustomJiveItemHandling == null) {
             mCustomJiveItemHandling = new CustomJiveItemHandling(activity);
         }
-        setWindowStyle(activity.window.windowStyle);
+        this.windowStyle = windowStyle;
+        this.listLayout = listLayout(preferredListLayout, windowStyle);
         this.logicDelegate = new JiveItemViewLogic(activity);
 
         // Certain LMS actions (e.g. slider) doesn't have text in their views
         if (text1 != null) {
-            int maxLines = getMaxLines();
+            int maxLines = mPreferences.getMaxLines(listLayout);
             if (maxLines > 0) {
                 setMaxLines(text1, maxLines);
                 setMaxLines(text2, maxLines);
             }
         }
-    }
-
-    private int getMaxLines() {
-        return Squeezer.getPreferences().getMaxLines(listLayout());
     }
 
     private void setMaxLines(TextView view, int maxLines) {
@@ -88,10 +89,6 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
     @Override
     public JiveItemListActivity getActivity() {
         return (JiveItemListActivity) super.getActivity();
-    }
-
-    void setWindowStyle(Window.WindowStyle windowStyle) {
-        this.windowStyle = windowStyle;
     }
 
     @Override
@@ -171,15 +168,8 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
         return item.isSelectable();
     }
 
-    private ArtworkListLayout listLayout() {
-        return listLayout(getActivity(), windowStyle);
-    }
-
-    static ArtworkListLayout listLayout(ItemListActivity activity, Window.WindowStyle windowStyle) {
-        if (canChangeListLayout(windowStyle)) {
-            return activity.getPreferredListLayout();
-        }
-        return ArtworkListLayout.list;
+    static ArtworkListLayout listLayout(ArtworkListLayout preferredListLayout, Window.WindowStyle windowStyle) {
+        return canChangeListLayout(windowStyle) ? preferredListLayout : ArtworkListLayout.list;
     }
 
     static boolean canChangeListLayout(Window.WindowStyle windowStyle) {
@@ -200,7 +190,7 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
             Drawable drawable = icon.getDrawable();
             Bitmap drawableBitmap = Util.drawableToBitmap(drawable);
 
-            boolean large = (listLayout() == ArtworkListLayout.grid);
+            boolean large = (listLayout == ArtworkListLayout.grid);
             int iconSize = drawable.getIntrinsicWidth();
             if (iconSize <= 0) {
                 iconSize = icon.getWidth();

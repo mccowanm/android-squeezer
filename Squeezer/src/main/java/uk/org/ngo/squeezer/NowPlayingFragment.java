@@ -77,11 +77,13 @@ import uk.org.ngo.squeezer.itemlist.JiveItemViewLogic;
 import uk.org.ngo.squeezer.itemlist.PlayerListActivity;
 import uk.org.ngo.squeezer.itemlist.PlayerViewLogic;
 import uk.org.ngo.squeezer.model.CurrentPlaylistItem;
+import uk.org.ngo.squeezer.model.Input;
 import uk.org.ngo.squeezer.model.JiveItem;
 import uk.org.ngo.squeezer.model.Player;
 import uk.org.ngo.squeezer.model.PlayerState;
 import uk.org.ngo.squeezer.model.PlayerState.RepeatStatus;
 import uk.org.ngo.squeezer.model.PlayerState.ShuffleStatus;
+import uk.org.ngo.squeezer.model.Window;
 import uk.org.ngo.squeezer.service.ConnectionState;
 import uk.org.ngo.squeezer.service.ISqueezeService;
 import uk.org.ngo.squeezer.service.SqueezeService;
@@ -132,7 +134,9 @@ public class NowPlayingFragment extends Fragment implements CallStateDialog.Call
 
     private MenuItem menuItemDisconnect;
 
+    private JiveItem topBarSearch;
     private JiveItem globalSearch;
+    private JiveItem myMusicSearch;
     private MenuItem menuItemSearch;
 
     private MenuItem menuItemPlaylist;
@@ -326,9 +330,9 @@ public class NowPlayingFragment extends Fragment implements CallStateDialog.Call
 
             trackText.setOnClickListener(v13 -> {
                 CurrentPlaylistItem song = getCurrentSong();
-                if (song != null) {
-                    globalSearch.input.initialText = song.getName();
-                    JiveItemListActivity.show(mActivity, globalSearch, globalSearch.goAction);
+                if (song != null && topBarSearch != null) {
+                    topBarSearch.input.initialText = song.getName();
+                    JiveItemListActivity.show(mActivity, topBarSearch, topBarSearch.goAction);
                 }
             });
 
@@ -805,7 +809,7 @@ public class NowPlayingFragment extends Fragment implements CallStateDialog.Call
         // These are all set at the same time, so one check is sufficient
         if (menuItemDisconnect != null) {
             // Set visibility and enabled state of menu items that are not player-specific.
-            menuItemSearch.setVisible(globalSearch != null);
+            menuItemSearch.setVisible(topBarSearch != null);
             menuItemDisconnect.setVisible(connected);
 
             // Set visibility and enabled state of menu items that are player-specific and
@@ -845,8 +849,8 @@ public class NowPlayingFragment extends Fragment implements CallStateDialog.Call
 
         int itemId = item.getItemId();
         if (itemId == R.id.menu_item_search) {
-            globalSearch.input.initialText = "";
-            JiveItemListActivity.show(mActivity, globalSearch, globalSearch.goAction);
+            topBarSearch.input.initialText = "";
+            JiveItemListActivity.show(mActivity, topBarSearch, topBarSearch.goAction);
             return true;
         } else if (itemId == R.id.menu_item_playlist) {
             CurrentPlaylistActivity.show(mActivity);
@@ -1019,15 +1023,19 @@ public class NowPlayingFragment extends Fragment implements CallStateDialog.Call
     @MainThread
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onEventMainThread(HomeMenuEvent event) {
-        globalSearch = null;
+        topBarSearch = globalSearch = myMusicSearch = null;
         for (JiveItem menuItem : event.menuItems) {
             if ("globalSearch".equals(menuItem.getId()) && menuItem.goAction != null) {
                 globalSearch = menuItem;
-                break;
+            }
+            if ("myMusicSearch".equals(menuItem.getId()) && menuItem.goAction != null) {
+                myMusicSearch = menuItem;
+                myMusicSearch.input = new Input();
             }
         }
+        topBarSearch = globalSearch;
         if (menuItemSearch != null) {
-            menuItemSearch.setVisible(globalSearch != null);
+            menuItemSearch.setVisible(topBarSearch != null);
         }
     }
 

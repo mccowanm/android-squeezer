@@ -112,18 +112,29 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
 
     @Override
     protected ItemAdapter<ItemViewHolder<JiveItem>, JiveItem> createItemListAdapter() {
-        return new JiveItemAdapter(this);
+        return (isGrouped()) ? new GroupAdapter(this) : new JiveItemAdapter(this);
+    }
+
+    private boolean isPlaylist() {
+        return parent != null && "playlist".equals(parent.getType());
+    }
+
+    private boolean isGrouped() {
+        if (parent != null) {
+            if ("myMusicSearch".equals(parent.getId())) return true;
+            return "globalSearch".equals(parent.getId());
+        }
+        return false;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
         Bundle extras = Objects.requireNonNull(getIntent().getExtras(), "intent did not contain extras");
         register = extras.getBoolean("register");
         parent = extras.getParcelable(JiveItem.class.getName());
         action = extras.getParcelable(Action.class.getName());
 
+        super.onCreate(savedInstanceState);
         pluginViewDelegate = new JiveItemViewLogic(this);
         setParentViewHolder();
 
@@ -133,7 +144,7 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
         } else {
             if (parent != null && parent.window != null) {
                 applyWindow(parent.window);
-            } else if (parent != null && "playlist".equals(parent.getType())) {
+            } else if (isPlaylist()) {
                 // special case of playlist - override server based windowStyle to play_list
                 applyWindowStyle(Window.WindowStyle.PLAY_LIST);
             } else
@@ -198,7 +209,7 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
     @Override
     public void onResume() {
         super.onResume();
-        setupListView();
+        setupListView(getListView(), getListLayout());
     }
 
     @Override
@@ -212,22 +223,28 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
     public void setContentView(@LayoutRes int layoutResID) {
         super.setContentView(layoutResID);
         dividerItemDecoration = new DividerItemDecoration(this, LinearLayoutManager.VERTICAL);
-        getListView().addItemDecoration(dividerItemDecoration);
+        if (!isGrouped()) {
+            getListView().addItemDecoration(dividerItemDecoration);
+        }
         fastScroller = findViewById(R.id.fastscroller);
 
-        setupListView();
+        setupListView(getListView(), getListLayout());
     }
 
-    private void setupListView() {
-        ArtworkListLayout listLayout = getListLayout();
-        RecyclerView.LayoutManager layoutManager = getListView().getLayoutManager();
+    public void addDividerItemDecoration(RecyclerView list) {
+        list.removeItemDecoration(dividerItemDecoration);
+        list.addItemDecoration(dividerItemDecoration);
+    }
+
+    public void setupListView(RecyclerView list, ArtworkListLayout listLayout) {
+        RecyclerView.LayoutManager layoutManager = list.getLayoutManager();
         if (listLayout == ArtworkListLayout.grid && !(layoutManager instanceof GridLayoutManager)) {
-            getListView().setLayoutManager(new GridAutofitLayoutManager(this, R.dimen.grid_column_width));
-            getListView().removeItemDecoration(dividerItemDecoration);
+            list.setLayoutManager(new GridAutofitLayoutManager(this, R.dimen.grid_column_width));
+            list.removeItemDecoration(dividerItemDecoration);
         }
         if (listLayout == ArtworkListLayout.list && (layoutManager instanceof GridLayoutManager)) {
-            getListView().setLayoutManager(new LinearLayoutManager(this));
-            getListView().addItemDecoration(dividerItemDecoration);
+            list.setLayoutManager(new LinearLayoutManager(this));
+            list.addItemDecoration(dividerItemDecoration);
         }
     }
 
@@ -289,14 +306,14 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
     }
 
     void applyWindowStyle(Window.WindowStyle windowStyle, ArtworkListLayout prevListLayout) {
-        ArtworkListLayout listLayout = JiveItemView.listLayout(this, windowStyle);
+        ArtworkListLayout listLayout = JiveItemView.listLayout(getPreferredListLayout(), windowStyle);
         updateViewMenuItems(listLayout, windowStyle);
         if (windowStyle != window.windowStyle || listLayout != prevListLayout) {
             window.windowStyle = windowStyle;
             getItemAdapter().notifyDataSetChanged();
         }
         if (listLayout != prevListLayout) {
-            setupListView();
+            setupListView(getListView(), listLayout);
         }
     }
 
@@ -376,8 +393,8 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
 
         final Window window = JiveItem.extractWindow(Util.getRecord(parameters, "window"), null);
         if (window != null) {
-            // override server based icon_list style for playlist
-            if (window.windowStyle == Window.WindowStyle.ICON_LIST && parent != null && "playlist".equals(parent.getType())) {
+            // override server based icon_list style for playlist and search results
+            if ((window.windowStyle == Window.WindowStyle.ICON_LIST && isPlaylist()) || isGrouped()) {
                 window.windowStyle = Window.WindowStyle.PLAY_LIST;
             }
             runOnUiThread(() -> applyWindow(window));
@@ -539,7 +556,7 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
     }
 
     ArtworkListLayout getListLayout() {
-        return JiveItemView.listLayout(this, window.windowStyle);
+        return JiveItemView.listLayout(getPreferredListLayout(), window.windowStyle);
     }
 
     protected void saveListLayout(ArtworkListLayout listLayout) {

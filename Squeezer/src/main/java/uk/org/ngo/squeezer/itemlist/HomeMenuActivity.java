@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.Squeezer;
 import uk.org.ngo.squeezer.framework.ItemAdapter;
@@ -69,20 +68,20 @@ public class HomeMenuActivity extends JiveItemListActivity {
         Squeezer.getPreferences().setHomeMenuLayout(listLayout);
     }
 
+    @Override
+    protected Window.WindowStyle defaultWindowStyle() {
+        return Window.WindowStyle.HOME_MENU;
+    }
+
     @Subscribe(sticky = true)
     public void onEvent(HomeMenuEvent event) {
         runOnUiThread(() -> {
-            if (parent.window == null) {
-                applyWindowStyle(Window.WindowStyle.HOME_MENU);
-            }
-            if (parent != JiveItem.HOME && window.text == null) {
-                updateHeader(parent);
-            }
             clearItemAdapter();
 
             ActionBar actionBar = getSupportActionBar();
             if (actionBar != null) {
                 if (JiveItem.HOME.equals(parent)) {
+                    parentViewHolder.itemView.setVisibility(View.GONE);
                     // Turn off the home icon.
                     actionBar.setDisplayHomeAsUpEnabled(false);
                 } else {

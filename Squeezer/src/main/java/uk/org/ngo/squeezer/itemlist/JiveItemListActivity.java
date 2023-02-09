@@ -106,7 +106,7 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
     private MenuItem menuItemAllInfo;
     private MenuItem menuItemFlatIcons;
 
-    private ViewParamItemView<JiveItem> parentViewHolder;
+    protected ViewParamItemView<JiveItem> parentViewHolder;
     private DividerItemDecoration dividerItemDecoration;
     private RecyclerViewFastScroller fastScroller;
 
@@ -139,17 +139,8 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
         setParentViewHolder();
 
         // If initial setup is performed, use it
-        if (savedInstanceState != null && savedInstanceState.containsKey("window")) {
-            applyWindow(savedInstanceState.getParcelable("window"));
-        } else {
-            if (parent != null && parent.window != null) {
-                applyWindow(parent.window);
-            } else if (isPlaylist()) {
-                // special case of playlist - override server based windowStyle to play_list
-                applyWindowStyle(Window.WindowStyle.PLAY_LIST);
-            } else
-                applyWindowStyle(Window.WindowStyle.TEXT_ONLY);
-        }
+        Window window = (savedInstanceState != null ? savedInstanceState.getParcelable("window") : null);
+        updateHeader(window);
 
         findViewById(R.id.input_view).setVisibility((hasInputField()) ? View.VISIBLE : View.GONE);
         if (hasInputField()) {
@@ -174,7 +165,7 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
             }
             inputText.setInputType(inputType);
             inputButton.setIconResource(inputImage);
-            inputTextLayout.setHint(parent.input.title);
+            inputTextLayout.setHint(TextUtils.isEmpty(parent.input.title) ? this.window.text : parent.input.title);
             inputText.setText(parent.input.initialText);
             parent.inputValue = parent.input.initialText;
 
@@ -248,68 +239,77 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
         }
     }
 
-    void updateHeader(String windowTitle) {
-        window.text = windowTitle;
-
-        parentViewHolder.itemView.setVisibility(View.VISIBLE);
-        parentViewHolder.text1.setText(windowTitle);
-        parentViewHolder.icon.setVisibility(View.GONE);
-        parentViewHolder.contextMenuButtonHolder.setVisibility(View.GONE);
+    protected Window.WindowStyle defaultWindowStyle() {
+        return Window.WindowStyle.TEXT_ONLY;
     }
 
-    void updateHeader(JiveItem parent) {
-        updateHeader(parent.getName());
+    void updateHeader(Window win) {
+        if (win == null && parent != null) win = parent.window;
 
-        if (!TextUtils.isEmpty(parent.text2)) {
+        if (win != null) {
+            updateWindowStyle(win.windowStyle);
+        } else if (isGrouped() || isPlaylist()) {
+            updateWindowStyle(Window.WindowStyle.PLAY_LIST);
+        } else {
+            updateWindowStyle(defaultWindowStyle());
+        }
+
+        window.text = null;
+        if (win != null && !TextUtils.isEmpty(win.text)) {
+            window.text = win.text;
+        } else if (parent != null && !TextUtils.isEmpty(parent.getName())) {
+            window.text = parent.getName();
+        }
+
+        if (hasInputField()) {
+            return;
+        }
+
+        if (window.text != null) {
+            parentViewHolder.itemView.setVisibility(View.VISIBLE);
+            parentViewHolder.text1.setText(window.text);
+        }
+
+        if (parent != null && !TextUtils.isEmpty(parent.text2)) {
             parentViewHolder.text2.setVisibility(View.VISIBLE);
             parentViewHolder.text2.setText(parent.text2);
         }
 
-        if (parent.hasIcon() && window.windowStyle == Window.WindowStyle.TEXT_ONLY) {
+        if (parent != null && parent.hasIcon() && window.windowStyle == Window.WindowStyle.TEXT_ONLY) {
             parentViewHolder.icon.setVisibility(View.VISIBLE);
             if (parent.useIcon()) {
                 ImageFetcher.getInstance(this).loadImage(parent.getIcon(), parentViewHolder.icon);
             } else {
                 parentViewHolder.icon.setImageDrawable(parent.getIconDrawable(this));
             }
+        } else {
+            parentViewHolder.icon.setVisibility(View.GONE);
         }
 
-        if (parent.hasContextMenu()) {
-            parentViewHolder.contextMenuButtonHolder.setVisibility(View.VISIBLE);
-        }
+        parentViewHolder.contextMenuButtonHolder.setVisibility((parent != null && parent.hasContextMenu()) ? View.VISIBLE : View.GONE);
 
-    }
-
-    private void updateHeader(@NonNull Window window) {
-        if (!TextUtils.isEmpty(window.text)) {
-            updateHeader(window.text);
-        }
-        if (!TextUtils.isEmpty(window.textarea)) {
+        if (win != null && !TextUtils.isEmpty(win.textarea)) {
             TextView header = findViewById(R.id.sub_header);
-            header.setText(window.textarea);
+            header.setText(win.textarea);
             findViewById(R.id.sub_header_container).setVisibility(View.VISIBLE);
+        } else {
+            findViewById(R.id.sub_header_container).setVisibility(View.GONE);
         }
     }
 
-    private void applyWindow(@NonNull Window window) {
-        applyWindowStyle(register ? Window.WindowStyle.TEXT_ONLY : window.windowStyle);
-        updateHeader(window);
 
-        window.titleStyle = this.window.titleStyle;
-        window.text = this.window.text;
-        this.window = window;
+    void updateWindowStyle(Window.WindowStyle windowStyle) {
+        updateWindowStyle(register ? Window.WindowStyle.TEXT_ONLY : windowStyle, getListLayout());
     }
 
-
-    void applyWindowStyle(Window.WindowStyle windowStyle) {
-        applyWindowStyle(windowStyle, getListLayout());
-    }
-
-    void applyWindowStyle(Window.WindowStyle windowStyle, ArtworkListLayout prevListLayout) {
+    void updateWindowStyle(Window.WindowStyle windowStyle, ArtworkListLayout prevListLayout) {
         ArtworkListLayout listLayout = JiveItemView.listLayout(getPreferredListLayout(), windowStyle);
         updateViewMenuItems(listLayout, windowStyle);
         if (windowStyle != window.windowStyle || listLayout != prevListLayout) {
             window.windowStyle = windowStyle;
+            if (windowStyle != Window.WindowStyle.TEXT_ONLY) {
+                parentViewHolder.icon.setVisibility(View.GONE);
+            }
             getItemAdapter().notifyDataSetChanged();
         }
         if (listLayout != prevListLayout) {
@@ -352,7 +352,6 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
         Log.d("JiveItemListActivity", "Handshake complete");
         super.onEventMainThread(event);
         if (parent != null && parent.hasSubItems()) {
-            updateHeader(parent);
             getItemAdapter().update(parent.subItems.size(), 0, parent.subItems);
         }
     }
@@ -397,11 +396,7 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
             if ((window.windowStyle == Window.WindowStyle.ICON_LIST && isPlaylist()) || isGrouped()) {
                 window.windowStyle = Window.WindowStyle.PLAY_LIST;
             }
-            runOnUiThread(() -> applyWindow(window));
-        }
-
-        if (this.window.text == null && parent != null) {
-            runOnUiThread(() -> updateHeader(parent));
+            runOnUiThread(() -> updateHeader(window));
         }
 
         // The documentation says "Returned with value 1 if there was a network error accessing
@@ -552,7 +547,7 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
     public void setPreferredListLayout(ArtworkListLayout listLayout) {
         ArtworkListLayout prevListLayout = getListLayout();
         saveListLayout(listLayout);
-        applyWindowStyle(window.windowStyle, prevListLayout);
+        updateWindowStyle(window.windowStyle, prevListLayout);
     }
 
     ArtworkListLayout getListLayout() {

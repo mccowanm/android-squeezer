@@ -38,7 +38,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.Stack;
 
-import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.Squeezer;
 import uk.org.ngo.squeezer.itemlist.dialog.ArtworkListLayout;
@@ -56,7 +55,7 @@ import uk.org.ngo.squeezer.util.RetainFragment;
  *
  * @author Kurt Aaholst
  */
-public abstract class ItemListActivity extends BaseActivity {
+public abstract class ItemListActivity extends BaseActivity implements ItemAdapter.PageOrderer {
 
     private static final String TAG = ItemListActivity.class.getName();
 
@@ -248,9 +247,8 @@ public abstract class ItemListActivity extends BaseActivity {
      * ordered, and if the service is connected and the handshake has completed.
      *
      * @param pagePosition position in the list to start the fetch.
-     * @return True if the page needed to be ordered (even if the order failed), false otherwise.
      */
-    public boolean maybeOrderPage(int pagePosition) {
+    public void maybeOrderPage(int pagePosition) {
         if (!mListScrolling && !mReceivedPages.contains(pagePosition) && !mOrderedPages
                 .contains(pagePosition) && !mOrderedPagesBeforeHandshake.contains(pagePosition)) {
             ISqueezeService service = getService();
@@ -267,9 +265,6 @@ public abstract class ItemListActivity extends BaseActivity {
                     mOrderedPagesBeforeHandshake.push(pagePosition);
                 }
             }
-            return true;
-        } else {
-            return false;
         }
     }
 

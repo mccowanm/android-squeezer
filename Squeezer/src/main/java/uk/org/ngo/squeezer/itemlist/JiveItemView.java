@@ -16,10 +16,6 @@
 
 package uk.org.ngo.squeezer.itemlist;
 
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
@@ -32,7 +28,7 @@ import java.util.EnumSet;
 import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.Squeezer;
-import uk.org.ngo.squeezer.Util;
+import uk.org.ngo.squeezer.framework.ContextMenu;
 import uk.org.ngo.squeezer.framework.ItemAdapter;
 import uk.org.ngo.squeezer.framework.ItemViewHolder;
 import uk.org.ngo.squeezer.framework.ViewParamItemView;
@@ -41,11 +37,9 @@ import uk.org.ngo.squeezer.model.Action;
 import uk.org.ngo.squeezer.model.CustomJiveItemHandling;
 import uk.org.ngo.squeezer.model.JiveItem;
 import uk.org.ngo.squeezer.model.Window;
-import uk.org.ngo.squeezer.util.ImageFetcher;
 
 public class JiveItemView extends ViewParamItemView<JiveItem> {
 
-    private final JiveItemViewLogic logicDelegate;
     private final Window.WindowStyle windowStyle;
     private final ArtworkListLayout listLayout;
 
@@ -69,7 +63,6 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
         }
         this.windowStyle = windowStyle;
         this.listLayout = listLayout(preferredListLayout, windowStyle);
-        this.logicDelegate = new JiveItemViewLogic(activity);
 
         // Certain LMS actions (e.g. slider) doesn't have text in their views
         if (text1 != null) {
@@ -104,12 +97,7 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
         text2.setText(item.text2);
 
         // If the item has an image, then fetch and display it
-        if (item.useIcon()) {
-            ImageFetcher.getInstance(getActivity()).loadImage(item.getIcon(), icon, this::onIcon);
-        } else {
-            icon.setImageDrawable(item.getIconDrawable(getActivity()));
-            onIcon();
-        }
+        JiveItemViewLogic.icon(icon, item, this::onIcon);
 
         text1.setAlpha(getAlpha());
         text2.setAlpha(getAlpha());
@@ -121,7 +109,7 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
             itemView.setOnLongClickListener(null);
         }
 
-        itemView.setClickable(isSelectable());
+        itemView.setEnabled(isSelectable());
 
         if (item.hasContextMenu()) {
             contextMenuButton.setVisibility(item.checkbox == null && item.radio == null ? View.VISIBLE : View.GONE);
@@ -185,27 +173,7 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
     }
 
     protected void onIcon() {
-        Drawable logo = item.getLogo(getActivity());
-        if (logo != null) {
-            Drawable drawable = icon.getDrawable();
-            Bitmap drawableBitmap = Util.drawableToBitmap(drawable);
-
-            boolean large = (listLayout == ArtworkListLayout.grid);
-            int iconSize = drawable.getIntrinsicWidth();
-            if (iconSize <= 0) {
-                iconSize = icon.getWidth();
-            }
-            int logoSize = (int)(iconSize * (large ? 0.2 : 0.3));
-            int start = (int)(iconSize * (large ? 0.78 : 0.68));
-            int top = (int)(iconSize * 0.02);
-            Bitmap logoBitmap = Util.getBitmap(logo, logoSize, logoSize);
-
-            Canvas canvas = new Canvas(drawableBitmap);
-            Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
-            canvas.drawBitmap(logoBitmap, start, top, paint);
-
-            icon.setImageBitmap(drawableBitmap);
-        }
+        JiveItemViewLogic.addLogo(icon, item, (listLayout == ArtworkListLayout.grid));
     }
 
     public void onItemSelected() {
@@ -222,7 +190,7 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
             getActivity().action(item, item.goAction);
         } else {
             if (item.goAction != null)
-                logicDelegate.execGoAction(this, item, 0);
+                JiveItemViewLogic.execGoAction(getActivity(), item);
             else if (item.hasSubItems())
                 JiveItemListActivity.show(getActivity(), item);
             else if (item.getNode() != null) {
@@ -249,7 +217,7 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
 
     @Override
     public void showContextMenu() {
-        logicDelegate.showContextMenu(this, item);
+        ContextMenu.show(getActivity(), item);
     }
 
 }

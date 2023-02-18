@@ -68,12 +68,12 @@ import java.util.Map;
 import uk.org.ngo.squeezer.dialog.AboutDialog;
 import uk.org.ngo.squeezer.dialog.CallStateDialog;
 import uk.org.ngo.squeezer.framework.BaseActivity;
+import uk.org.ngo.squeezer.framework.ContextMenu;
 import uk.org.ngo.squeezer.framework.ViewParamItemView;
 import uk.org.ngo.squeezer.itemlist.AlarmsActivity;
 import uk.org.ngo.squeezer.itemlist.CurrentPlaylistActivity;
 import uk.org.ngo.squeezer.itemlist.IServiceItemListCallback;
 import uk.org.ngo.squeezer.itemlist.JiveItemListActivity;
-import uk.org.ngo.squeezer.itemlist.JiveItemViewLogic;
 import uk.org.ngo.squeezer.itemlist.PlayerListActivity;
 import uk.org.ngo.squeezer.itemlist.PlayerViewLogic;
 import uk.org.ngo.squeezer.model.CurrentPlaylistItem;
@@ -83,7 +83,6 @@ import uk.org.ngo.squeezer.model.Player;
 import uk.org.ngo.squeezer.model.PlayerState;
 import uk.org.ngo.squeezer.model.PlayerState.RepeatStatus;
 import uk.org.ngo.squeezer.model.PlayerState.ShuffleStatus;
-import uk.org.ngo.squeezer.model.Window;
 import uk.org.ngo.squeezer.service.ConnectionState;
 import uk.org.ngo.squeezer.service.ISqueezeService;
 import uk.org.ngo.squeezer.service.SqueezeService;
@@ -108,7 +107,6 @@ public class NowPlayingFragment extends Fragment implements CallStateDialog.Call
     private static final String TAG = "NowPlayingFragment";
 
     private BaseActivity mActivity;
-    private JiveItemViewLogic pluginViewDelegate;
 
     @Nullable
     private ISqueezeService mService = null;
@@ -252,7 +250,6 @@ public class NowPlayingFragment extends Fragment implements CallStateDialog.Call
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         mActivity = (BaseActivity) context;
-        pluginViewDelegate = new JiveItemViewLogic(mActivity);
     }
 
     @Override
@@ -287,7 +284,7 @@ public class NowPlayingFragment extends Fragment implements CallStateDialog.Call
                 CurrentPlaylistItem currentSong = getCurrentSong();
                 // This extra check is if user pressed the button before visibility is set to GONE
                 if (currentSong != null) {
-                    pluginViewDelegate.showContextMenu(viewHolder, currentSong);
+                    ContextMenu.show(mActivity, currentSong);
                 }
             });
             btnContextMenu = viewHolder.contextMenuButtonHolder;
@@ -758,8 +755,6 @@ public class NowPlayingFragment extends Fragment implements CallStateDialog.Call
             requireService().getEventBus().unregister(this);
             mRegisteredCallbacks = false;
         }
-
-        pluginViewDelegate.resetContextMenu();
 
         super.onPause();
     }

@@ -61,6 +61,7 @@ import uk.org.ngo.squeezer.Squeezer;
 import uk.org.ngo.squeezer.Util;
 import uk.org.ngo.squeezer.dialog.NetworkErrorDialogFragment;
 import uk.org.ngo.squeezer.framework.BaseListActivity;
+import uk.org.ngo.squeezer.framework.ContextMenu;
 import uk.org.ngo.squeezer.framework.ItemAdapter;
 import uk.org.ngo.squeezer.framework.ItemViewHolder;
 import uk.org.ngo.squeezer.framework.ViewParamItemView;
@@ -72,7 +73,6 @@ import uk.org.ngo.squeezer.model.Window;
 import uk.org.ngo.squeezer.service.ISqueezeService;
 import uk.org.ngo.squeezer.service.event.ActivePlayerChanged;
 import uk.org.ngo.squeezer.service.event.HandshakeComplete;
-import uk.org.ngo.squeezer.util.ImageFetcher;
 import uk.org.ngo.squeezer.util.ThemeManager;
 import uk.org.ngo.squeezer.widget.DividerItemDecoration;
 import uk.org.ngo.squeezer.widget.GridAutofitLayoutManager;
@@ -89,7 +89,6 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
     private static final String WINDOW = "WINDOW";
     public static final String WINDOW_EXTRA = "windowId";
 
-    private JiveItemViewLogic pluginViewDelegate;
     private boolean register;
     protected JiveItem parent;
     private Action action;
@@ -135,7 +134,6 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
         action = extras.getParcelable(Action.class.getName());
 
         super.onCreate(savedInstanceState);
-        pluginViewDelegate = new JiveItemViewLogic(this);
         setParentViewHolder();
 
         // If initial setup is performed, use it
@@ -188,7 +186,7 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
 
     private void setParentViewHolder() {
         parentViewHolder = new ViewParamItemView<>(this, findViewById(R.id.parent_container));
-        parentViewHolder.contextMenuButton.setOnClickListener(v -> pluginViewDelegate.showContextMenu(parentViewHolder, parent));
+        parentViewHolder.contextMenuButton.setOnClickListener(v -> ContextMenu.show(this, parent));
     }
 
     @Override
@@ -206,8 +204,6 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
     @Override
     public void onPause() {
         super.onPause();
-        pluginViewDelegate.resetContextMenu();
-        pluginViewDelegate.resetContextMenu();
     }
 
     @Override
@@ -278,7 +274,7 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
         if (parent != null && parent.hasIcon() && window.windowStyle == Window.WindowStyle.TEXT_ONLY) {
             parentViewHolder.icon.setVisibility(View.VISIBLE);
             if (parent.useIcon()) {
-                ImageFetcher.getInstance(this).loadImage(parent.getIcon(), parentViewHolder.icon);
+                JiveItemViewLogic.icon(parentViewHolder.icon, parent, this::updateHeaderIcon);
             } else {
                 parentViewHolder.icon.setImageDrawable(parent.getIconDrawable(this));
             }
@@ -295,6 +291,10 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
         } else {
             findViewById(R.id.sub_header_container).setVisibility(View.GONE);
         }
+    }
+
+    private void updateHeaderIcon() {
+        JiveItemViewLogic.addLogo(parentViewHolder.icon, parent, true);
     }
 
 

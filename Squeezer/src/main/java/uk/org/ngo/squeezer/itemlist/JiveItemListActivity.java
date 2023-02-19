@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2011 Kurt Aaholst <kaaholst@gmail.com>
  *
@@ -65,6 +64,7 @@ import uk.org.ngo.squeezer.framework.ContextMenu;
 import uk.org.ngo.squeezer.framework.ItemAdapter;
 import uk.org.ngo.squeezer.framework.ItemViewHolder;
 import uk.org.ngo.squeezer.framework.ViewParamItemView;
+import uk.org.ngo.squeezer.itemlist.dialog.ArtworkDialog;
 import uk.org.ngo.squeezer.itemlist.dialog.ArtworkListLayout;
 import uk.org.ngo.squeezer.model.Action;
 import uk.org.ngo.squeezer.model.JiveItem;
@@ -273,11 +273,8 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
 
         if (parent != null && parent.hasIcon() && window.windowStyle == Window.WindowStyle.TEXT_ONLY) {
             parentViewHolder.icon.setVisibility(View.VISIBLE);
-            if (parent.useIcon()) {
-                JiveItemViewLogic.icon(parentViewHolder.icon, parent, this::updateHeaderIcon);
-            } else {
-                parentViewHolder.icon.setImageDrawable(parent.getIconDrawable(this));
-            }
+            JiveItemViewLogic.icon(parentViewHolder.icon, parent, this::updateHeaderIcon);
+            parentViewHolder.icon.setOnClickListener(view -> ArtworkDialog.show(this, parent));
         } else {
             parentViewHolder.icon.setVisibility(View.GONE);
         }

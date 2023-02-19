@@ -68,7 +68,7 @@ public class ArtworkDialog extends DialogFragment implements IServiceItemListCal
     @Override
     public void onItemsReceived(int count, int start, Map<String, Object> parameters, List<JiveItem> items, Class<JiveItem> dataType) {
         Uri artworkId = Util.getImageUrl(parameters, parameters.containsKey("artworkId") ? "artworkId" : "artworkUrl");
-        ImageFetcher.getInstance(getContext()).loadImage(artworkId, artwork);
+        requireActivity().runOnUiThread(() -> ImageFetcher.getInstance(getContext()).loadImage(artworkId, artwork));
     }
 
     @Override

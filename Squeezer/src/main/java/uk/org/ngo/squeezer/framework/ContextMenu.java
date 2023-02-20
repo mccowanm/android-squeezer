@@ -99,7 +99,7 @@ public class ContextMenu extends BottomSheetDialogFragmentWithService implements
 
 
     private void updateHeaderIcon() {
-        JiveItemViewLogic.addLogo(icon, contextStack.peek().first, false);
+        JiveItemViewLogic.addLogo(icon, contextStack.peek().first);
     }
 
     public static void show(BaseActivity activity, JiveItem item) {

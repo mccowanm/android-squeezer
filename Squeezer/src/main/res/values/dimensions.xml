@@ -31,6 +31,10 @@
     <!-- Inset for flat_icons as foreground when using legacy icons -->
     <dimen name="album_art_inset">2dp</dimen>
 
+    <!-- Emblem embedded in artwork -->
+    <dimen name="logo_inset">2dp</dimen>
+    <dimen name="logo_size">14dp</dimen>
+
     <!-- Width of player drop down -->
     <dimen name="player_dropdown_width">@dimen/match_parent</dimen>
 </resources>

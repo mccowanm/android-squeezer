@@ -173,7 +173,7 @@ public class JiveItemView extends ViewParamItemView<JiveItem> {
     }
 
     protected void onIcon() {
-        JiveItemViewLogic.addLogo(icon, item, (listLayout == ArtworkListLayout.grid));
+        JiveItemViewLogic.addLogo(icon, item);
     }
 
     public void onItemSelected() {

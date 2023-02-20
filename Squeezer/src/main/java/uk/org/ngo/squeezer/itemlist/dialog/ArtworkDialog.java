@@ -80,7 +80,7 @@ public class ArtworkDialog extends DialogFragment implements IServiceItemListCal
     }
 
     private void addLoge() {
-        JiveItemViewLogic.addLogo(artwork, item, true);
+        JiveItemViewLogic.addLogo(artwork, item);
     }
 
 

@@ -17,12 +17,14 @@
 package uk.org.ngo.squeezer.itemlist;
 
 import android.app.Activity;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 
+import uk.org.ngo.squeezer.R;
 import uk.org.ngo.squeezer.Util;
 import uk.org.ngo.squeezer.framework.ContextMenu;
 import uk.org.ngo.squeezer.model.Action;
@@ -100,7 +102,7 @@ public class JiveItemViewLogic {
         }
     }
 
-    public static void addLogo(ImageView icon, JiveItem item, boolean large) {
+    public static void addLogo(ImageView icon, JiveItem item) {
         Drawable logo = item.getLogo(icon.getContext());
         if (logo != null) {
             Drawable drawable = icon.getDrawable();
@@ -110,14 +112,19 @@ public class JiveItemViewLogic {
             if (iconSize <= 0) {
                 iconSize = icon.getWidth();
             }
-            int logoSize = (int)(iconSize * (large ? 0.2 : 0.3));
-            int start = (int)(iconSize * (large ? 0.78 : 0.68));
-            int top = (int)(iconSize * 0.02);
+
+            // The same logo size looks different on different size artwork, so we adjust it slightly
+            Resources resources = icon.getResources();
+            double baseIconSize = resources.getDimensionPixelSize(R.dimen.album_art_icon_size);
+            double factor = 1 + ((iconSize / baseIconSize) - 1) / 5;
+            int logoInset = (int)(resources.getDimensionPixelSize(R.dimen.logo_inset) * factor);
+            int logoSize = (int)(resources.getDimensionPixelSize(R.dimen.logo_size) * factor);
+            int start = iconSize - logoSize - logoInset;
             Bitmap logoBitmap = Util.getBitmap(logo, logoSize, logoSize);
 
             Canvas canvas = new Canvas(drawableBitmap);
             Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
-            canvas.drawBitmap(logoBitmap, start, top, paint);
+            canvas.drawBitmap(logoBitmap, start, logoInset, paint);
 
             icon.setImageBitmap(drawableBitmap);
         }

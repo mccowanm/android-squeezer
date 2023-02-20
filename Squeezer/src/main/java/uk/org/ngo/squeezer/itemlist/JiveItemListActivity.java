@@ -291,7 +291,7 @@ public class JiveItemListActivity extends BaseListActivity<ItemViewHolder<JiveIt
     }
 
     private void updateHeaderIcon() {
-        JiveItemViewLogic.addLogo(parentViewHolder.icon, parent, true);
+        JiveItemViewLogic.addLogo(parentViewHolder.icon, parent);
     }
 
 

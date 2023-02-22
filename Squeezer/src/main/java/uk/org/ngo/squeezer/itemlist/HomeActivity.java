@@ -20,12 +20,14 @@ package uk.org.ngo.squeezer.itemlist;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.MainThread;
+import androidx.preference.PreferenceManager;
 
 import uk.org.ngo.squeezer.Preferences;
 import uk.org.ngo.squeezer.Squeezer;
@@ -43,15 +45,18 @@ public class HomeActivity extends HomeMenuActivity {
         super.onCreate(savedInstanceState);
 
         // Show the change log if necessary.
-        Squeezer.getPreferences(preferences -> {
-            ChangeLogDialog changeLog = new ChangeLogDialog(this, preferences.getSharedPreferences());
-            if (changeLog.isFirstRun()) {
-                if (changeLog.isFirstRunEver()) {
-                    Squeezer.getInstance().doInBackground(changeLog::skipLogDialog);
-                } else {
-                    changeLog.getThemedLogDialog().show();
+        Squeezer.getInstance().doInBackground(() -> {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(HomeActivity.this);
+            runOnUiThread(() -> {
+                ChangeLogDialog changeLog = new ChangeLogDialog(this, preferences);
+                if (changeLog.isFirstRun()) {
+                    if (changeLog.isFirstRunEver()) {
+                        changeLog.skipLogDialog();
+                    } else {
+                        changeLog.getThemedLogDialog().show();
+                    }
                 }
-            }
+            });
         });
     }
 

@@ -14,8 +14,11 @@ import uk.org.ngo.squeezer.R;
  * Extends ChangeLog to use the v7 support AlertDialog which follows the application theme.
  */
 public class ChangeLogDialog extends de.cketti.library.changelog.ChangeLog {
+    SharedPreferences preferences;
+
     public ChangeLogDialog(final Context context, SharedPreferences sharedPreferences) {
         super(context, sharedPreferences, DEFAULT_CSS);
+        preferences = sharedPreferences;
     }
 
     /**
@@ -69,5 +72,13 @@ public class ChangeLogDialog extends de.cketti.library.changelog.ChangeLog {
         }
 
         return builder.create();
+    }
+
+    @Override
+    protected void updateVersionInPreferences() {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt(VERSION_KEY, getCurrentVersionCode());
+
+        editor.apply();
     }
 }

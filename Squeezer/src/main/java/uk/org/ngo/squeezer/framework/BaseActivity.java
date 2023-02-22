@@ -179,6 +179,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Download
                 if (preferences.getScreensaverMode() == Preferences.ScreensaverMode.CLOCK) {
                     inactivityHandler = new Handler();
                     inactivityAction = () -> startActivity(new Intent(this, Screensaver.class));
+                    setInactivityTimer();
                 }
             }
         });
@@ -207,7 +208,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Download
         }
 
         if (inactivityHandler != null) {
-            inactivityHandler.postDelayed(inactivityAction, INACTIVITY_TIME);
+            setInactivityTimer();
         }
 
         // If SqueezePlayer is installed, start it
@@ -215,6 +216,11 @@ public abstract class BaseActivity extends AppCompatActivity implements Download
 
         // Ensure that any image fetching tasks started by this activity do not finish prematurely.
         ImageFetcher.getInstance(this).setExitTasksEarly(false);
+    }
+
+    private void setInactivityTimer() {
+        inactivityHandler.removeCallbacks(inactivityAction);
+        inactivityHandler.postDelayed(inactivityAction, INACTIVITY_TIME);
     }
 
     @Override
@@ -358,8 +364,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Download
         super.onUserInteraction();
 
         if (inactivityHandler != null) {
-            inactivityHandler.removeCallbacks(inactivityAction);
-            inactivityHandler.postDelayed(inactivityAction, INACTIVITY_TIME);
+            setInactivityTimer();
         }
     }
 

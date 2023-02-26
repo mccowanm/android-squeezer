@@ -171,7 +171,7 @@ public class ContextMenu extends BottomSheetDialogFragmentWithService implements
 
     @Override
     public Object getClient() {
-        return activity();
+        return this;
     }
 
     @Override

@@ -95,7 +95,7 @@ class GroupAdapter extends ItemAdapter<ItemViewHolder<JiveItem>, JiveItem> {
 
         @Override
         public Object getClient() {
-            return null;
+            return activity;
         }
     }
 

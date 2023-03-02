@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.graphics.ColorUtils;
@@ -26,6 +25,7 @@ import uk.org.ngo.squeezer.framework.BaseActivity;
 import uk.org.ngo.squeezer.framework.BottomSheetDialogFragmentWithService;
 import uk.org.ngo.squeezer.service.ISqueezeService;
 import uk.org.ngo.squeezer.service.event.PlayerVolume;
+import uk.org.ngo.squeezer.service.event.PlayersChanged;
 
 public class VolumeController extends BottomSheetDialogFragmentWithService implements OnCrollerChangeListener {
     private static final String TAG = VolumeController.class.getSimpleName();
@@ -35,18 +35,6 @@ public class VolumeController extends BottomSheetDialogFragmentWithService imple
     private Croller seekbar;
     private int currentProgress = 0;
     private boolean trackingTouch;
-
-    @Override
-    protected  void onServiceConnected() {
-        service.getEventBus().register(this);
-        showVolumeChanged();
-    }
-
-    @Override
-    public void onStop() {
-        requireService().getEventBus().unregister(this);
-        super.onStop();
-    }
 
     @Nullable
     @Override
@@ -124,9 +112,13 @@ public class VolumeController extends BottomSheetDialogFragmentWithService imple
         trackingTouch = false;
     }
 
-    @MainThread
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
-    public void onEventMainThread(PlayerVolume event) {
+    public void onEvent(PlayersChanged event) {
+        showVolumeChanged();
+    }
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onEvent(PlayerVolume event) {
         if (service != null && event.player == service.getActivePlayer()) {
             showVolumeChanged();
         }

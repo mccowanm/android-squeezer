@@ -17,8 +17,6 @@ public abstract class BottomSheetDialogFragmentWithService extends BottomSheetDi
 
     protected ISqueezeService service = null;
 
-    abstract protected void onServiceConnected();
-
     private final ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder binder) {
@@ -32,6 +30,10 @@ public abstract class BottomSheetDialogFragmentWithService extends BottomSheetDi
         }
     };
 
+    protected final void onServiceConnected() {
+        service.getEventBus().register(this);
+    }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -41,6 +43,10 @@ public abstract class BottomSheetDialogFragmentWithService extends BottomSheetDi
     @Override
     public void onStop() {
         super.onStop();
+        if (service != null) {
+            service.getEventBus().unregister(this);
+            service.cancelItemListRequests(this);
+        }
         requireActivity().unbindService(serviceConnection);
     }
 

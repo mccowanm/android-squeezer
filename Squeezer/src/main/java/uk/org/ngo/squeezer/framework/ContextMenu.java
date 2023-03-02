@@ -13,6 +13,9 @@ import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -25,6 +28,7 @@ import uk.org.ngo.squeezer.itemlist.JiveItemListActivity;
 import uk.org.ngo.squeezer.itemlist.JiveItemViewLogic;
 import uk.org.ngo.squeezer.model.Action;
 import uk.org.ngo.squeezer.model.JiveItem;
+import uk.org.ngo.squeezer.service.event.HandshakeComplete;
 
 public class ContextMenu extends BottomSheetDialogFragmentWithService implements IServiceItemListCallback<JiveItem>, ItemAdapter.PageOrderer {
     public static final String TAG = ContextMenu.class.getSimpleName();
@@ -34,11 +38,6 @@ public class ContextMenu extends BottomSheetDialogFragmentWithService implements
     private View divider;
     private ProgressBar progress;
     private ImageView icon;
-
-    @Override
-    protected void onServiceConnected() {
-        maybeOrderPage(0);
-    }
 
     @Nullable
     @Override
@@ -172,6 +171,11 @@ public class ContextMenu extends BottomSheetDialogFragmentWithService implements
     @Override
     public Object getClient() {
         return this;
+    }
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onEvent(@SuppressWarnings("unused") HandshakeComplete event) {
+        maybeOrderPage(0);
     }
 
     @Override

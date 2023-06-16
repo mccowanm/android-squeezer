@@ -116,7 +116,7 @@ public class JiveItem extends Item {
     @NonNull private String name = "";
     public String text2;
     @NonNull public String textkey = "";
-    @NonNull private final Uri icon;
+    @NonNull private Uri icon = Uri.EMPTY;
     private String iconStyle;
     private String extid;
 
@@ -144,11 +144,12 @@ public class JiveItem extends Item {
     public Boolean radio;
     public Slider slider;
 
+    @NonNull public Uri webLink = Uri.EMPTY;
+
     private SlimCommand downloadCommand;
     private SlimCommand randomPlayFolderCommand;
 
     public JiveItem() {
-        icon = Uri.EMPTY;
     }
 
     @NonNull
@@ -322,7 +323,7 @@ public class JiveItem extends Item {
 
 
     public boolean isSelectable() {
-        return (goAction != null || nextWindow != null || hasSubItems()|| node != null || checkbox != null);
+        return (goAction != null || nextWindow != null || hasSubItems()|| node != null || checkbox != null || !webLink.equals(Uri.EMPTY));
     }
 
     public boolean hasContextMenu() {
@@ -410,6 +411,8 @@ public class JiveItem extends Item {
             slider.sliderIcons = getString(record, "sliderIcons");
             slider.help = getString(record, "help");
         }
+
+        webLink = Uri.parse(getStringOrEmpty(record, "weblink"));
     }
 
     public JiveItem(Parcel source) {
@@ -445,6 +448,7 @@ public class JiveItem extends Item {
         radio = (Boolean) source.readValue(getClass().getClassLoader());
         slider = source.readParcelable(getClass().getClassLoader());
         downloadCommand = source.readParcelable(getClass().getClassLoader());
+        webLink = Uri.parse(source.readString());
 //      TODO
 //        randomPlayFolderCommand = source.readParcelable(getClass().getClassLoader());
     }
@@ -482,6 +486,7 @@ public class JiveItem extends Item {
         dest.writeValue(radio);
         dest.writeParcelable(slider, flags);
         dest.writeParcelable(downloadCommand, flags);
+        dest.writeString(webLink.toString());
     }
 
     public void setWeight(int weight) {

@@ -585,6 +585,7 @@ public class JiveItem extends Item {
         window.textarea = getStringOrEmpty(params, "textarea").replaceAll("\\\\n", "\n");
         window.textareaToken = getString(params, "textAreaToken");
         window.help = getString(params, "help");
+        window.html = getString(params, "html");
         window.icon = getImageUrl(params, params.containsKey("icon-id") ? "icon-id" : "icon");
         window.titleStyle = getString(params, "titleStyle");
 
